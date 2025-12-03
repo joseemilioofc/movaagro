@@ -4,13 +4,11 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { TransportRequestForm, TransportFormData } from "@/components/TransportRequestForm";
 import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
 
 interface TransportRequest {
@@ -35,17 +33,6 @@ const CooperativeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const [newRequest, setNewRequest] = useState({
-    title: "",
-    description: "",
-    origin_address: "",
-    destination_address: "",
-    cargo_type: "",
-    weight_kg: "",
-    pickup_date: "",
-    external_form_link: "",
-  });
 
   useEffect(() => {
     if (!authLoading && (!user || role !== "cooperative")) {
@@ -76,21 +63,32 @@ const CooperativeDashboard = () => {
     }
   };
 
-  const handleCreateRequest = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleCreateRequest = async (formData: TransportFormData) => {
     setIsSubmitting(true);
 
     try {
+      const description = [
+        `Contacto: ${formData.contact}`,
+        `Pessoa de contacto: ${formData.contactPerson}`,
+        `Volume: ${formData.volume || "N/A"}`,
+        formData.hasSpecialConditions === "sim" ? `Condições especiais: ${formData.specialConditions}` : "",
+        `Urgência: ${formData.urgency}`,
+        `Responsável no destino: ${formData.responsiblePerson}`,
+        `Contacto no destino: ${formData.destinationContact}`,
+        `Pagamento: ${formData.paymentMethod} - ${formData.whoPays === "remetente" ? "Remetente paga" : "Destinatário paga"}`,
+        formData.observations ? `Observações: ${formData.observations}` : "",
+      ].filter(Boolean).join("\n");
+
       const { error } = await supabase.from("transport_requests").insert({
         cooperative_id: user?.id,
-        title: newRequest.title,
-        description: newRequest.description || null,
-        origin_address: newRequest.origin_address,
-        destination_address: newRequest.destination_address,
-        cargo_type: newRequest.cargo_type,
-        weight_kg: newRequest.weight_kg ? parseFloat(newRequest.weight_kg) : null,
-        pickup_date: newRequest.pickup_date,
-        external_form_link: newRequest.external_form_link || null,
+        title: `${formData.productType} - ${formData.fullName}`,
+        description,
+        origin_address: formData.pickupLocation,
+        destination_address: formData.deliveryLocation,
+        cargo_type: formData.productType,
+        weight_kg: formData.quantity ? parseFloat(formData.quantity.replace(/[^\d.]/g, "")) || null : null,
+        pickup_date: formData.pickupDate,
+        external_form_link: formData.externalFormLink || null,
       });
 
       if (error) throw error;
@@ -100,16 +98,6 @@ const CooperativeDashboard = () => {
         description: "Seu pedido de transporte foi criado com sucesso.",
       });
 
-      setNewRequest({
-        title: "",
-        description: "",
-        origin_address: "",
-        destination_address: "",
-        cargo_type: "",
-        weight_kg: "",
-        pickup_date: "",
-        external_form_link: "",
-      });
       setIsDialogOpen(false);
       fetchRequests();
     } catch (error: any) {
@@ -183,98 +171,10 @@ const CooperativeDashboard = () => {
               <DialogHeader>
                 <DialogTitle>Novo Pedido de Transporte</DialogTitle>
                 <DialogDescription>
-                  Preencha os detalhes do seu pedido de transporte
+                  Preencha os detalhes do seu pedido em 5 passos simples
                 </DialogDescription>
               </DialogHeader>
-              <form onSubmit={handleCreateRequest} className="space-y-4 mt-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Título do Pedido</Label>
-                  <Input
-                    id="title"
-                    placeholder="Ex: Transporte de soja"
-                    value={newRequest.title}
-                    onChange={(e) => setNewRequest({ ...newRequest, title: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="description">Descrição (opcional)</Label>
-                  <Textarea
-                    id="description"
-                    placeholder="Detalhes adicionais do transporte"
-                    value={newRequest.description}
-                    onChange={(e) => setNewRequest({ ...newRequest, description: e.target.value })}
-                  />
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="origin">Origem</Label>
-                    <Input
-                      id="origin"
-                      placeholder="Cidade, Estado"
-                      value={newRequest.origin_address}
-                      onChange={(e) => setNewRequest({ ...newRequest, origin_address: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="destination">Destino</Label>
-                    <Input
-                      id="destination"
-                      placeholder="Cidade, Estado"
-                      value={newRequest.destination_address}
-                      onChange={(e) => setNewRequest({ ...newRequest, destination_address: e.target.value })}
-                      required
-                    />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="cargo">Tipo de Carga</Label>
-                    <Input
-                      id="cargo"
-                      placeholder="Ex: Grãos, Frutas"
-                      value={newRequest.cargo_type}
-                      onChange={(e) => setNewRequest({ ...newRequest, cargo_type: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="weight">Peso (kg)</Label>
-                    <Input
-                      id="weight"
-                      type="number"
-                      placeholder="Ex: 1000"
-                      value={newRequest.weight_kg}
-                      onChange={(e) => setNewRequest({ ...newRequest, weight_kg: e.target.value })}
-                    />
-                  </div>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="pickup_date">Data de Coleta</Label>
-                  <Input
-                    id="pickup_date"
-                    type="date"
-                    value={newRequest.pickup_date}
-                    onChange={(e) => setNewRequest({ ...newRequest, pickup_date: e.target.value })}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="form_link">Link do Formulário Externo (opcional)</Label>
-                  <Input
-                    id="form_link"
-                    type="url"
-                    placeholder="https://forms.google.com/..."
-                    value={newRequest.external_form_link}
-                    onChange={(e) => setNewRequest({ ...newRequest, external_form_link: e.target.value })}
-                  />
-                </div>
-                <Button type="submit" className="w-full bg-gradient-primary" disabled={isSubmitting}>
-                  {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
-                  Criar Pedido
-                </Button>
-              </form>
+              <TransportRequestForm onSubmit={handleCreateRequest} isSubmitting={isSubmitting} />
             </DialogContent>
           </Dialog>
         </div>
