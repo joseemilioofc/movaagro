@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { TransportRequestForm, TransportFormData } from "@/components/TransportRequestForm";
-import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink } from "lucide-react";
+import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink, MessageSquare } from "lucide-react";
 
 interface TransportRequest {
   id: string;
@@ -289,6 +289,16 @@ const CooperativeDashboard = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-3">
+                      {request.status === "accepted" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/chat/${request.id}`)}
+                        >
+                          <MessageSquare className="w-4 h-4 mr-1" />
+                          Chat
+                        </Button>
+                      )}
                       {request.external_form_link && (
                         <a
                           href={request.external_form_link}

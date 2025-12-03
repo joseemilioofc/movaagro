@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import CooperativeDashboard from "./pages/CooperativeDashboard";
 import TransporterDashboard from "./pages/TransporterDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import ChatPage from "./pages/ChatPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
             <Route path="/cooperative" element={<CooperativeDashboard />} />
             <Route path="/transporter" element={<TransporterDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/chat/:requestId" element={<ChatPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
