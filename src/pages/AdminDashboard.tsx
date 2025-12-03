@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield } from "lucide-react";
+import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield, MessageSquare } from "lucide-react";
 
 interface Profile {
   id: string;
@@ -306,13 +306,25 @@ const AdminDashboard = () => {
                         <TableCell>{new Date(request.pickup_date).toLocaleDateString("pt-BR")}</TableCell>
                         <TableCell>{getStatusBadge(request.status)}</TableCell>
                         <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setDeleteDialog({ type: "request", id: request.id })}
-                          >
-                            <Trash2 className="w-4 h-4 text-destructive" />
-                          </Button>
+                          <div className="flex items-center gap-1">
+                            {request.status === "accepted" && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => navigate(`/chat/${request.id}`)}
+                                title="Abrir chat"
+                              >
+                                <MessageSquare className="w-4 h-4 text-primary" />
+                              </Button>
+                            )}
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setDeleteDialog({ type: "request", id: request.id })}
+                            >
+                              <Trash2 className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </div>
                         </TableCell>
                       </TableRow>
                     ))}

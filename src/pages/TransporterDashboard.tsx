@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye } from "lucide-react";
+import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye, MessageSquare } from "lucide-react";
 
 interface TransportRequest {
   id: string;
@@ -76,6 +76,30 @@ const TransporterDashboard = () => {
   const handleAccept = async (requestId: string) => {
     setIsProcessing(true);
     try {
+      // Get request details for email
+      const { data: requestData, error: fetchError } = await supabase
+        .from("transport_requests")
+        .select("*")
+        .eq("id", requestId)
+        .single();
+
+      if (fetchError) throw fetchError;
+
+      // Get cooperative email
+      const { data: cooperativeProfile } = await supabase
+        .from("profiles")
+        .select("email, name")
+        .eq("user_id", requestData.cooperative_id)
+        .single();
+
+      // Get transporter profile
+      const { data: transporterProfile } = await supabase
+        .from("profiles")
+        .select("name, email")
+        .eq("user_id", user?.id)
+        .single();
+
+      // Update request status
       const { error } = await supabase
         .from("transport_requests")
         .update({ status: "accepted", transporter_id: user?.id })
@@ -83,13 +107,37 @@ const TransporterDashboard = () => {
 
       if (error) throw error;
 
+      // Send email notification to cooperative
+      try {
+        await supabase.functions.invoke("send-transport-confirmation", {
+          body: {
+            email: cooperativeProfile?.email,
+            type: "accepted",
+            transporterName: transporterProfile?.name,
+            transporterEmail: transporterProfile?.email,
+            requestDetails: {
+              title: requestData.title,
+              origin: requestData.origin_address,
+              destination: requestData.destination_address,
+              cargoType: requestData.cargo_type,
+              weight: requestData.weight_kg,
+              pickupDate: requestData.pickup_date,
+              description: requestData.description,
+            },
+          },
+        });
+      } catch (emailError) {
+        console.error("Error sending email:", emailError);
+      }
+
       toast({
         title: "Pedido aceito!",
-        description: "Você aceitou o pedido de transporte.",
+        description: "Você será redirecionado para o chat.",
       });
 
       setSelectedRequest(null);
-      fetchRequests();
+      // Navigate to chat
+      navigate(`/chat/${requestId}`);
     } catch (error: any) {
       toast({
         title: "Erro ao aceitar pedido",
@@ -276,9 +324,19 @@ const TransporterDashboard = () => {
                         </p>
                       </div>
                     </div>
-                    <Badge variant={request.status === "accepted" ? "default" : "secondary"}>
-                      {request.status === "accepted" ? "Em andamento" : request.status}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => navigate(`/chat/${request.id}`)}
+                      >
+                        <MessageSquare className="w-4 h-4 mr-1" />
+                        Chat
+                      </Button>
+                      <Badge variant={request.status === "accepted" ? "default" : "secondary"}>
+                        {request.status === "accepted" ? "Em andamento" : request.status}
+                      </Badge>
+                    </div>
                   </div>
                 ))}
               </div>
