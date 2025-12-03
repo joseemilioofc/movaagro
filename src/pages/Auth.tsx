@@ -10,6 +10,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { Truck, Wheat, Shield, ArrowLeft, Loader2 } from "lucide-react";
 import { z } from "zod";
+import { Footer } from "@/components/Footer";
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -328,6 +329,8 @@ const Auth = () => {
           )}
         </div>
       </div>
+
+      <Footer />
     </div>
   );
 };
