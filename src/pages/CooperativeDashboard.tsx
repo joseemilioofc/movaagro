@@ -93,9 +93,35 @@ const CooperativeDashboard = () => {
 
       if (error) throw error;
 
+      // Send confirmation email
+      try {
+        const { data: profileData } = await supabase
+          .from("profiles")
+          .select("email")
+          .eq("user_id", user?.id)
+          .single();
+
+        if (profileData?.email) {
+          await supabase.functions.invoke("send-transport-confirmation", {
+            body: {
+              email: profileData.email,
+              name: formData.fullName,
+              productType: formData.productType,
+              quantity: formData.quantity,
+              pickupLocation: formData.pickupLocation,
+              deliveryLocation: formData.deliveryLocation,
+              pickupDate: formData.pickupDate,
+              urgency: formData.urgency,
+            },
+          });
+        }
+      } catch (emailError) {
+        console.error("Failed to send confirmation email:", emailError);
+      }
+
       toast({
         title: "Pedido criado!",
-        description: "Seu pedido de transporte foi criado com sucesso.",
+        description: "Seu pedido foi criado. Um email de confirmação foi enviado.",
       });
 
       setIsDialogOpen(false);
