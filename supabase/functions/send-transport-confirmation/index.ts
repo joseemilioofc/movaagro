@@ -1,15 +1,19 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.3";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-interface TransportConfirmationRequest {
-  email: string;
+interface EmailRequest {
+  email?: string;
   name?: string;
   productType?: string;
   quantity?: string;
@@ -17,7 +21,7 @@ interface TransportConfirmationRequest {
   deliveryLocation?: string;
   pickupDate?: string;
   urgency?: string;
-  type?: "created" | "accepted";
+  type?: "created" | "accepted" | "proposal_sent" | "payment_submitted" | "payment_confirmed";
   transporterName?: string;
   transporterEmail?: string;
   requestDetails?: {
@@ -29,7 +33,29 @@ interface TransportConfirmationRequest {
     pickupDate: string;
     description: string | null;
   };
+  proposalId?: string;
+  requestId?: string;
+  transporterId?: string;
+  price?: number;
+  description?: string;
 }
+
+const getEmailStyles = () => `
+  body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }
+  .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+  .header { background: linear-gradient(135deg, #16a34a, #22c55e); color: white; padding: 30px; text-align: center; }
+  .header h1 { margin: 0; font-size: 28px; }
+  .content { padding: 30px; }
+  .info-card { background: #f9fafb; border-left: 4px solid #16a34a; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
+  .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
+  .info-row:last-child { border-bottom: none; }
+  .label { color: #6b7280; font-size: 14px; }
+  .value { color: #111827; font-weight: 600; }
+  .highlight-box { background: #f0fdf4; border: 2px solid #16a34a; padding: 20px; margin: 20px 0; border-radius: 12px; text-align: center; }
+  .price { font-size: 32px; font-weight: bold; color: #16a34a; }
+  .payment-box { background: #fef3c7; border: 2px solid #d97706; padding: 20px; margin: 20px 0; border-radius: 12px; }
+  .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px; }
+`;
 
 const handler = async (req: Request): Promise<Response> => {
   console.log("Received request to send-transport-confirmation");
@@ -39,203 +65,390 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const data: TransportConfirmationRequest = await req.json();
-    console.log("Request data:", { ...data, email: data.email ? "***" : "missing" });
+    const data: EmailRequest = await req.json();
+    console.log("Request type:", data.type);
 
     let emailHtml: string;
     let subject: string;
+    let recipients: string[] = [];
 
-    if (data.type === "accepted" && data.requestDetails) {
-      // Email for when a transporter accepts the request
-      subject = "🎉 Seu Pedido de Transporte foi Aceito! - MOVA";
-      emailHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }
-            .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-            .header { background: linear-gradient(135deg, #16a34a, #22c55e); color: white; padding: 30px; text-align: center; }
-            .header h1 { margin: 0; font-size: 28px; }
-            .content { padding: 30px; }
-            .success-box { background: #f0fdf4; border: 2px solid #16a34a; padding: 20px; margin: 20px 0; border-radius: 12px; text-align: center; }
-            .success-box h2 { color: #16a34a; margin: 0 0 10px 0; }
-            .info-card { background: #f9fafb; border-left: 4px solid #16a34a; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
-            .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
-            .info-row:last-child { border-bottom: none; }
-            .label { color: #6b7280; font-size: 14px; }
-            .value { color: #111827; font-weight: 600; }
-            .transporter-card { background: linear-gradient(135deg, #ecfdf5, #d1fae5); padding: 20px; border-radius: 12px; margin: 20px 0; }
-            .transporter-card h3 { margin: 0 0 15px 0; color: #065f46; }
-            .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px; }
-            .cta-button { display: inline-block; background: #16a34a; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: 600; margin-top: 15px; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>🚛 MOVA</h1>
-              <p style="margin: 10px 0 0 0; opacity: 0.9;">Boas Notícias!</p>
+    // Helper to get profile
+    const getProfile = async (userId: string) => {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("name, email")
+        .eq("user_id", userId)
+        .single();
+      return profile;
+    };
+
+    // Helper to get request details
+    const getRequestDetails = async (requestId: string) => {
+      const { data: request } = await supabase
+        .from("transport_requests")
+        .select("*, cooperative_id, transporter_id")
+        .eq("id", requestId)
+        .single();
+      return request;
+    };
+
+    // Helper to get admin emails
+    const getAdminEmails = async () => {
+      const { data: adminRoles } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "admin");
+      
+      if (!adminRoles) return [];
+      
+      const emails: string[] = [];
+      for (const admin of adminRoles) {
+        const profile = await getProfile(admin.user_id);
+        if (profile?.email) emails.push(profile.email);
+      }
+      return emails;
+    };
+
+    switch (data.type) {
+      case "proposal_sent": {
+        // Transporter sent a proposal - notify cooperative and admins
+        const request = await getRequestDetails(data.requestId!);
+        const transporterProfile = await getProfile(data.transporterId!);
+        const cooperativeProfile = await getProfile(request.cooperative_id);
+        const adminEmails = await getAdminEmails();
+
+        recipients = [cooperativeProfile?.email, ...adminEmails].filter(Boolean) as string[];
+        subject = "💰 Nova Proposta de Transporte Recebida - MOVA";
+
+        emailHtml = `
+          <!DOCTYPE html>
+          <html>
+          <head><style>${getEmailStyles()}</style></head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>🚛 MOVA</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Nova Proposta Recebida!</p>
+              </div>
+              <div class="content">
+                <div class="highlight-box">
+                  <h2 style="margin: 0 0 10px 0; color: #16a34a;">Nova Proposta de Trabalho</h2>
+                  <p>O transportador <strong>${transporterProfile?.name || "N/A"}</strong> enviou uma proposta.</p>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="label">Pedido</span>
+                    <span class="value">${request.title}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Descrição do Serviço</span>
+                    <span class="value">${data.description}</span>
+                  </div>
+                </div>
+
+                <div class="highlight-box">
+                  <p style="margin: 0; color: #6b7280;">Valor Proposto:</p>
+                  <p class="price">${data.price?.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })}</p>
+                </div>
+
+                <div class="payment-box">
+                  <p style="margin: 0 0 10px 0; font-weight: bold; color: #92400e;">📱 Dados para Pagamento (MOVA):</p>
+                  <p style="font-family: monospace; font-size: 18px; margin: 0; color: #78350f;">863343229 J*** P**** E*****</p>
+                </div>
+
+                <p style="text-align: center;">
+                  <strong>Acesse a plataforma para ver mais detalhes e efetuar o pagamento!</strong>
+                </p>
+              </div>
+              <div class="footer">
+                <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
+              </div>
             </div>
-            <div class="content">
-              <div class="success-box">
-                <h2>✅ Pedido Aceito!</h2>
-                <p>Um transportador aceitou o seu pedido de transporte.</p>
-              </div>
-              
-              <div class="transporter-card">
-                <h3>🚚 Transportador Atribuído</h3>
-                <div class="info-row">
-                  <span class="label">Nome</span>
-                  <span class="value">${data.transporterName || "N/A"}</span>
-                </div>
-                <div class="info-row">
-                  <span class="label">Email</span>
-                  <span class="value">${data.transporterEmail || "N/A"}</span>
-                </div>
-              </div>
+          </body>
+          </html>
+        `;
+        break;
+      }
 
-              <h3>📦 Detalhes do Pedido</h3>
-              <div class="info-card">
-                <div class="info-row">
-                  <span class="label">Título</span>
-                  <span class="value">${data.requestDetails.title}</span>
+      case "payment_submitted": {
+        // Cooperative submitted payment proof - notify admin and transporter
+        const { data: proposal } = await supabase
+          .from("transport_proposals")
+          .select("*")
+          .eq("id", data.proposalId)
+          .single();
+
+        const request = await getRequestDetails(data.requestId!);
+        const transporterProfile = await getProfile(proposal.transporter_id);
+        const cooperativeProfile = await getProfile(request.cooperative_id);
+        const adminEmails = await getAdminEmails();
+
+        recipients = [transporterProfile?.email, ...adminEmails].filter(Boolean) as string[];
+        subject = "📋 Comprovativo de Pagamento Enviado - MOVA";
+
+        emailHtml = `
+          <!DOCTYPE html>
+          <html>
+          <head><style>${getEmailStyles()}</style></head>
+          <body>
+            <div class="container">
+              <div class="header" style="background: linear-gradient(135deg, #d97706, #f59e0b);">
+                <h1>🚛 MOVA</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Pagamento Enviado!</p>
+              </div>
+              <div class="content">
+                <div class="highlight-box" style="border-color: #d97706; background: #fef3c7;">
+                  <h2 style="margin: 0 0 10px 0; color: #92400e;">📋 Comprovativo Recebido</h2>
+                  <p>A cooperativa <strong>${cooperativeProfile?.name || "N/A"}</strong> enviou o comprovativo de pagamento.</p>
                 </div>
-                <div class="info-row">
-                  <span class="label">Origem</span>
-                  <span class="value">${data.requestDetails.origin}</span>
+
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="label">Pedido</span>
+                    <span class="value">${request.title}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Valor</span>
+                    <span class="value">${proposal.price?.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })}</span>
+                  </div>
+                  ${proposal.payment_code ? `
+                  <div class="info-row">
+                    <span class="label">Código de Confirmação</span>
+                    <span class="value" style="font-family: monospace;">${proposal.payment_code}</span>
+                  </div>
+                  ` : ''}
                 </div>
-                <div class="info-row">
-                  <span class="label">Destino</span>
-                  <span class="value">${data.requestDetails.destination}</span>
+
+                <p style="text-align: center; color: #92400e; font-weight: bold;">
+                  ⏳ Aguardando confirmação do administrador
+                </p>
+              </div>
+              <div class="footer">
+                <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `;
+        break;
+      }
+
+      case "payment_confirmed": {
+        // Admin confirmed payment - notify transporter and cooperative
+        const { data: proposal } = await supabase
+          .from("transport_proposals")
+          .select("*")
+          .eq("id", data.proposalId)
+          .single();
+
+        const request = await getRequestDetails(data.requestId!);
+        const transporterProfile = await getProfile(proposal.transporter_id);
+        const cooperativeProfile = await getProfile(request.cooperative_id);
+
+        recipients = [transporterProfile?.email, cooperativeProfile?.email].filter(Boolean) as string[];
+        subject = "✅ Pagamento Confirmado - Transporte Autorizado! - MOVA";
+
+        emailHtml = `
+          <!DOCTYPE html>
+          <html>
+          <head><style>${getEmailStyles()}</style></head>
+          <body>
+            <div class="container">
+              <div class="header" style="background: linear-gradient(135deg, #059669, #10b981);">
+                <h1>🚛 MOVA</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Transporte Autorizado!</p>
+              </div>
+              <div class="content">
+                <div class="highlight-box" style="border-color: #059669;">
+                  <h2 style="margin: 0 0 10px 0; color: #059669;">✅ Pagamento Confirmado!</h2>
+                  <p>O administrador confirmou o pagamento. O transporte está autorizado a ser realizado.</p>
                 </div>
-                <div class="info-row">
-                  <span class="label">Tipo de Carga</span>
-                  <span class="value">${data.requestDetails.cargoType}</span>
+
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="label">Pedido</span>
+                    <span class="value">${request.title}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Origem</span>
+                    <span class="value">${request.origin_address}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Destino</span>
+                    <span class="value">${request.destination_address}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Data de Coleta</span>
+                    <span class="value">${new Date(request.pickup_date).toLocaleDateString("pt-PT")}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Valor Pago</span>
+                    <span class="value" style="color: #059669;">${proposal.price?.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })}</span>
+                  </div>
                 </div>
-                ${data.requestDetails.weight ? `
-                <div class="info-row">
-                  <span class="label">Peso</span>
-                  <span class="value">${data.requestDetails.weight} kg</span>
+
+                <div style="background: #ecfdf5; border-radius: 12px; padding: 20px; text-align: center; margin-top: 20px;">
+                  <p style="margin: 0; font-size: 18px; color: #065f46;">
+                    🎉 O transporte pode ser realizado!
+                  </p>
+                </div>
+
+                <div style="margin-top: 20px;">
+                  <p><strong>Transportador:</strong> ${transporterProfile?.name}</p>
+                  <p><strong>Cooperativa:</strong> ${cooperativeProfile?.name}</p>
+                </div>
+              </div>
+              <div class="footer">
+                <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `;
+        break;
+      }
+
+      case "accepted": {
+        // Original accepted email
+        subject = "🎉 Seu Pedido de Transporte foi Aceito! - MOVA";
+        recipients = [data.email!];
+        emailHtml = `
+          <!DOCTYPE html>
+          <html>
+          <head><style>${getEmailStyles()}</style></head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>🚛 MOVA</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Boas Notícias!</p>
+              </div>
+              <div class="content">
+                <div class="highlight-box">
+                  <h2 style="color: #16a34a; margin: 0 0 10px 0;">✅ Pedido Aceito!</h2>
+                  <p>Um transportador aceitou o seu pedido de transporte.</p>
+                </div>
+                
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="label">Transportador</span>
+                    <span class="value">${data.transporterName || "N/A"}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Email</span>
+                    <span class="value">${data.transporterEmail || "N/A"}</span>
+                  </div>
+                </div>
+
+                ${data.requestDetails ? `
+                <h3>📦 Detalhes do Pedido</h3>
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="label">Título</span>
+                    <span class="value">${data.requestDetails.title}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Origem</span>
+                    <span class="value">${data.requestDetails.origin}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Destino</span>
+                    <span class="value">${data.requestDetails.destination}</span>
+                  </div>
                 </div>
                 ` : ''}
-                <div class="info-row">
-                  <span class="label">Data de Recolha</span>
-                  <span class="value">${new Date(data.requestDetails.pickupDate).toLocaleDateString("pt-PT")}</span>
-                </div>
-                ${data.requestDetails.description ? `
-                <div class="info-row">
-                  <span class="label">Descrição</span>
-                  <span class="value">${data.requestDetails.description}</span>
-                </div>
-                ` : ''}
+                
+                <p style="text-align: center;">
+                  <strong>Acesse a plataforma para iniciar a conversa com o transportador!</strong>
+                </p>
               </div>
-              
-              <p style="text-align: center;">
-                <strong>Acesse a plataforma para iniciar a conversa com o transportador!</strong>
-              </p>
+              <div class="footer">
+                <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
+              </div>
             </div>
-            <div class="footer">
-              <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
-              <p>Este é um email automático, por favor não responda.</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
-    } else {
-      // Original email for when a request is created
-      const urgencyLabels: Record<string, string> = {
-        baixa: "Baixa",
-        media: "Média",
-        alta: "Alta",
-      };
+          </body>
+          </html>
+        `;
+        break;
+      }
 
-      subject = "Confirmação do Pedido de Transporte - MOVA";
-      emailHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <style>
-            body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; margin: 0; padding: 20px; }
-            .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-            .header { background: linear-gradient(135deg, #16a34a, #22c55e); color: white; padding: 30px; text-align: center; }
-            .header h1 { margin: 0; font-size: 28px; }
-            .content { padding: 30px; }
-            .info-card { background: #f0fdf4; border-left: 4px solid #16a34a; padding: 15px; margin: 15px 0; border-radius: 0 8px 8px 0; }
-            .info-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #e5e7eb; }
-            .info-row:last-child { border-bottom: none; }
-            .label { color: #6b7280; font-size: 14px; }
-            .value { color: #111827; font-weight: 600; }
-            .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 12px; }
-            .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-            .badge-alta { background: #fef2f2; color: #dc2626; }
-            .badge-media { background: #fef3c7; color: #d97706; }
-            .badge-baixa { background: #f0fdf4; color: #16a34a; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>🚛 MOVA</h1>
-              <p style="margin: 10px 0 0 0; opacity: 0.9;">Pedido de Transporte Confirmado!</p>
-            </div>
-            <div class="content">
-              <p>Olá <strong>${data.name}</strong>,</p>
-              <p>O seu pedido de transporte foi criado com sucesso! Abaixo estão os detalhes:</p>
-              
-              <div class="info-card">
-                <div class="info-row">
-                  <span class="label">Produto</span>
-                  <span class="value">${data.productType}</span>
-                </div>
-                <div class="info-row">
-                  <span class="label">Quantidade</span>
-                  <span class="value">${data.quantity}</span>
-                </div>
-                <div class="info-row">
-                  <span class="label">Origem</span>
-                  <span class="value">${data.pickupLocation}</span>
-                </div>
-                <div class="info-row">
-                  <span class="label">Destino</span>
-                  <span class="value">${data.deliveryLocation}</span>
-                </div>
-                <div class="info-row">
-                  <span class="label">Data de Recolha</span>
-                  <span class="value">${new Date(data.pickupDate!).toLocaleDateString("pt-PT")}</span>
-                </div>
-                <div class="info-row">
-                  <span class="label">Urgência</span>
-                  <span class="value">
-                    <span class="badge badge-${data.urgency}">${urgencyLabels[data.urgency!] || data.urgency}</span>
-                  </span>
+      default: {
+        // Original created email
+        const urgencyLabels: Record<string, string> = {
+          baixa: "Baixa",
+          media: "Média",
+          alta: "Alta",
+        };
+
+        subject = "Confirmação do Pedido de Transporte - MOVA";
+        recipients = [data.email!];
+        emailHtml = `
+          <!DOCTYPE html>
+          <html>
+          <head><style>${getEmailStyles()}</style></head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>🚛 MOVA</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Pedido de Transporte Confirmado!</p>
+              </div>
+              <div class="content">
+                <p>Olá <strong>${data.name}</strong>,</p>
+                <p>O seu pedido de transporte foi criado com sucesso!</p>
+                
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="label">Produto</span>
+                    <span class="value">${data.productType}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Quantidade</span>
+                    <span class="value">${data.quantity}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Origem</span>
+                    <span class="value">${data.pickupLocation}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Destino</span>
+                    <span class="value">${data.deliveryLocation}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Data de Recolha</span>
+                    <span class="value">${data.pickupDate ? new Date(data.pickupDate).toLocaleDateString("pt-PT") : "N/A"}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Urgência</span>
+                    <span class="value">${urgencyLabels[data.urgency!] || data.urgency}</span>
+                  </div>
                 </div>
               </div>
-              
-              <p>A nossa equipa irá processar o seu pedido e em breve uma transportadora entrará em contacto consigo.</p>
-              <p>Se tiver alguma dúvida, não hesite em contactar-nos.</p>
+              <div class="footer">
+                <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
+              </div>
             </div>
-            <div class="footer">
-              <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
-              <p>Este é um email automático, por favor não responda.</p>
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
+          </body>
+          </html>
+        `;
+      }
     }
 
-    const emailResponse = await resend.emails.send({
-      from: "MOVA <onboarding@resend.dev>",
-      to: [data.email],
-      subject: subject,
-      html: emailHtml,
-    });
+    // Send emails
+    for (const recipient of recipients) {
+      try {
+        const emailResponse = await resend.emails.send({
+          from: "MOVA <onboarding@resend.dev>",
+          to: [recipient],
+          subject: subject,
+          html: emailHtml,
+        });
+        console.log(`Email sent to ${recipient}:`, emailResponse);
+      } catch (emailError) {
+        console.error(`Failed to send email to ${recipient}:`, emailError);
+      }
+    }
 
-    console.log("Email sent successfully:", emailResponse);
-
-    return new Response(JSON.stringify({ success: true, data: emailResponse }), {
+    return new Response(JSON.stringify({ success: true, recipients }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
