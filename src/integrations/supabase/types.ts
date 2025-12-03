@@ -79,6 +79,62 @@ export type Database = {
         }
         Relationships: []
       }
+      transport_proposals: {
+        Row: {
+          admin_confirmed_at: string | null
+          admin_confirmed_by: string | null
+          created_at: string
+          description: string
+          id: string
+          mova_account: string | null
+          payment_code: string | null
+          payment_proof_url: string | null
+          price: number
+          status: string | null
+          transport_request_id: string
+          transporter_id: string
+          updated_at: string
+        }
+        Insert: {
+          admin_confirmed_at?: string | null
+          admin_confirmed_by?: string | null
+          created_at?: string
+          description: string
+          id?: string
+          mova_account?: string | null
+          payment_code?: string | null
+          payment_proof_url?: string | null
+          price: number
+          status?: string | null
+          transport_request_id: string
+          transporter_id: string
+          updated_at?: string
+        }
+        Update: {
+          admin_confirmed_at?: string | null
+          admin_confirmed_by?: string | null
+          created_at?: string
+          description?: string
+          id?: string
+          mova_account?: string | null
+          payment_code?: string | null
+          payment_proof_url?: string | null
+          price?: number
+          status?: string | null
+          transport_request_id?: string
+          transporter_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_proposals_transport_request_id_fkey"
+            columns: ["transport_request_id"]
+            isOneToOne: false
+            referencedRelation: "transport_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transport_requests: {
         Row: {
           cargo_type: string
