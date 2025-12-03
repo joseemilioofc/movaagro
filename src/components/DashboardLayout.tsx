@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Truck, LogOut, Home, Package, Users, Shield } from "lucide-react";
+import { Footer } from "@/components/Footer";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -38,7 +39,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const navItems = getNavItems();
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
       <header className="border-b border-border bg-card">
         <div className="container mx-auto px-4">
@@ -102,9 +103,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </nav>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-1">
         {children}
       </main>
+
+      <Footer />
     </div>
   );
 }

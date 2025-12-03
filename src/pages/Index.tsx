@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Truck, Wheat, Shield, ArrowRight, CheckCircle } from "lucide-react";
+import { Footer } from "@/components/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gradient-hero">
+    <div className="min-h-screen bg-gradient-hero flex flex-col">
       {/* Header */}
       <header className="container mx-auto px-4 py-6">
         <nav className="flex items-center justify-between">
@@ -108,23 +109,7 @@ const Index = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="container mx-auto px-4 py-8 border-t border-border">
-        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
-              <Truck className="w-4 h-4 text-primary-foreground" />
-            </div>
-            <span className="font-display font-bold text-foreground">MOVA</span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            © 2024 MOVA. Todos os direitos reservados.
-          </p>
-          <Link to="/auth?admin=true" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-            Acesso Administrativo
-          </Link>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
