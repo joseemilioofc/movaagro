@@ -21,7 +21,7 @@ interface EmailRequest {
   deliveryLocation?: string;
   pickupDate?: string;
   urgency?: string;
-  type?: "created" | "accepted" | "proposal_sent" | "payment_submitted" | "payment_confirmed";
+  type?: "created" | "accepted" | "proposal_sent" | "payment_submitted" | "payment_confirmed" | "new_request";
   transporterName?: string;
   transporterEmail?: string;
   requestDetails?: {
@@ -109,7 +109,107 @@ const handler = async (req: Request): Promise<Response> => {
       return emails;
     };
 
+    // Helper to get all transporter emails
+    const getTransporterEmails = async () => {
+      const { data: transporterRoles } = await supabase
+        .from("user_roles")
+        .select("user_id")
+        .eq("role", "transporter");
+      
+      if (!transporterRoles) return [];
+      
+      const emails: string[] = [];
+      for (const transporter of transporterRoles) {
+        const profile = await getProfile(transporter.user_id);
+        if (profile?.email) emails.push(profile.email);
+      }
+      return emails;
+    };
+
     switch (data.type) {
+      case "new_request": {
+        // New transport request created - notify all transporters
+        const transporterEmails = await getTransporterEmails();
+        
+        if (transporterEmails.length === 0) {
+          console.log("No transporters found to notify");
+          return new Response(JSON.stringify({ success: true, message: "No transporters to notify" }), {
+            status: 200,
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        }
+
+        recipients = transporterEmails;
+        subject = "🚛 Novo Pedido de Transporte Disponível - MOVA";
+
+        const urgencyLabels: Record<string, string> = {
+          baixa: "Baixa",
+          media: "Média",
+          alta: "Alta",
+        };
+
+        emailHtml = `
+          <!DOCTYPE html>
+          <html>
+          <head><style>${getEmailStyles()}</style></head>
+          <body>
+            <div class="container">
+              <div class="header">
+                <h1>🚛 MOVA</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Nova Oportunidade de Trabalho!</p>
+              </div>
+              <div class="content">
+                <div class="highlight-box">
+                  <h2 style="margin: 0 0 10px 0; color: #16a34a;">📦 Novo Pedido de Transporte</h2>
+                  <p>Uma cooperativa acaba de criar um novo pedido de transporte. Seja o primeiro a enviar sua proposta!</p>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="label">Produto</span>
+                    <span class="value">${data.productType || "N/A"}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Quantidade</span>
+                    <span class="value">${data.quantity || "N/A"}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Origem</span>
+                    <span class="value">${data.pickupLocation || "N/A"}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Destino</span>
+                    <span class="value">${data.deliveryLocation || "N/A"}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Data de Recolha</span>
+                    <span class="value">${data.pickupDate ? new Date(data.pickupDate).toLocaleDateString("pt-PT") : "N/A"}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Urgência</span>
+                    <span class="value" style="color: ${data.urgency === 'alta' ? '#dc2626' : data.urgency === 'media' ? '#d97706' : '#16a34a'}; font-weight: bold;">
+                      ${urgencyLabels[data.urgency!] || data.urgency || "N/A"}
+                    </span>
+                  </div>
+                </div>
+
+                <div style="background: #ecfdf5; border-radius: 12px; padding: 20px; text-align: center; margin-top: 20px;">
+                  <p style="margin: 0; font-size: 16px; color: #065f46;">
+                    💰 Acesse a plataforma MOVA para enviar sua proposta e conseguir este trabalho!
+                  </p>
+                </div>
+              </div>
+              <div class="footer">
+                <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
+                <p style="font-size: 10px; color: #9ca3af;">Você recebeu este email porque está cadastrado como transportador na plataforma MOVA.</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `;
+        break;
+      }
+
       case "proposal_sent": {
         // Transporter sent a proposal - notify cooperative and admins
         const request = await getRequestDetails(data.requestId!);

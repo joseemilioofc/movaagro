@@ -93,7 +93,7 @@ const CooperativeDashboard = () => {
 
       if (error) throw error;
 
-      // Send confirmation email
+      // Send confirmation email to cooperative
       try {
         const { data: profileData } = await supabase
           .from("profiles")
@@ -117,6 +117,23 @@ const CooperativeDashboard = () => {
         }
       } catch (emailError) {
         console.error("Failed to send confirmation email:", emailError);
+      }
+
+      // Notify all transporters about the new request
+      try {
+        await supabase.functions.invoke("send-transport-confirmation", {
+          body: {
+            type: "new_request",
+            productType: formData.productType,
+            quantity: formData.quantity,
+            pickupLocation: formData.pickupLocation,
+            deliveryLocation: formData.deliveryLocation,
+            pickupDate: formData.pickupDate,
+            urgency: formData.urgency,
+          },
+        });
+      } catch (emailError) {
+        console.error("Failed to notify transporters:", emailError);
       }
 
       toast({
