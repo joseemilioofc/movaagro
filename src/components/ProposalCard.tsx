@@ -196,7 +196,7 @@ export const ProposalCard = ({ proposal, onUpdate, requestId }: ProposalCardProp
             <div>
               <Label className="text-xs text-muted-foreground">Valor do Serviço</Label>
               <p className="text-2xl font-bold text-primary">
-                {proposal.price.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })}
+                {proposal.price.toLocaleString("pt-MZ", { style: "currency", currency: "MZN" })}
               </p>
             </div>
           </div>
