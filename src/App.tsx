@@ -9,6 +9,7 @@ import Auth from "./pages/Auth";
 import CooperativeDashboard from "./pages/CooperativeDashboard";
 import TransporterDashboard from "./pages/TransporterDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
+import AdminSettings from "./pages/AdminSettings";
 import AuditLogs from "./pages/AuditLogs";
 import ChatPage from "./pages/ChatPage";
 import Privacy from "./pages/Privacy";
@@ -31,6 +32,7 @@ const App = () => (
             <Route path="/cooperative" element={<CooperativeDashboard />} />
             <Route path="/transporter" element={<TransporterDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin/settings" element={<AdminSettings />} />
             <Route path="/admin/audit" element={<AuditLogs />} />
             <Route path="/chat/:requestId" element={<ChatPage />} />
             <Route path="/privacy" element={<Privacy />} />
