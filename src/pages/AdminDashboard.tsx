@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,9 +8,13 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield, MessageSquare, TrendingUp, DollarSign, CheckCircle, Clock, XCircle } from "lucide-react";
+import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield, MessageSquare, TrendingUp, DollarSign, CheckCircle, Clock, Calendar } from "lucide-react";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
+import { format, subDays, subMonths, startOfDay, isAfter } from "date-fns";
+import { ptBR } from "date-fns/locale";
 
 interface Profile {
   id: string;
@@ -46,6 +50,8 @@ interface Proposal {
   created_at: string;
 }
 
+type DateFilter = "7d" | "30d" | "90d" | "all";
+
 const AdminDashboard = () => {
   const { user, role, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -57,6 +63,68 @@ const AdminDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [deleteDialog, setDeleteDialog] = useState<{ type: "user" | "request"; id: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [dateFilter, setDateFilter] = useState<DateFilter>("30d");
+
+  const getFilterDate = (filter: DateFilter) => {
+    const now = new Date();
+    switch (filter) {
+      case "7d": return subDays(now, 7);
+      case "30d": return subDays(now, 30);
+      case "90d": return subDays(now, 90);
+      default: return null;
+    }
+  };
+
+  const filteredData = useMemo(() => {
+    const filterDate = getFilterDate(dateFilter);
+    
+    const filterByDate = <T extends { created_at: string }>(items: T[]) => {
+      if (!filterDate) return items;
+      return items.filter(item => isAfter(new Date(item.created_at), filterDate));
+    };
+
+    return {
+      profiles: filterByDate(profiles),
+      requests: filterByDate(requests),
+      proposals: filterByDate(proposals),
+    };
+  }, [profiles, requests, proposals, dateFilter]);
+
+  const chartData = useMemo(() => {
+    const filterDate = getFilterDate(dateFilter);
+    const days = dateFilter === "7d" ? 7 : dateFilter === "30d" ? 30 : dateFilter === "90d" ? 90 : 90;
+    
+    const data: { date: string; pedidos: number; propostas: number; usuarios: number }[] = [];
+    
+    for (let i = days - 1; i >= 0; i--) {
+      const date = subDays(new Date(), i);
+      const dateStr = format(date, "yyyy-MM-dd");
+      const displayDate = format(date, "dd/MM", { locale: ptBR });
+      
+      const pedidos = requests.filter(r => format(new Date(r.created_at), "yyyy-MM-dd") === dateStr).length;
+      const propostas = proposals.filter(p => format(new Date(p.created_at), "yyyy-MM-dd") === dateStr).length;
+      const usuarios = profiles.filter(p => format(new Date(p.created_at), "yyyy-MM-dd") === dateStr).length;
+      
+      data.push({ date: displayDate, pedidos, propostas, usuarios });
+    }
+    
+    // Group by week if more than 30 days
+    if (days > 30) {
+      const weeklyData: typeof data = [];
+      for (let i = 0; i < data.length; i += 7) {
+        const week = data.slice(i, i + 7);
+        weeklyData.push({
+          date: week[0]?.date || "",
+          pedidos: week.reduce((sum, d) => sum + d.pedidos, 0),
+          propostas: week.reduce((sum, d) => sum + d.propostas, 0),
+          usuarios: week.reduce((sum, d) => sum + d.usuarios, 0),
+        });
+      }
+      return weeklyData;
+    }
+    
+    return data;
+  }, [requests, proposals, profiles, dateFilter]);
 
   useEffect(() => {
     if (!authLoading && (!user || role !== "admin")) {
@@ -167,19 +235,19 @@ const AdminDashboard = () => {
     );
   }
 
-  const cooperatives = profiles.filter((p) => getUserRole(p.user_id) === "cooperative");
-  const transporters = profiles.filter((p) => getUserRole(p.user_id) === "transporter");
+  const cooperatives = filteredData.profiles.filter((p) => getUserRole(p.user_id) === "cooperative");
+  const transporters = filteredData.profiles.filter((p) => getUserRole(p.user_id) === "transporter");
   
-  // Statistics calculations
-  const pendingRequests = requests.filter((r) => r.status === "pending").length;
-  const acceptedRequests = requests.filter((r) => r.status === "accepted").length;
-  const completedRequests = requests.filter((r) => r.status === "completed").length;
+  // Statistics calculations using filtered data
+  const pendingRequests = filteredData.requests.filter((r) => r.status === "pending").length;
+  const acceptedRequests = filteredData.requests.filter((r) => r.status === "accepted").length;
+  const completedRequests = filteredData.requests.filter((r) => r.status === "completed").length;
   
-  const pendingProposals = proposals.filter((p) => p.status === "pending").length;
-  const acceptedProposals = proposals.filter((p) => p.status === "accepted").length;
-  const paidProposals = proposals.filter((p) => p.status === "paid" || p.status === "admin_confirmed").length;
+  const pendingProposals = filteredData.proposals.filter((p) => p.status === "pending").length;
+  const acceptedProposals = filteredData.proposals.filter((p) => p.status === "accepted").length;
+  const paidProposals = filteredData.proposals.filter((p) => p.status === "paid" || p.status === "admin_confirmed").length;
   
-  const totalRevenue = proposals
+  const totalRevenue = filteredData.proposals
     .filter((p) => p.status === "paid" || p.status === "admin_confirmed")
     .reduce((sum, p) => sum + (p.price || 0), 0);
   
@@ -189,17 +257,40 @@ const AdminDashboard = () => {
     return createdAt.getMonth() === now.getMonth() && createdAt.getFullYear() === now.getFullYear();
   }).length;
 
+  const dateFilterLabels: Record<DateFilter, string> = {
+    "7d": "Últimos 7 dias",
+    "30d": "Últimos 30 dias",
+    "90d": "Últimos 90 dias",
+    "all": "Todo período",
+  };
+
   return (
     <DashboardLayout>
       <div className="space-y-8">
-        {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-            <Shield className="w-6 h-6 text-primary-foreground" />
+        {/* Header with Date Filter */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+              <Shield className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-display font-bold text-foreground">Painel Administrativo</h1>
+              <p className="text-muted-foreground">Gerencie usuários e pedidos da plataforma</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-display font-bold text-foreground">Painel Administrativo</h1>
-            <p className="text-muted-foreground">Gerencie usuários e pedidos da plataforma</p>
+          <div className="flex items-center gap-2">
+            <Calendar className="w-4 h-4 text-muted-foreground" />
+            <Select value={dateFilter} onValueChange={(v) => setDateFilter(v as DateFilter)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Filtrar por período" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="7d">Últimos 7 dias</SelectItem>
+                <SelectItem value="30d">Últimos 30 dias</SelectItem>
+                <SelectItem value="90d">Últimos 90 dias</SelectItem>
+                <SelectItem value="all">Todo período</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
         </div>
 
@@ -349,12 +440,89 @@ const AdminDashboard = () => {
                   De {paidProposals} transações confirmadas
                 </p>
                 <p className="text-sm text-muted-foreground">
-                  Total de propostas: {proposals.length}
+                  Total de propostas: {filteredData.proposals.length}
                 </p>
               </div>
             </CardContent>
           </Card>
         </div>
+
+        {/* Evolution Chart */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <TrendingUp className="w-5 h-5 text-primary" />
+              Evolução ao Longo do Tempo
+            </CardTitle>
+            <CardDescription>
+              {dateFilterLabels[dateFilter]} - Pedidos, propostas e novos usuários
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-[300px]">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={chartData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                  <defs>
+                    <linearGradient id="colorPedidos" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--primary))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--primary))" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorPropostas" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--chart-2))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--chart-2))" stopOpacity={0} />
+                    </linearGradient>
+                    <linearGradient id="colorUsuarios" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="hsl(var(--chart-3))" stopOpacity={0.3} />
+                      <stop offset="95%" stopColor="hsl(var(--chart-3))" stopOpacity={0} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+                  <XAxis 
+                    dataKey="date" 
+                    className="text-xs" 
+                    tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <YAxis 
+                    className="text-xs" 
+                    tick={{ fill: 'hsl(var(--muted-foreground))' }}
+                  />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'hsl(var(--background))', 
+                      border: '1px solid hsl(var(--border))',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="pedidos"
+                    name="Pedidos"
+                    stroke="hsl(var(--primary))"
+                    fillOpacity={1}
+                    fill="url(#colorPedidos)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="propostas"
+                    name="Propostas"
+                    stroke="hsl(var(--chart-2))"
+                    fillOpacity={1}
+                    fill="url(#colorPropostas)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="usuarios"
+                    name="Usuários"
+                    stroke="hsl(var(--chart-3))"
+                    fillOpacity={1}
+                    fill="url(#colorUsuarios)"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Tabs */}
         <Tabs defaultValue="users">
