@@ -2,9 +2,7 @@ import { Link } from "react-router-dom";
 import { Truck, MessageCircle } from "lucide-react";
 
 export function Footer() {
-  const whatsappNumber = "244923456789"; // Número WhatsApp Angola
-  const whatsappMessage = encodeURIComponent("Olá! Gostaria de saber mais sobre a MOVA.");
-  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+  const whatsappLink = "https://wa.me/message/GAE2YZRB7LCPO1";
 
   return (
     <footer className="border-t border-border bg-card">
