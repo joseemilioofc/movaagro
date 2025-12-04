@@ -5,6 +5,7 @@ import { Footer } from "@/components/Footer";
 import wheatFieldHero from "@/assets/wheat-field-hero.jpg";
 import cornHarvest from "@/assets/corn-harvest.jpg";
 import truckCabinView from "@/assets/truck-cabin-view.jpg";
+import truckLoadingCorn from "@/assets/truck-loading-corn.jpg";
 
 const Index = () => {
   return (
@@ -205,19 +206,27 @@ const Index = () => {
 
       {/* CTA Section */}
       <section className="container mx-auto px-4 py-20">
-        <div className="bg-gradient-primary rounded-3xl p-12 text-center">
-          <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
-            Pronto para começar?
-          </h2>
-          <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
-            Cadastre-se gratuitamente e comece a usar a plataforma MOVA hoje mesmo.
-          </p>
-          <Link to="/auth?tab=signup">
-            <Button size="lg" variant="secondary" className="font-semibold px-8 h-14 text-lg">
-              Criar Conta Grátis
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-          </Link>
+        <div className="relative rounded-3xl overflow-hidden">
+          <img 
+            src={truckLoadingCorn} 
+            alt="Caminhão sendo carregado com milho" 
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-primary/80" />
+          <div className="relative z-10 p-12 text-center">
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-primary-foreground mb-4">
+              Pronto para começar?
+            </h2>
+            <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
+              Cadastre-se gratuitamente e comece a usar a plataforma MOVA hoje mesmo.
+            </p>
+            <Link to="/auth?tab=signup">
+              <Button size="lg" variant="secondary" className="font-semibold px-8 h-14 text-lg">
+                Criar Conta Grátis
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+            </Link>
+          </div>
         </div>
       </section>
 
