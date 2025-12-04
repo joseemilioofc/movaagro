@@ -7,8 +7,9 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { ScrollText, Loader2, Search, Filter } from "lucide-react";
+import { ScrollText, Loader2, Search, Filter, ChevronLeft, ChevronRight } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ExportExcelButton } from "@/components/admin/ExportExcelButton";
@@ -30,6 +31,8 @@ interface Profile {
   email: string;
 }
 
+const ITEMS_PER_PAGE = 20;
+
 const AuditLogs = () => {
   const { user, role, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -39,6 +42,8 @@ const AuditLogs = () => {
   const [actionFilter, setActionFilter] = useState<string>("all");
   const [entityFilter, setEntityFilter] = useState<string>("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
 
   useEffect(() => {
     if (!authLoading && (!user || role !== "admin")) {
@@ -50,16 +55,33 @@ const AuditLogs = () => {
     if (user && role === "admin") {
       fetchData();
     }
-  }, [user, role]);
+  }, [user, role, currentPage]);
+
+  // Reset to page 1 when filters change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [actionFilter, entityFilter, searchTerm]);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
+      // Get total count
+      const { count } = await supabase
+        .from("audit_logs")
+        .select("*", { count: "exact", head: true });
+
+      setTotalCount(count || 0);
+
+      // Get paginated data
+      const from = (currentPage - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+
       const [logsRes, profilesRes] = await Promise.all([
         supabase
           .from("audit_logs")
           .select("*")
           .order("created_at", { ascending: false })
-          .limit(500),
+          .range(from, to),
         supabase.from("profiles").select("user_id, name, email"),
       ]);
 
@@ -99,6 +121,7 @@ const AuditLogs = () => {
       transport_request: "Pedido",
       transport_proposal: "Proposta",
       profile: "Perfil",
+      kpi_settings: "Config. KPI",
     };
     return labels[entityType] || entityType;
   };
@@ -116,6 +139,8 @@ const AuditLogs = () => {
       log.entity_type.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesAction && matchesEntity && matchesSearch;
   });
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   if (authLoading || loading) {
     return (
@@ -196,8 +221,8 @@ const AuditLogs = () => {
         {/* Logs Table */}
         <Card>
           <CardHeader>
-            <CardTitle>Registros ({filteredLogs.length})</CardTitle>
-            <CardDescription>Últimas 500 ações registradas na plataforma</CardDescription>
+            <CardTitle>Registros ({totalCount} total)</CardTitle>
+            <CardDescription>Página {currentPage} de {totalPages || 1}</CardDescription>
           </CardHeader>
           <CardContent>
             {filteredLogs.length === 0 ? (
@@ -206,32 +231,64 @@ const AuditLogs = () => {
                 <p>Nenhum registro de auditoria encontrado.</p>
               </div>
             ) : (
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Data/Hora</TableHead>
-                    <TableHead>Usuário</TableHead>
-                    <TableHead>Ação</TableHead>
-                    <TableHead>Entidade</TableHead>
-                    <TableHead>Detalhes</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredLogs.map((log) => (
-                    <TableRow key={log.id}>
-                      <TableCell className="whitespace-nowrap">
-                        {format(new Date(log.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
-                      </TableCell>
-                      <TableCell className="font-medium">{getUserName(log.user_id)}</TableCell>
-                      <TableCell>{getActionBadge(log.action)}</TableCell>
-                      <TableCell>{getEntityLabel(log.entity_type)}</TableCell>
-                      <TableCell className="max-w-[300px] truncate">
-                        {log.details ? JSON.stringify(log.details) : "-"}
-                      </TableCell>
+              <>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Data/Hora</TableHead>
+                      <TableHead>Usuário</TableHead>
+                      <TableHead>Ação</TableHead>
+                      <TableHead>Entidade</TableHead>
+                      <TableHead>Detalhes</TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+                  </TableHeader>
+                  <TableBody>
+                    {filteredLogs.map((log) => (
+                      <TableRow key={log.id}>
+                        <TableCell className="whitespace-nowrap">
+                          {format(new Date(log.created_at), "dd/MM/yyyy HH:mm", { locale: ptBR })}
+                        </TableCell>
+                        <TableCell className="font-medium">{getUserName(log.user_id)}</TableCell>
+                        <TableCell>{getActionBadge(log.action)}</TableCell>
+                        <TableCell>{getEntityLabel(log.entity_type)}</TableCell>
+                        <TableCell className="max-w-[300px] truncate">
+                          {log.details ? JSON.stringify(log.details) : "-"}
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+
+                {/* Pagination */}
+                <div className="flex items-center justify-between mt-4 pt-4 border-t">
+                  <p className="text-sm text-muted-foreground">
+                    Mostrando {((currentPage - 1) * ITEMS_PER_PAGE) + 1} a {Math.min(currentPage * ITEMS_PER_PAGE, totalCount)} de {totalCount}
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                      disabled={currentPage === 1}
+                    >
+                      <ChevronLeft className="w-4 h-4" />
+                      Anterior
+                    </Button>
+                    <span className="text-sm font-medium px-2">
+                      {currentPage} / {totalPages || 1}
+                    </span>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                      disabled={currentPage >= totalPages}
+                    >
+                      Próxima
+                      <ChevronRight className="w-4 h-4" />
+                    </Button>
+                  </div>
+                </div>
+              </>
             )}
           </CardContent>
         </Card>

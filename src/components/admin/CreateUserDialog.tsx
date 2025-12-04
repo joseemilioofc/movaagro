@@ -62,6 +62,7 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
     try {
       // Use the edge function to create admin users, or signUp for others
       if (formData.role === "admin") {
+        console.log("Creating admin user via edge function...");
         const { data, error } = await supabase.functions.invoke("create-admin-user", {
           body: {
             email: formData.email,
@@ -70,6 +71,7 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
           },
         });
 
+        console.log("Edge function response:", data, error);
         if (error) throw error;
         if (data?.error) throw new Error(data.error);
       } else {

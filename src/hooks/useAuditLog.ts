@@ -1,7 +1,7 @@
 import { supabase } from "@/integrations/supabase/client";
 
 type AuditAction = "create" | "update" | "delete" | "login" | "logout" | "email_sent";
-type EntityType = "user" | "transport_request" | "transport_proposal" | "profile";
+type EntityType = "user" | "transport_request" | "transport_proposal" | "profile" | "kpi_settings";
 
 interface LogOptions {
   action: AuditAction;
