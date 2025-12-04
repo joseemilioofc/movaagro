@@ -21,6 +21,7 @@ import { ExportPDFButton } from "@/components/admin/ExportPDFButton";
 import { CreateUserDialog } from "@/components/admin/CreateUserDialog";
 import { MonthlyComparisonChart } from "@/components/admin/MonthlyComparisonChart";
 import { KPIDashboard } from "@/components/admin/KPIDashboard";
+import { AdvancedAnalyticsDashboard } from "@/components/admin/AdvancedAnalyticsDashboard";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 
 interface Profile {
@@ -587,6 +588,13 @@ const AdminDashboard = () => {
           requests={requests}
           proposals={proposals}
           profiles={profiles}
+        />
+
+        {/* Advanced Analytics Dashboard */}
+        <AdvancedAnalyticsDashboard
+          profiles={profiles}
+          requests={requests}
+          proposals={proposals}
         />
 
         {/* Tabs */}

@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { RatingDialog } from "@/components/RatingDialog";
-import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye, MessageSquare, Star } from "lucide-react";
+import { GPSTrackingMap } from "@/components/GPSTrackingMap";
+import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye, MessageSquare, Star, Navigation } from "lucide-react";
 
 interface TransportRequest {
   id: string;
@@ -36,6 +37,7 @@ const TransporterDashboard = () => {
   const [selectedRequest, setSelectedRequest] = useState<TransportRequest | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
   const [ratingRequest, setRatingRequest] = useState<TransportRequest | null>(null);
+  const [trackingRequest, setTrackingRequest] = useState<TransportRequest | null>(null);
   const [cooperativeNames, setCooperativeNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -345,14 +347,24 @@ const TransporterDashboard = () => {
                     </div>
                     <div className="flex items-center gap-2">
                       {request.status === "accepted" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => navigate(`/chat/${request.id}`)}
-                        >
-                          <MessageSquare className="w-4 h-4 mr-1" />
-                          Chat
-                        </Button>
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setTrackingRequest(request)}
+                          >
+                            <Navigation className="w-4 h-4 mr-1" />
+                            GPS
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => navigate(`/chat/${request.id}`)}
+                          >
+                            <MessageSquare className="w-4 h-4 mr-1" />
+                            Chat
+                          </Button>
+                        </>
                       )}
                       {request.status === "completed" && (
                         <Button
@@ -445,6 +457,25 @@ const TransporterDashboard = () => {
                   </Button>
                 </div>
               </div>
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* GPS Tracking Dialog */}
+        <Dialog open={!!trackingRequest} onOpenChange={() => setTrackingRequest(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Rastreamento GPS</DialogTitle>
+              <DialogDescription>{trackingRequest?.title}</DialogDescription>
+            </DialogHeader>
+            {trackingRequest && (
+              <GPSTrackingMap
+                transportRequestId={trackingRequest.id}
+                transporterId={user?.id}
+                isTransporter={true}
+                originAddress={trackingRequest.origin_address}
+                destinationAddress={trackingRequest.destination_address}
+              />
             )}
           </DialogContent>
         </Dialog>
