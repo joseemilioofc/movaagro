@@ -109,7 +109,7 @@ export const ProposalForm = ({ requestId, onProposalSent }: ProposalFormProps) =
             <Label htmlFor="price">Valor (MZN)</Label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-                Kz
+                Mzn
               </span>
               <Input
                 id="price"
