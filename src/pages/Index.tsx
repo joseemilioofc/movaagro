@@ -218,7 +218,7 @@ const Index = () => {
               Pronto para começar?
             </h2>
             <p className="text-primary-foreground/80 text-lg mb-8 max-w-xl mx-auto">
-              Cadastre-se gratuitamente e comece a usar a plataforma MOVA hoje mesmo.
+              Cadastre-se gratuitamente e comece a usar o Serviço MOVA hoje mesmo.
             </p>
             <Link to="/auth?tab=signup">
               <Button size="lg" variant="secondary" className="font-semibold px-8 h-14 text-lg">
