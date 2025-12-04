@@ -8,7 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye, MessageSquare } from "lucide-react";
+import { RatingDialog } from "@/components/RatingDialog";
+import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye, MessageSquare, Star } from "lucide-react";
 
 interface TransportRequest {
   id: string;
@@ -22,6 +23,7 @@ interface TransportRequest {
   status: string;
   external_form_link: string | null;
   created_at: string;
+  cooperative_id: string;
 }
 
 const TransporterDashboard = () => {
@@ -33,6 +35,8 @@ const TransporterDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState<TransportRequest | null>(null);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [ratingRequest, setRatingRequest] = useState<TransportRequest | null>(null);
+  const [cooperativeNames, setCooperativeNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!authLoading && (!user || role !== "transporter")) {
@@ -66,6 +70,21 @@ const TransporterDashboard = () => {
 
       setPendingRequests(pendingRes.data || []);
       setMyRequests(acceptedRes.data || []);
+
+      // Fetch cooperative names
+      const cooperativeIds = (acceptedRes.data || []).map(r => r.cooperative_id);
+      if (cooperativeIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, name")
+          .in("user_id", cooperativeIds);
+        
+        if (profiles) {
+          const names: Record<string, string> = {};
+          profiles.forEach(p => { names[p.user_id] = p.name; });
+          setCooperativeNames(names);
+        }
+      }
     } catch (error) {
       console.error("Error fetching requests:", error);
     } finally {
@@ -325,16 +344,28 @@ const TransporterDashboard = () => {
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => navigate(`/chat/${request.id}`)}
-                      >
-                        <MessageSquare className="w-4 h-4 mr-1" />
-                        Chat
-                      </Button>
-                      <Badge variant={request.status === "accepted" ? "default" : "secondary"}>
-                        {request.status === "accepted" ? "Em andamento" : request.status}
+                      {request.status === "accepted" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => navigate(`/chat/${request.id}`)}
+                        >
+                          <MessageSquare className="w-4 h-4 mr-1" />
+                          Chat
+                        </Button>
+                      )}
+                      {request.status === "completed" && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setRatingRequest(request)}
+                        >
+                          <Star className="w-4 h-4 mr-1" />
+                          Avaliar
+                        </Button>
+                      )}
+                      <Badge variant={request.status === "accepted" ? "default" : request.status === "completed" ? "outline" : "secondary"}>
+                        {request.status === "accepted" ? "Em andamento" : request.status === "completed" ? "Concluído" : request.status}
                       </Badge>
                     </div>
                   </div>
@@ -417,6 +448,19 @@ const TransporterDashboard = () => {
             )}
           </DialogContent>
         </Dialog>
+
+        {/* Rating Dialog */}
+        {ratingRequest && (
+          <RatingDialog
+            open={!!ratingRequest}
+            onOpenChange={() => setRatingRequest(null)}
+            transportRequestId={ratingRequest.id}
+            reviewedId={ratingRequest.cooperative_id}
+            reviewedName={cooperativeNames[ratingRequest.cooperative_id] || "Cooperativa"}
+            reviewerRole="transporter"
+            onRatingSubmitted={fetchRequests}
+          />
+        )}
       </div>
     </DashboardLayout>
   );

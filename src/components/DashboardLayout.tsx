@@ -4,6 +4,8 @@ import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Truck, LogOut, Home, Package, Shield, ScrollText, Settings, User } from "lucide-react";
 import { Footer } from "@/components/Footer";
+import { NotificationBell } from "@/components/NotificationBell";
+import { useNotifications } from "@/hooks/useNotifications";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -12,6 +14,7 @@ interface DashboardLayoutProps {
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { role, signOut } = useAuth();
   const location = useLocation();
+  const { notifications, clearAll, markAsRead } = useNotifications(true);
 
   const handleSignOut = async () => {
     await signOut();
@@ -70,7 +73,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </nav>
             </div>
 
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <NotificationBell
+                notifications={notifications}
+                onClearAll={clearAll}
+                onMarkAsRead={markAsRead}
+              />
               <Link to="/profile">
                 <Button variant="ghost" size="sm" className="gap-2">
                   <User className="w-4 h-4" />
