@@ -20,6 +20,7 @@ import { ptBR } from "date-fns/locale";
 import { ExportPDFButton } from "@/components/admin/ExportPDFButton";
 import { CreateUserDialog } from "@/components/admin/CreateUserDialog";
 import { MonthlyComparisonChart } from "@/components/admin/MonthlyComparisonChart";
+import { KPIDashboard } from "@/components/admin/KPIDashboard";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 
 interface Profile {
@@ -570,6 +571,13 @@ const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* KPI Dashboard */}
+        <KPIDashboard
+          profiles={profiles}
+          requests={requests}
+          proposals={proposals}
+        />
 
         {/* Monthly Comparison Chart */}
         <MonthlyComparisonChart
