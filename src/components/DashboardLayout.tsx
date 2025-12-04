@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Truck, LogOut, Home, Package, Shield, ScrollText, Settings } from "lucide-react";
+import { Truck, LogOut, Home, Package, Shield, ScrollText, Settings, User } from "lucide-react";
 import { Footer } from "@/components/Footer";
 
 interface DashboardLayoutProps {
@@ -71,6 +71,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
 
             <div className="flex items-center gap-4">
+              <Link to="/profile">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <User className="w-4 h-4" />
+                  <span className="hidden sm:inline">Perfil</span>
+                </Button>
+              </Link>
               <Link to="/">
                 <Button variant="ghost" size="sm" className="gap-2">
                   <Home className="w-4 h-4" />
