@@ -9,7 +9,8 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { TransportRequestForm, TransportFormData } from "@/components/TransportRequestForm";
-import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink, MessageSquare } from "lucide-react";
+import { RatingDialog } from "@/components/RatingDialog";
+import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink, MessageSquare, Star } from "lucide-react";
 
 interface TransportRequest {
   id: string;
@@ -23,6 +24,7 @@ interface TransportRequest {
   status: string;
   external_form_link: string | null;
   created_at: string;
+  transporter_id: string | null;
 }
 
 const CooperativeDashboard = () => {
@@ -33,6 +35,8 @@ const CooperativeDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [ratingRequest, setRatingRequest] = useState<TransportRequest | null>(null);
+  const [transporterNames, setTransporterNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
     if (!authLoading && (!user || role !== "cooperative")) {
@@ -56,6 +60,24 @@ const CooperativeDashboard = () => {
 
       if (error) throw error;
       setRequests(data || []);
+
+      // Fetch transporter names for completed requests
+      const transporterIds = (data || [])
+        .filter(r => r.transporter_id)
+        .map(r => r.transporter_id);
+      
+      if (transporterIds.length > 0) {
+        const { data: profiles } = await supabase
+          .from("profiles")
+          .select("user_id, name")
+          .in("user_id", transporterIds);
+        
+        if (profiles) {
+          const names: Record<string, string> = {};
+          profiles.forEach(p => { names[p.user_id] = p.name; });
+          setTransporterNames(names);
+        }
+      }
     } catch (error) {
       console.error("Error fetching requests:", error);
     } finally {
@@ -316,6 +338,16 @@ const CooperativeDashboard = () => {
                           Chat
                         </Button>
                       )}
+                      {request.status === "completed" && request.transporter_id && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => setRatingRequest(request)}
+                        >
+                          <Star className="w-4 h-4 mr-1" />
+                          Avaliar
+                        </Button>
+                      )}
                       {request.external_form_link && (
                         <a
                           href={request.external_form_link}
@@ -335,6 +367,19 @@ const CooperativeDashboard = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* Rating Dialog */}
+        {ratingRequest && ratingRequest.transporter_id && (
+          <RatingDialog
+            open={!!ratingRequest}
+            onOpenChange={() => setRatingRequest(null)}
+            transportRequestId={ratingRequest.id}
+            reviewedId={ratingRequest.transporter_id}
+            reviewedName={transporterNames[ratingRequest.transporter_id] || "Transportadora"}
+            reviewerRole="cooperative"
+            onRatingSubmitted={fetchRequests}
+          />
+        )}
       </div>
     </DashboardLayout>
   );
