@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Truck, LogOut, Home, Package, Shield, ScrollText, Settings, User } from "lucide-react";
+import { Truck, LogOut, Home, Package, Shield, ScrollText, Settings, User, FileText, Smartphone } from "lucide-react";
 import { Footer } from "@/components/Footer";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -26,15 +26,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         return [
           { label: "Dashboard", href: "/admin", icon: Shield },
           { label: "Auditoria", href: "/admin/audit", icon: ScrollText },
+          { label: "Contratos", href: "/contracts", icon: FileText },
           { label: "Configurações", href: "/admin/settings", icon: Settings },
         ];
       case "cooperative":
         return [
           { label: "Meus Pedidos", href: "/cooperative", icon: Package },
+          { label: "Contratos", href: "/contracts", icon: FileText },
+          { label: "App", href: "/install", icon: Smartphone },
         ];
       case "transporter":
         return [
           { label: "Pedidos", href: "/transporter", icon: Package },
+          { label: "Contratos", href: "/contracts", icon: FileText },
+          { label: "App", href: "/install", icon: Smartphone },
         ];
       default:
         return [];
