@@ -19,7 +19,7 @@ export function Footer() {
               <span className="font-display font-bold text-foreground">MOVA</span>
             </div>
             <p className="text-sm text-muted-foreground">
-              Conectando cooperativas e agricultores às transportadoras de forma rápida e segura.
+              Conectando cooperativas, agricultores e transportadoras a oportunidades de forma rápida e segura.
             </p>
           </div>
 
