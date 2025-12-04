@@ -34,6 +34,8 @@ const Auth = () => {
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "login");
   const [isAdmin, setIsAdmin] = useState(searchParams.get("admin") === "true");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  const [resetEmail, setResetEmail] = useState("");
 
   const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [signupForm, setSignupForm] = useState({
@@ -54,6 +56,44 @@ const Auth = () => {
       }
     }
   }, [user, role, authLoading, navigate]);
+
+  const handleForgotPassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      if (!resetEmail || !z.string().email().safeParse(resetEmail).success) {
+        toast({
+          title: "Email inválido",
+          description: "Por favor, insira um email válido.",
+          variant: "destructive",
+        });
+        setIsSubmitting(false);
+        return;
+      }
+
+      const { error } = await supabase.auth.resetPasswordForEmail(resetEmail, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (error) {
+        toast({
+          title: "Erro ao enviar email",
+          description: error.message,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Email enviado!",
+          description: "Verifique sua caixa de entrada para redefinir sua senha.",
+        });
+        setShowForgotPassword(false);
+        setResetEmail("");
+      }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -179,14 +219,53 @@ const Auth = () => {
               </div>
             </div>
             <h1 className="text-2xl font-display font-bold text-foreground">
-              {isAdmin ? "Acesso Administrativo" : "Bem-vindo à MOVA"}
+              {showForgotPassword ? "Redefinir Senha" : isAdmin ? "Acesso Administrativo" : "Bem-vindo à MOVA"}
             </h1>
             <p className="text-muted-foreground mt-2">
-              {isAdmin ? "Entre com suas credenciais de administrador" : "Entre ou crie sua conta"}
+              {showForgotPassword 
+                ? "Digite seu email para receber o link" 
+                : isAdmin 
+                  ? "Entre com suas credenciais de administrador" 
+                  : "Entre ou crie sua conta"}
             </p>
           </div>
 
-          {isAdmin ? (
+          {showForgotPassword ? (
+            <Card>
+              <CardHeader>
+                <CardTitle>Recuperar Senha</CardTitle>
+                <CardDescription>
+                  Enviaremos um link para redefinir sua senha
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleForgotPassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="reset-email">Email</Label>
+                    <Input
+                      id="reset-email"
+                      type="email"
+                      placeholder="seu@email.com"
+                      value={resetEmail}
+                      onChange={(e) => setResetEmail(e.target.value)}
+                      required
+                    />
+                  </div>
+                  <Button type="submit" className="w-full bg-gradient-primary" disabled={isSubmitting}>
+                    {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+                    Enviar Link
+                  </Button>
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(false)}
+                    className="w-full text-sm text-muted-foreground hover:text-foreground"
+                  >
+                    Voltar ao login
+                  </button>
+                </form>
+              </CardContent>
+            </Card>
+          ) : isAdmin ? (
             <Card>
               <CardHeader>
                 <CardTitle>Login Admin</CardTitle>
@@ -220,6 +299,13 @@ const Auth = () => {
                     {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                     Entrar
                   </Button>
+                  <button
+                    type="button"
+                    onClick={() => setShowForgotPassword(true)}
+                    className="w-full text-sm text-primary hover:underline mt-2"
+                  >
+                    Esqueceu sua senha?
+                  </button>
                 </form>
               </CardContent>
             </Card>
@@ -262,6 +348,13 @@ const Auth = () => {
                         {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                         Entrar
                       </Button>
+                      <button
+                        type="button"
+                        onClick={() => setShowForgotPassword(true)}
+                        className="w-full text-sm text-primary hover:underline mt-2"
+                      >
+                        Esqueceu sua senha?
+                      </button>
                     </form>
                   </TabsContent>
 

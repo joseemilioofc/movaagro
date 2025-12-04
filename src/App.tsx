@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "@/contexts/AuthContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
+import ResetPassword from "./pages/ResetPassword";
 import CooperativeDashboard from "./pages/CooperativeDashboard";
 import TransporterDashboard from "./pages/TransporterDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -29,6 +30,7 @@ const App = () => (
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/cooperative" element={<CooperativeDashboard />} />
             <Route path="/transporter" element={<TransporterDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
