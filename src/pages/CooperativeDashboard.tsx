@@ -10,7 +10,8 @@ import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { TransportRequestForm, TransportFormData } from "@/components/TransportRequestForm";
 import { RatingDialog } from "@/components/RatingDialog";
-import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink, MessageSquare, Star } from "lucide-react";
+import { GPSTrackingMap } from "@/components/GPSTrackingMap";
+import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink, MessageSquare, Star, MapPin } from "lucide-react";
 
 interface TransportRequest {
   id: string;
@@ -36,6 +37,7 @@ const CooperativeDashboard = () => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ratingRequest, setRatingRequest] = useState<TransportRequest | null>(null);
+  const [trackingRequest, setTrackingRequest] = useState<TransportRequest | null>(null);
   const [transporterNames, setTransporterNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -329,14 +331,24 @@ const CooperativeDashboard = () => {
                     </div>
                     <div className="flex items-center gap-3">
                       {request.status === "accepted" && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          onClick={() => navigate(`/chat/${request.id}`)}
-                        >
-                          <MessageSquare className="w-4 h-4 mr-1" />
-                          Chat
-                        </Button>
+                        <>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => setTrackingRequest(request)}
+                          >
+                            <MapPin className="w-4 h-4 mr-1" />
+                            GPS
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => navigate(`/chat/${request.id}`)}
+                          >
+                            <MessageSquare className="w-4 h-4 mr-1" />
+                            Chat
+                          </Button>
+                        </>
                       )}
                       {request.status === "completed" && request.transporter_id && (
                         <Button
@@ -367,6 +379,24 @@ const CooperativeDashboard = () => {
             )}
           </CardContent>
         </Card>
+
+        {/* GPS Tracking Dialog */}
+        <Dialog open={!!trackingRequest} onOpenChange={() => setTrackingRequest(null)}>
+          <DialogContent className="max-w-2xl">
+            <DialogHeader>
+              <DialogTitle>Rastreamento GPS</DialogTitle>
+              <DialogDescription>{trackingRequest?.title}</DialogDescription>
+            </DialogHeader>
+            {trackingRequest && (
+              <GPSTrackingMap
+                transportRequestId={trackingRequest.id}
+                isTransporter={false}
+                originAddress={trackingRequest.origin_address}
+                destinationAddress={trackingRequest.destination_address}
+              />
+            )}
+          </DialogContent>
+        </Dialog>
 
         {/* Rating Dialog */}
         {ratingRequest && ratingRequest.transporter_id && (

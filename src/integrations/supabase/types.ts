@@ -199,6 +199,50 @@ export type Database = {
         }
         Relationships: []
       }
+      transport_locations: {
+        Row: {
+          accuracy: number | null
+          created_at: string
+          heading: number | null
+          id: string
+          latitude: number
+          longitude: number
+          speed: number | null
+          transport_request_id: string
+          transporter_id: string
+        }
+        Insert: {
+          accuracy?: number | null
+          created_at?: string
+          heading?: number | null
+          id?: string
+          latitude: number
+          longitude: number
+          speed?: number | null
+          transport_request_id: string
+          transporter_id: string
+        }
+        Update: {
+          accuracy?: number | null
+          created_at?: string
+          heading?: number | null
+          id?: string
+          latitude?: number
+          longitude?: number
+          speed?: number | null
+          transport_request_id?: string
+          transporter_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "transport_locations_transport_request_id_fkey"
+            columns: ["transport_request_id"]
+            isOneToOne: false
+            referencedRelation: "transport_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       transport_proposals: {
         Row: {
           admin_confirmed_at: string | null
