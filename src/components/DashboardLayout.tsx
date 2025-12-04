@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Truck, LogOut, Home, Package, Users, Shield } from "lucide-react";
+import { Truck, LogOut, Home, Package, Shield, ScrollText } from "lucide-react";
 import { Footer } from "@/components/Footer";
 
 interface DashboardLayoutProps {
@@ -22,6 +22,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       case "admin":
         return [
           { label: "Dashboard", href: "/admin", icon: Shield },
+          { label: "Auditoria", href: "/admin/audit", icon: ScrollText },
         ];
       case "cooperative":
         return [
