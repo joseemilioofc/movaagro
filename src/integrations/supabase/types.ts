@@ -106,6 +106,90 @@ export type Database = {
           },
         ]
       }
+      digital_contracts: {
+        Row: {
+          cargo_type: string
+          contract_number: string
+          cooperative_id: string
+          cooperative_signature: string | null
+          cooperative_signed_at: string | null
+          created_at: string
+          destination_address: string
+          id: string
+          origin_address: string
+          pickup_date: string
+          price: number
+          proposal_id: string
+          status: string
+          terms: string
+          transport_request_id: string
+          transporter_id: string
+          transporter_signature: string | null
+          transporter_signed_at: string | null
+          updated_at: string
+          weight_kg: number | null
+        }
+        Insert: {
+          cargo_type: string
+          contract_number: string
+          cooperative_id: string
+          cooperative_signature?: string | null
+          cooperative_signed_at?: string | null
+          created_at?: string
+          destination_address: string
+          id?: string
+          origin_address: string
+          pickup_date: string
+          price: number
+          proposal_id: string
+          status?: string
+          terms: string
+          transport_request_id: string
+          transporter_id: string
+          transporter_signature?: string | null
+          transporter_signed_at?: string | null
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Update: {
+          cargo_type?: string
+          contract_number?: string
+          cooperative_id?: string
+          cooperative_signature?: string | null
+          cooperative_signed_at?: string | null
+          created_at?: string
+          destination_address?: string
+          id?: string
+          origin_address?: string
+          pickup_date?: string
+          price?: number
+          proposal_id?: string
+          status?: string
+          terms?: string
+          transport_request_id?: string
+          transporter_id?: string
+          transporter_signature?: string | null
+          transporter_signed_at?: string | null
+          updated_at?: string
+          weight_kg?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "digital_contracts_proposal_id_fkey"
+            columns: ["proposal_id"]
+            isOneToOne: false
+            referencedRelation: "transport_proposals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "digital_contracts_transport_request_id_fkey"
+            columns: ["transport_request_id"]
+            isOneToOne: false
+            referencedRelation: "transport_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       kpi_alerts: {
         Row: {
           created_at: string

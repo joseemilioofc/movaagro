@@ -252,7 +252,7 @@ const handler = async (req: Request): Promise<Response> => {
 
                 <div class="highlight-box">
                   <p style="margin: 0; color: #6b7280;">Valor Proposto:</p>
-                  <p class="price">${data.price?.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })}</p>
+                  <p class="price">${data.price?.toLocaleString("pt-MZ", { style: "currency", currency: "MZN" })}</p>
                 </div>
 
                 <div class="payment-box">
@@ -313,7 +313,7 @@ const handler = async (req: Request): Promise<Response> => {
                   </div>
                   <div class="info-row">
                     <span class="label">Valor</span>
-                    <span class="value">${proposal.price?.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })}</span>
+                    <span class="value">${proposal.price?.toLocaleString("pt-MZ", { style: "currency", currency: "MZN" })}</span>
                   </div>
                   ${proposal.payment_code ? `
                   <div class="info-row">
@@ -387,7 +387,7 @@ const handler = async (req: Request): Promise<Response> => {
                   </div>
                   <div class="info-row">
                     <span class="label">Valor Pago</span>
-                    <span class="value" style="color: #059669;">${proposal.price?.toLocaleString("pt-AO", { style: "currency", currency: "AOA" })}</span>
+                    <span class="value" style="color: #059669;">${proposal.price?.toLocaleString("pt-MZ", { style: "currency", currency: "MZN" })}</span>
                   </div>
                 </div>
 
