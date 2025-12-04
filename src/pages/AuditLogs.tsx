@@ -11,6 +11,7 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { ScrollText, Loader2, Search, Filter } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { ExportExcelButton } from "@/components/admin/ExportExcelButton";
 
 interface AuditLog {
   id: string;
@@ -130,14 +131,17 @@ const AuditLogs = () => {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-            <ScrollText className="w-6 h-6 text-primary-foreground" />
+        <div className="flex items-center justify-between flex-wrap gap-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+              <ScrollText className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <div>
+              <h1 className="text-3xl font-display font-bold text-foreground">Logs de Auditoria</h1>
+              <p className="text-muted-foreground">Histórico de ações administrativas</p>
+            </div>
           </div>
-          <div>
-            <h1 className="text-3xl font-display font-bold text-foreground">Logs de Auditoria</h1>
-            <p className="text-muted-foreground">Histórico de ações administrativas</p>
-          </div>
+          <ExportExcelButton logs={filteredLogs} getUserName={getUserName} />
         </div>
 
         {/* Filters */}
