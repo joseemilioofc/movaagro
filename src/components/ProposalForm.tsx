@@ -21,6 +21,37 @@ export const ProposalForm = ({ requestId, onProposalSent }: ProposalFormProps) =
   const [price, setPrice] = useState("");
   const [sending, setSending] = useState(false);
 
+  const formatCurrency = (value: string) => {
+    // Remove tudo exceto números e vírgula
+    let cleaned = value.replace(/[^\d,]/g, "");
+    
+    // Garante apenas uma vírgula
+    const parts = cleaned.split(",");
+    if (parts.length > 2) {
+      cleaned = parts[0] + "," + parts.slice(1).join("");
+    }
+    
+    // Limita decimais a 2 dígitos
+    if (parts.length === 2 && parts[1].length > 2) {
+      cleaned = parts[0] + "," + parts[1].slice(0, 2);
+    }
+    
+    // Adiciona separador de milhares
+    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+    
+    return parts.length === 2 ? `${integerPart},${parts[1]}` : integerPart;
+  };
+
+  const handlePriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatCurrency(e.target.value);
+    setPrice(formatted);
+  };
+
+  const parsePriceToNumber = (value: string): number => {
+    // Remove separadores de milhares e converte vírgula para ponto
+    return parseFloat(value.replace(/\./g, "").replace(",", "."));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -33,7 +64,7 @@ export const ProposalForm = ({ requestId, onProposalSent }: ProposalFormProps) =
       return;
     }
 
-    const priceNumber = parseFloat(price.replace(",", "."));
+    const priceNumber = parsePriceToNumber(price);
     if (isNaN(priceNumber) || priceNumber <= 0) {
       toast({
         title: "Valor inválido",
@@ -116,8 +147,8 @@ export const ProposalForm = ({ requestId, onProposalSent }: ProposalFormProps) =
                 type="text"
                 placeholder="0,00"
                 value={price}
-                onChange={(e) => setPrice(e.target.value)}
-                className="pl-10"
+                onChange={handlePriceChange}
+                className="pl-12"
               />
             </div>
           </div>
