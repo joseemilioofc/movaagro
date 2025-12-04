@@ -1,17 +1,21 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Target, Users, Package, DollarSign, CheckCircle, Clock, ArrowUpRight, ArrowDownRight } from "lucide-react";
-import { useMemo } from "react";
-import { subDays, format, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { Target, Users, Package, DollarSign, CheckCircle, ArrowUpRight, ArrowDownRight } from "lucide-react";
+import { useMemo, useEffect, useState, useCallback } from "react";
+import { subDays, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
+import { supabase } from "@/integrations/supabase/client";
+import { KPIGoalsSettings } from "./KPIGoalsSettings";
 
 interface KPIDashboardProps {
   profiles: Array<{ created_at: string }>;
   requests: Array<{ created_at: string; status: string }>;
   proposals: Array<{ created_at: string; status: string; price: number }>;
+  adminEmails?: string[];
 }
 
 interface KPIConfig {
+  name: string;
   label: string;
   target: number;
   current: number;
@@ -20,7 +24,30 @@ interface KPIConfig {
   trend: number;
 }
 
-export const KPIDashboard = ({ profiles, requests, proposals }: KPIDashboardProps) => {
+interface KPIGoal {
+  name: string;
+  target_value: number;
+  unit: string;
+}
+
+export const KPIDashboard = ({ profiles, requests, proposals, adminEmails = [] }: KPIDashboardProps) => {
+  const [goals, setGoals] = useState<KPIGoal[]>([]);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const fetchGoals = useCallback(async () => {
+    try {
+      const { data, error } = await supabase.from("kpi_goals").select("name, target_value, unit");
+      if (error) throw error;
+      setGoals(data || []);
+    } catch (error) {
+      console.error("Error fetching KPI goals:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchGoals();
+  }, [fetchGoals, refreshKey]);
+
   const kpis = useMemo(() => {
     const now = new Date();
     const currentMonthStart = startOfMonth(now);
@@ -92,41 +119,77 @@ export const KPIDashboard = ({ profiles, requests, proposals }: KPIDashboardProp
       ? Math.round((lastMonthCompletedRequests / lastMonthTotalRequests) * 100) 
       : 0;
 
+    // Get targets from database or use defaults
+    const getTarget = (name: string, defaultValue: number) => {
+      const goal = goals.find((g) => g.name === name);
+      return goal?.target_value ?? defaultValue;
+    };
+
     return [
       {
+        name: "new_users",
         label: "Novos Usuários",
-        target: 50,
+        target: getTarget("new_users", 50),
         current: currentMonthUsers,
         unit: "usuários",
         icon: <Users className="w-5 h-5" />,
         trend: calcTrend(currentMonthUsers, lastMonthUsers),
       },
       {
+        name: "monthly_requests",
         label: "Pedidos do Mês",
-        target: 100,
+        target: getTarget("monthly_requests", 100),
         current: currentMonthRequests,
         unit: "pedidos",
         icon: <Package className="w-5 h-5" />,
         trend: calcTrend(currentMonthRequests, lastMonthRequests),
       },
       {
+        name: "conversion_rate",
         label: "Taxa de Conversão",
-        target: 80,
+        target: getTarget("conversion_rate", 80),
         current: conversionRate,
         unit: "%",
         icon: <CheckCircle className="w-5 h-5" />,
         trend: conversionRate - lastMonthConversion,
       },
       {
+        name: "monthly_revenue",
         label: "Receita Mensal",
-        target: 500000,
+        target: getTarget("monthly_revenue", 500000),
         current: currentMonthRevenue,
         unit: "MZN",
         icon: <DollarSign className="w-5 h-5" />,
         trend: calcTrend(currentMonthRevenue, lastMonthRevenue),
       },
     ] as KPIConfig[];
-  }, [profiles, requests, proposals]);
+  }, [profiles, requests, proposals, goals]);
+
+  // Check KPI alerts
+  useEffect(() => {
+    const checkAlerts = async () => {
+      if (kpis.length === 0 || adminEmails.length === 0) return;
+
+      const kpiData = kpis.map((kpi) => ({
+        name: kpi.name,
+        current: kpi.current,
+        target: kpi.target,
+        unit: kpi.unit,
+        percentage: Math.round((kpi.current / kpi.target) * 100),
+      }));
+
+      try {
+        await supabase.functions.invoke("check-kpi-alerts", {
+          body: { kpiData, adminEmails },
+        });
+      } catch (error) {
+        console.error("Error checking KPI alerts:", error);
+      }
+    };
+
+    // Check alerts once on load
+    checkAlerts();
+  }, [kpis, adminEmails]);
 
   const getProgressColor = (current: number, target: number) => {
     const percentage = (current / target) * 100;
@@ -149,11 +212,16 @@ export const KPIDashboard = ({ profiles, requests, proposals }: KPIDashboardProp
   return (
     <Card>
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Target className="w-5 h-5 text-primary" />
-          KPIs e Metas do Mês
-        </CardTitle>
-        <CardDescription>Acompanhe o progresso das métricas principais</CardDescription>
+        <div className="flex items-center justify-between">
+          <div>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5 text-primary" />
+              KPIs e Metas do Mês
+            </CardTitle>
+            <CardDescription>Acompanhe o progresso das métricas principais</CardDescription>
+          </div>
+          <KPIGoalsSettings onUpdate={() => setRefreshKey((k) => k + 1)} />
+        </div>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

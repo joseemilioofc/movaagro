@@ -79,6 +79,66 @@ export type Database = {
           },
         ]
       }
+      kpi_alerts: {
+        Row: {
+          created_at: string
+          email_alert: boolean
+          id: string
+          kpi_name: string
+          last_alert_sent_at: string | null
+          threshold_percentage: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email_alert?: boolean
+          id?: string
+          kpi_name: string
+          last_alert_sent_at?: string | null
+          threshold_percentage?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email_alert?: boolean
+          id?: string
+          kpi_name?: string
+          last_alert_sent_at?: string | null
+          threshold_percentage?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      kpi_goals: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          target_value: number
+          unit: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          target_value?: number
+          unit?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          target_value?: number
+          unit?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company_name: string | null

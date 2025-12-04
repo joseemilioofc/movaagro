@@ -577,6 +577,9 @@ const AdminDashboard = () => {
           profiles={profiles}
           requests={requests}
           proposals={proposals}
+          adminEmails={profiles
+            .filter((p) => userRoles.find((r) => r.user_id === p.user_id && r.role === "admin"))
+            .map((p) => p.email)}
         />
 
         {/* Monthly Comparison Chart */}
