@@ -21,7 +21,10 @@ interface EmailRequest {
   deliveryLocation?: string;
   pickupDate?: string;
   urgency?: string;
-  type?: "created" | "accepted" | "proposal_sent" | "payment_submitted" | "payment_confirmed" | "new_request";
+  type?: "created" | "accepted" | "proposal_sent" | "payment_submitted" | "payment_confirmed" | "new_request" | "user_registered";
+  userName?: string;
+  userEmail?: string;
+  userRole?: string;
   transporterName?: string;
   transporterEmail?: string;
   requestDetails?: {
@@ -401,6 +404,79 @@ const handler = async (req: Request): Promise<Response> => {
               </div>
               <div class="footer">
                 <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
+              </div>
+            </div>
+          </body>
+          </html>
+        `;
+        break;
+      }
+
+      case "user_registered": {
+        // New user registered - notify admins
+        const adminEmails = await getAdminEmails();
+        
+        if (adminEmails.length === 0) {
+          console.log("No admins found to notify");
+          return new Response(JSON.stringify({ success: true, message: "No admins to notify" }), {
+            status: 200,
+            headers: { "Content-Type": "application/json", ...corsHeaders },
+          });
+        }
+
+        const roleLabels: Record<string, string> = {
+          cooperative: "Cooperativa",
+          transporter: "Transportadora",
+          admin: "Administrador",
+        };
+
+        recipients = adminEmails;
+        subject = "👤 Novo Usuário Cadastrado - MOVA";
+
+        emailHtml = `
+          <!DOCTYPE html>
+          <html>
+          <head><style>${getEmailStyles()}</style></head>
+          <body>
+            <div class="container">
+              <div class="header" style="background: linear-gradient(135deg, #3b82f6, #60a5fa);">
+                <h1>🚛 MOVA</h1>
+                <p style="margin: 10px 0 0 0; opacity: 0.9;">Novo Cadastro na Plataforma!</p>
+              </div>
+              <div class="content">
+                <div class="highlight-box" style="border-color: #3b82f6; background: #eff6ff;">
+                  <h2 style="margin: 0 0 10px 0; color: #1d4ed8;">👤 Novo Usuário</h2>
+                  <p>Um novo usuário acabou de se cadastrar na plataforma MOVA.</p>
+                </div>
+
+                <div class="info-card">
+                  <div class="info-row">
+                    <span class="label">Nome</span>
+                    <span class="value">${data.userName || "N/A"}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Email</span>
+                    <span class="value">${data.userEmail || "N/A"}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Tipo de Conta</span>
+                    <span class="value">${roleLabels[data.userRole!] || data.userRole}</span>
+                  </div>
+                  <div class="info-row">
+                    <span class="label">Data de Cadastro</span>
+                    <span class="value">${new Date().toLocaleDateString("pt-PT")} às ${new Date().toLocaleTimeString("pt-PT")}</span>
+                  </div>
+                </div>
+
+                <div style="background: #ecfdf5; border-radius: 12px; padding: 20px; text-align: center; margin-top: 20px;">
+                  <p style="margin: 0; font-size: 16px; color: #065f46;">
+                    📊 Acesse o painel administrativo para gerenciar os usuários.
+                  </p>
+                </div>
+              </div>
+              <div class="footer">
+                <p>© 2024 MOVA - Plataforma de Transporte Agrícola</p>
+                <p style="font-size: 10px; color: #9ca3af;">Você recebeu este email porque é administrador da plataforma MOVA.</p>
               </div>
             </div>
           </body>

@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams, Link } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -128,6 +129,20 @@ const Auth = () => {
           title: "Cadastro realizado!",
           description: "Bem-vindo à MOVA! Redirecionando...",
         });
+        
+        // Notify admins about new registration
+        try {
+          await supabase.functions.invoke("send-transport-confirmation", {
+            body: {
+              type: "user_registered",
+              userName: signupForm.name,
+              userEmail: signupForm.email,
+              userRole: signupForm.role,
+            },
+          });
+        } catch (emailError) {
+          console.log("Failed to send registration notification:", emailError);
+        }
       }
     } finally {
       setIsSubmitting(false);
