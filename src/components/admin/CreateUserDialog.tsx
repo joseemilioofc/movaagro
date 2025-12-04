@@ -4,9 +4,11 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { UserPlus, Loader2 } from "lucide-react";
+import { logAuditAction } from "@/hooks/useAuditLog";
+import { UserPlus, Loader2, Mail } from "lucide-react";
 
 interface CreateUserDialogProps {
   onUserCreated: () => void;
@@ -17,6 +19,7 @@ type UserRole = "admin" | "cooperative" | "transporter";
 export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
+  const [sendWelcomeEmail, setSendWelcomeEmail] = useState(true);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -101,9 +104,38 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
         }
       }
 
+      // Send welcome email if enabled
+      if (sendWelcomeEmail) {
+        try {
+          await supabase.functions.invoke("send-welcome-email", {
+            body: {
+              email: formData.email,
+              name: formData.name,
+              role: formData.role,
+              password: formData.password,
+            },
+          });
+        } catch (emailError) {
+          console.error("Erro ao enviar email de boas-vindas:", emailError);
+          // Don't fail the user creation if email fails
+        }
+      }
+
+      // Log audit action
+      await logAuditAction({
+        action: "create",
+        entityType: "user",
+        details: {
+          email: formData.email,
+          name: formData.name,
+          role: formData.role,
+          welcomeEmailSent: sendWelcomeEmail,
+        },
+      });
+
       toast({
         title: "Usuário criado",
-        description: `${roleLabels[formData.role as UserRole]} criado com sucesso!`,
+        description: `${roleLabels[formData.role as UserRole]} criado com sucesso!${sendWelcomeEmail ? " Email de boas-vindas enviado." : ""}`,
       });
 
       setFormData({
@@ -212,6 +244,17 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
                 </div>
               </>
             )}
+            <div className="flex items-center space-x-2 pt-2">
+              <Checkbox
+                id="sendEmail"
+                checked={sendWelcomeEmail}
+                onCheckedChange={(checked) => setSendWelcomeEmail(checked as boolean)}
+              />
+              <Label htmlFor="sendEmail" className="flex items-center gap-2 text-sm font-normal cursor-pointer">
+                <Mail className="w-4 h-4" />
+                Enviar email de boas-vindas com credenciais
+              </Label>
+            </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>

@@ -19,6 +19,7 @@ import { format, subDays, isAfter } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { ExportPDFButton } from "@/components/admin/ExportPDFButton";
 import { CreateUserDialog } from "@/components/admin/CreateUserDialog";
+import { MonthlyComparisonChart } from "@/components/admin/MonthlyComparisonChart";
 import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 
 interface Profile {
@@ -569,6 +570,13 @@ const AdminDashboard = () => {
             </div>
           </CardContent>
         </Card>
+
+        {/* Monthly Comparison Chart */}
+        <MonthlyComparisonChart
+          requests={requests}
+          proposals={proposals}
+          profiles={profiles}
+        />
 
         {/* Tabs */}
         <Tabs defaultValue="users">
