@@ -10,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield, MessageSquare } from "lucide-react";
+import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield, MessageSquare, TrendingUp, DollarSign, CheckCircle, Clock, XCircle } from "lucide-react";
 
 interface Profile {
   id: string;
@@ -39,6 +39,13 @@ interface TransportRequest {
   created_at: string;
 }
 
+interface Proposal {
+  id: string;
+  price: number;
+  status: string;
+  created_at: string;
+}
+
 const AdminDashboard = () => {
   const { user, role, loading: authLoading } = useAuth();
   const navigate = useNavigate();
@@ -46,6 +53,7 @@ const AdminDashboard = () => {
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [userRoles, setUserRoles] = useState<UserRole[]>([]);
   const [requests, setRequests] = useState<TransportRequest[]>([]);
+  const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteDialog, setDeleteDialog] = useState<{ type: "user" | "request"; id: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -64,19 +72,22 @@ const AdminDashboard = () => {
 
   const fetchData = async () => {
     try {
-      const [profilesRes, rolesRes, requestsRes] = await Promise.all([
+      const [profilesRes, rolesRes, requestsRes, proposalsRes] = await Promise.all([
         supabase.from("profiles").select("*").order("created_at", { ascending: false }),
         supabase.from("user_roles").select("*"),
         supabase.from("transport_requests").select("*").order("created_at", { ascending: false }),
+        supabase.from("transport_proposals").select("*").order("created_at", { ascending: false }),
       ]);
 
       if (profilesRes.error) throw profilesRes.error;
       if (rolesRes.error) throw rolesRes.error;
       if (requestsRes.error) throw requestsRes.error;
+      if (proposalsRes.error) throw proposalsRes.error;
 
       setProfiles(profilesRes.data || []);
       setUserRoles(rolesRes.data || []);
       setRequests(requestsRes.data || []);
+      setProposals(proposalsRes.data || []);
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
@@ -158,6 +169,25 @@ const AdminDashboard = () => {
 
   const cooperatives = profiles.filter((p) => getUserRole(p.user_id) === "cooperative");
   const transporters = profiles.filter((p) => getUserRole(p.user_id) === "transporter");
+  
+  // Statistics calculations
+  const pendingRequests = requests.filter((r) => r.status === "pending").length;
+  const acceptedRequests = requests.filter((r) => r.status === "accepted").length;
+  const completedRequests = requests.filter((r) => r.status === "completed").length;
+  
+  const pendingProposals = proposals.filter((p) => p.status === "pending").length;
+  const acceptedProposals = proposals.filter((p) => p.status === "accepted").length;
+  const paidProposals = proposals.filter((p) => p.status === "paid" || p.status === "admin_confirmed").length;
+  
+  const totalRevenue = proposals
+    .filter((p) => p.status === "paid" || p.status === "admin_confirmed")
+    .reduce((sum, p) => sum + (p.price || 0), 0);
+  
+  const thisMonthUsers = profiles.filter((p) => {
+    const createdAt = new Date(p.created_at);
+    const now = new Date();
+    return createdAt.getMonth() === now.getMonth() && createdAt.getFullYear() === now.getFullYear();
+  }).length;
 
   return (
     <DashboardLayout>
@@ -173,8 +203,8 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        {/* Main Stats */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Card>
             <CardContent className="pt-6">
               <div className="flex items-center gap-4">
@@ -184,6 +214,7 @@ const AdminDashboard = () => {
                 <div>
                   <p className="text-sm text-muted-foreground">Total Usuários</p>
                   <p className="text-2xl font-bold">{profiles.length}</p>
+                  <p className="text-xs text-muted-foreground">+{thisMonthUsers} este mês</p>
                 </div>
               </div>
             </CardContent>
@@ -221,9 +252,105 @@ const AdminDashboard = () => {
                   <Package className="w-6 h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Pedidos</p>
+                  <p className="text-sm text-muted-foreground">Total Pedidos</p>
                   <p className="text-2xl font-bold">{requests.length}</p>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Detailed Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {/* Request Status */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                Status dos Pedidos
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-amber-500" />
+                    <span className="text-sm">Pendentes</span>
+                  </div>
+                  <Badge variant="secondary">{pendingRequests}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
+                    <span className="text-sm">Aceitos</span>
+                  </div>
+                  <Badge variant="default">{acceptedRequests}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-green-500" />
+                    <span className="text-sm">Concluídos</span>
+                  </div>
+                  <Badge variant="outline">{completedRequests}</Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Proposal Status */}
+          <Card>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-primary" />
+                Status das Propostas
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-4 h-4 text-amber-500" />
+                    <span className="text-sm">Pendentes</span>
+                  </div>
+                  <Badge variant="secondary">{pendingProposals}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-blue-500" />
+                    <span className="text-sm">Aceitas</span>
+                  </div>
+                  <Badge variant="default">{acceptedProposals}</Badge>
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <DollarSign className="w-4 h-4 text-green-500" />
+                    <span className="text-sm">Pagas</span>
+                  </div>
+                  <Badge variant="outline">{paidProposals}</Badge>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Revenue */}
+          <Card className="bg-gradient-to-br from-primary/10 to-primary/5">
+            <CardHeader className="pb-2">
+              <CardTitle className="text-lg flex items-center gap-2">
+                <DollarSign className="w-5 h-5 text-primary" />
+                Receita Total
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-2">
+                <p className="text-3xl font-bold text-primary">
+                  {totalRevenue.toLocaleString("pt-MZ", { minimumFractionDigits: 2 })} MZN
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  De {paidProposals} transações confirmadas
+                </p>
+                <p className="text-sm text-muted-foreground">
+                  Total de propostas: {proposals.length}
+                </p>
               </div>
             </CardContent>
           </Card>
