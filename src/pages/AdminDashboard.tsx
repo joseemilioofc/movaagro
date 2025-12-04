@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -9,12 +9,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield, MessageSquare, TrendingUp, DollarSign, CheckCircle, Clock, Calendar } from "lucide-react";
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, Legend } from "recharts";
-import { format, subDays, subMonths, startOfDay, isAfter } from "date-fns";
+import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield, MessageSquare, TrendingUp, DollarSign, CheckCircle, Clock, Calendar, Bell } from "lucide-react";
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
+import { format, subDays, isAfter } from "date-fns";
 import { ptBR } from "date-fns/locale";
+import { ExportPDFButton } from "@/components/admin/ExportPDFButton";
+import { CreateUserDialog } from "@/components/admin/CreateUserDialog";
+import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 
 interface Profile {
   id: string;
@@ -64,6 +69,38 @@ const AdminDashboard = () => {
   const [deleteDialog, setDeleteDialog] = useState<{ type: "user" | "request"; id: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [dateFilter, setDateFilter] = useState<DateFilter>("30d");
+  const [notificationsEnabled, setNotificationsEnabled] = useState(true);
+
+  const fetchData = useCallback(async () => {
+    try {
+      const [profilesRes, rolesRes, requestsRes, proposalsRes] = await Promise.all([
+        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
+        supabase.from("user_roles").select("*"),
+        supabase.from("transport_requests").select("*").order("created_at", { ascending: false }),
+        supabase.from("transport_proposals").select("*").order("created_at", { ascending: false }),
+      ]);
+
+      if (profilesRes.error) throw profilesRes.error;
+      if (rolesRes.error) throw rolesRes.error;
+      if (requestsRes.error) throw requestsRes.error;
+      if (proposalsRes.error) throw proposalsRes.error;
+
+      setProfiles(profilesRes.data || []);
+      setUserRoles(rolesRes.data || []);
+      setRequests(requestsRes.data || []);
+      setProposals(proposalsRes.data || []);
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Real-time notifications
+  useRealtimeNotifications({
+    enabled: notificationsEnabled && role === "admin",
+    onNewRequest: fetchData,
+  });
 
   const getFilterDate = (filter: DateFilter) => {
     const now = new Date();
@@ -138,30 +175,11 @@ const AdminDashboard = () => {
     }
   }, [user, role]);
 
-  const fetchData = async () => {
-    try {
-      const [profilesRes, rolesRes, requestsRes, proposalsRes] = await Promise.all([
-        supabase.from("profiles").select("*").order("created_at", { ascending: false }),
-        supabase.from("user_roles").select("*"),
-        supabase.from("transport_requests").select("*").order("created_at", { ascending: false }),
-        supabase.from("transport_proposals").select("*").order("created_at", { ascending: false }),
-      ]);
-
-      if (profilesRes.error) throw profilesRes.error;
-      if (rolesRes.error) throw rolesRes.error;
-      if (requestsRes.error) throw requestsRes.error;
-      if (proposalsRes.error) throw proposalsRes.error;
-
-      setProfiles(profilesRes.data || []);
-      setUserRoles(rolesRes.data || []);
-      setRequests(requestsRes.data || []);
-      setProposals(proposalsRes.data || []);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    } finally {
-      setLoading(false);
+  useEffect(() => {
+    if (user && role === "admin") {
+      fetchData();
     }
-  };
+  }, [user, role, fetchData]);
 
   const getUserRole = (userId: string) => {
     const userRole = userRoles.find((r) => r.user_id === userId);
@@ -268,29 +286,57 @@ const AdminDashboard = () => {
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header with Date Filter */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
-              <Shield className="w-6 h-6 text-primary-foreground" />
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 bg-gradient-primary rounded-xl flex items-center justify-center">
+                <Shield className="w-6 h-6 text-primary-foreground" />
+              </div>
+              <div>
+                <h1 className="text-3xl font-display font-bold text-foreground">Painel Administrativo</h1>
+                <p className="text-muted-foreground">Gerencie usuários e pedidos da plataforma</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-3xl font-display font-bold text-foreground">Painel Administrativo</h1>
-              <p className="text-muted-foreground">Gerencie usuários e pedidos da plataforma</p>
+            <div className="flex items-center gap-3 flex-wrap">
+              <div className="flex items-center gap-2">
+                <Bell className={`w-4 h-4 ${notificationsEnabled ? "text-primary" : "text-muted-foreground"}`} />
+                <Label htmlFor="notifications" className="text-sm">Notificações</Label>
+                <Switch
+                  id="notifications"
+                  checked={notificationsEnabled}
+                  onCheckedChange={setNotificationsEnabled}
+                />
+              </div>
+              <Select value={dateFilter} onValueChange={(v) => setDateFilter(v as DateFilter)}>
+                <SelectTrigger className="w-[150px]">
+                  <SelectValue placeholder="Período" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="7d">7 dias</SelectItem>
+                  <SelectItem value="30d">30 dias</SelectItem>
+                  <SelectItem value="90d">90 dias</SelectItem>
+                  <SelectItem value="all">Tudo</SelectItem>
+                </SelectContent>
+              </Select>
+              <ExportPDFButton
+                stats={{
+                  totalUsers: profiles.length,
+                  cooperatives: cooperatives.length,
+                  transporters: transporters.length,
+                  totalRequests: requests.length,
+                  pendingRequests,
+                  acceptedRequests,
+                  completedRequests,
+                  totalProposals: proposals.length,
+                  pendingProposals,
+                  acceptedProposals,
+                  paidProposals,
+                  totalRevenue,
+                }}
+                dateFilter={dateFilterLabels[dateFilter]}
+              />
+              <CreateUserDialog onUserCreated={fetchData} />
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <Calendar className="w-4 h-4 text-muted-foreground" />
-            <Select value={dateFilter} onValueChange={(v) => setDateFilter(v as DateFilter)}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filtrar por período" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="7d">Últimos 7 dias</SelectItem>
-                <SelectItem value="30d">Últimos 30 dias</SelectItem>
-                <SelectItem value="90d">Últimos 90 dias</SelectItem>
-                <SelectItem value="all">Todo período</SelectItem>
-              </SelectContent>
-            </Select>
           </div>
         </div>
 
