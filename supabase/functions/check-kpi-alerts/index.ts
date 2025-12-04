@@ -23,7 +23,13 @@ serve(async (req) => {
   }
 
   try {
-    const { kpiData, adminEmails } = await req.json() as { kpiData: KPIData[]; adminEmails: string[] };
+    const { kpiData, adminEmails, forceAlert = false } = await req.json() as { 
+      kpiData: KPIData[]; 
+      adminEmails: string[];
+      forceAlert?: boolean;
+    };
+
+    console.log("Checking KPI alerts for", kpiData.length, "KPIs");
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
@@ -41,20 +47,18 @@ serve(async (req) => {
     const alertsToSend: KPIData[] = [];
 
     for (const kpi of kpiData) {
-      const alertSetting = alertSettings?.find((a) => a.kpi_name === kpi.name);
+      const alertSetting = alertSettings?.find((a: any) => a.kpi_name === kpi.name);
       
       if (alertSetting && alertSetting.email_alert) {
         const threshold = alertSetting.threshold_percentage || 50;
         
-        if (kpi.percentage < threshold) {
-          // Check if we already sent an alert in the last 24 hours
+        if (kpi.percentage < threshold || forceAlert) {
           const lastAlert = alertSetting.last_alert_sent_at;
           const now = new Date();
           
-          if (!lastAlert || (now.getTime() - new Date(lastAlert).getTime()) > 24 * 60 * 60 * 1000) {
+          if (forceAlert || !lastAlert || (now.getTime() - new Date(lastAlert).getTime()) > 24 * 60 * 60 * 1000) {
             alertsToSend.push(kpi);
             
-            // Update last alert time
             await supabaseAdmin
               .from("kpi_alerts")
               .update({ last_alert_sent_at: now.toISOString() })
@@ -130,6 +134,19 @@ serve(async (req) => {
       });
 
       console.log(`Sent KPI alert email to ${adminEmails.length} admin(s) for ${alertsToSend.length} KPI(s)`);
+
+      // Save to alert history
+      await supabaseAdmin.from("alert_history").insert({
+        alert_type: forceAlert ? "test" : "automatic",
+        kpi_names: alertsToSend.map((k) => k.name),
+        recipients: adminEmails,
+        details: {
+          kpis: alertsToSend,
+          threshold: alertSettings?.map((a: any) => ({ name: a.kpi_name, threshold: a.threshold_percentage })),
+        },
+      });
+
+      console.log("Alert history saved");
     }
 
     return new Response(

@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Truck, LogOut, Home, Package, Shield, ScrollText } from "lucide-react";
+import { Truck, LogOut, Home, Package, Shield, ScrollText, Settings } from "lucide-react";
 import { Footer } from "@/components/Footer";
 
 interface DashboardLayoutProps {
@@ -23,6 +23,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         return [
           { label: "Dashboard", href: "/admin", icon: Shield },
           { label: "Auditoria", href: "/admin/audit", icon: ScrollText },
+          { label: "Configurações", href: "/admin/settings", icon: Settings },
         ];
       case "cooperative":
         return [

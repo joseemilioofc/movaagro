@@ -14,6 +14,33 @@ export type Database = {
   }
   public: {
     Tables: {
+      alert_history: {
+        Row: {
+          alert_type: string
+          details: Json | null
+          id: string
+          kpi_names: string[]
+          recipients: string[]
+          sent_at: string
+        }
+        Insert: {
+          alert_type: string
+          details?: Json | null
+          id?: string
+          kpi_names: string[]
+          recipients: string[]
+          sent_at?: string
+        }
+        Update: {
+          alert_type?: string
+          details?: Json | null
+          id?: string
+          kpi_names?: string[]
+          recipients?: string[]
+          sent_at?: string
+        }
+        Relationships: []
+      }
       audit_logs: {
         Row: {
           action: string
