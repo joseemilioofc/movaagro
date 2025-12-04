@@ -11,7 +11,9 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { TransportRequestForm, TransportFormData } from "@/components/TransportRequestForm";
 import { RatingDialog } from "@/components/RatingDialog";
 import { GPSTrackingMap } from "@/components/GPSTrackingMap";
-import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink, MessageSquare, Star, MapPin } from "lucide-react";
+import { DigitalContract } from "@/components/DigitalContract";
+import { useContracts } from "@/hooks/useContracts";
+import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink, MessageSquare, Star, MapPin, FileText } from "lucide-react";
 
 interface TransportRequest {
   id: string;
@@ -38,7 +40,9 @@ const CooperativeDashboard = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [ratingRequest, setRatingRequest] = useState<TransportRequest | null>(null);
   const [trackingRequest, setTrackingRequest] = useState<TransportRequest | null>(null);
+  const [contractRequest, setContractRequest] = useState<TransportRequest | null>(null);
   const [transporterNames, setTransporterNames] = useState<Record<string, string>>({});
+  const { contracts, refetch: refetchContracts } = useContracts();
 
   useEffect(() => {
     if (!authLoading && (!user || role !== "cooperative")) {
@@ -343,6 +347,14 @@ const CooperativeDashboard = () => {
                           <Button
                             size="sm"
                             variant="outline"
+                            onClick={() => setContractRequest(request)}
+                          >
+                            <FileText className="w-4 h-4 mr-1" />
+                            Contrato
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
                             onClick={() => navigate(`/chat/${request.id}`)}
                           >
                             <MessageSquare className="w-4 h-4 mr-1" />
@@ -394,6 +406,43 @@ const CooperativeDashboard = () => {
                 originAddress={trackingRequest.origin_address}
                 destinationAddress={trackingRequest.destination_address}
               />
+            )}
+          </DialogContent>
+        </Dialog>
+
+        {/* Contract Dialog */}
+        <Dialog open={!!contractRequest} onOpenChange={() => setContractRequest(null)}>
+          <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>Contrato Digital</DialogTitle>
+              <DialogDescription>{contractRequest?.title}</DialogDescription>
+            </DialogHeader>
+            {contractRequest && (
+              <>
+                {contracts.filter(c => c.transport_request_id === contractRequest.id).length > 0 ? (
+                  contracts
+                    .filter(c => c.transport_request_id === contractRequest.id)
+                    .map(contract => (
+                      <DigitalContract
+                        key={contract.id}
+                        contract={contract}
+                        cooperativeName="Cooperativa"
+                        transporterName={contractRequest.transporter_id ? transporterNames[contractRequest.transporter_id] : undefined}
+                        onUpdate={refetchContracts}
+                      />
+                    ))
+                ) : (
+                  <div className="text-center py-8">
+                    <FileText className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                    <p className="text-muted-foreground">
+                      Nenhum contrato disponível para este transporte.
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-2">
+                      O contrato será gerado após a confirmação do pagamento.
+                    </p>
+                  </div>
+                )}
+              </>
             )}
           </DialogContent>
         </Dialog>

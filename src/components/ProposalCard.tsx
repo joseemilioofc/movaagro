@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { formatMZN } from "@/lib/currency";
 import { 
   Loader2, 
   DollarSign, 
@@ -132,6 +133,33 @@ export const ProposalCard = ({ proposal, onUpdate, requestId }: ProposalCardProp
 
       if (error) throw error;
 
+      // Fetch request details to create contract
+      const { data: requestData } = await supabase
+        .from("transport_requests")
+        .select("*")
+        .eq("id", requestId)
+        .single();
+
+      if (requestData) {
+        // Create digital contract
+        const contractNumber = `MOVA-${new Date().getFullYear()}-${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+        await supabase.from("digital_contracts").insert({
+          transport_request_id: requestId,
+          proposal_id: proposal.id,
+          cooperative_id: requestData.cooperative_id,
+          transporter_id: proposal.transporter_id,
+          contract_number: contractNumber,
+          terms: `Contrato de transporte de ${requestData.cargo_type} de ${requestData.origin_address} para ${requestData.destination_address}. Valor: ${formatMZN(proposal.price)}.`,
+          price: proposal.price,
+          pickup_date: requestData.pickup_date,
+          origin_address: requestData.origin_address,
+          destination_address: requestData.destination_address,
+          cargo_type: requestData.cargo_type,
+          weight_kg: requestData.weight_kg,
+          status: "pending",
+        });
+      }
+
       // Send notification email
       await supabase.functions.invoke("send-transport-confirmation", {
         body: {
@@ -143,7 +171,7 @@ export const ProposalCard = ({ proposal, onUpdate, requestId }: ProposalCardProp
 
       toast({
         title: "Pagamento confirmado!",
-        description: "As partes foram notificadas.",
+        description: "As partes foram notificadas e o contrato foi gerado.",
       });
 
       onUpdate();
@@ -196,7 +224,7 @@ export const ProposalCard = ({ proposal, onUpdate, requestId }: ProposalCardProp
             <div>
               <Label className="text-xs text-muted-foreground">Valor do Serviço</Label>
               <p className="text-2xl font-bold text-primary">
-                {proposal.price.toLocaleString("pt-MZ", { style: "currency", currency: "MZN" })}
+                {formatMZN(proposal.price)}
               </p>
             </div>
           </div>
