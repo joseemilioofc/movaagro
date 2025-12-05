@@ -12,15 +12,26 @@ import { useToast } from "@/hooks/use-toast";
 import { Truck, Wheat, Shield, ArrowLeft, Loader2 } from "lucide-react";
 import { z } from "zod";
 import { Footer } from "@/components/Footer";
+import { PasswordInput } from "@/components/PasswordInput";
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
   password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
 });
 
-const signupSchema = loginSchema.extend({
+const signupSchema = z.object({
+  email: z.string().email("Email inválido"),
   name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres"),
+  password: z.string()
+    .min(8, "A senha deve ter pelo menos 8 caracteres")
+    .regex(passwordRegex, "A senha deve conter: letra maiúscula, minúscula, número e caractere especial (@$!%*?&)"),
+  confirmPassword: z.string(),
   role: z.enum(["cooperative", "transporter"]),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "As senhas não coincidem",
+  path: ["confirmPassword"],
 });
 
 type AppRole = "admin" | "cooperative" | "transporter";
@@ -42,6 +53,7 @@ const Auth = () => {
     name: "",
     email: "",
     password: "",
+    confirmPassword: "",
     role: (searchParams.get("role") as "cooperative" | "transporter") || "cooperative",
   });
 
@@ -286,12 +298,10 @@ const Auth = () => {
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="admin-password">Senha</Label>
-                    <Input
+                    <PasswordInput
                       id="admin-password"
-                      type="password"
-                      placeholder="••••••••"
                       value={loginForm.password}
-                      onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                      onChange={(value) => setLoginForm({ ...loginForm, password: value })}
                       required
                     />
                   </div>
@@ -335,12 +345,10 @@ const Auth = () => {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="password">Senha</Label>
-                        <Input
+                        <PasswordInput
                           id="password"
-                          type="password"
-                          placeholder="••••••••"
                           value={loginForm.password}
-                          onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                          onChange={(value) => setLoginForm({ ...loginForm, password: value })}
                           required
                         />
                       </div>
@@ -383,12 +391,22 @@ const Auth = () => {
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="signup-password">Senha</Label>
-                        <Input
+                        <PasswordInput
                           id="signup-password"
-                          type="password"
-                          placeholder="••••••••"
                           value={signupForm.password}
-                          onChange={(e) => setSignupForm({ ...signupForm, password: e.target.value })}
+                          onChange={(value) => setSignupForm({ ...signupForm, password: value })}
+                          required
+                        />
+                        <p className="text-xs text-muted-foreground">
+                          Mínimo 8 caracteres, com maiúscula, minúscula, número e especial (@$!%*?&)
+                        </p>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="signup-confirm-password">Confirmar Senha</Label>
+                        <PasswordInput
+                          id="signup-confirm-password"
+                          value={signupForm.confirmPassword}
+                          onChange={(value) => setSignupForm({ ...signupForm, confirmPassword: value })}
                           required
                         />
                       </div>

@@ -2,17 +2,21 @@ import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Loader2, Lock, CheckCircle } from "lucide-react";
 import { z } from "zod";
 import { Footer } from "@/components/Footer";
+import { PasswordInput } from "@/components/PasswordInput";
+
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const passwordSchema = z.object({
-  password: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
-  confirmPassword: z.string().min(6, "A senha deve ter pelo menos 6 caracteres"),
+  password: z.string()
+    .min(8, "A senha deve ter pelo menos 8 caracteres")
+    .regex(passwordRegex, "A senha deve conter: letra maiúscula, minúscula, número e caractere especial (@$!%*?&)"),
+  confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
   path: ["confirmPassword"],
@@ -223,30 +227,26 @@ const ResetPassword = () => {
             <CardHeader>
               <CardTitle>Nova Senha</CardTitle>
               <CardDescription>
-                Escolha uma senha forte com pelo menos 6 caracteres
+                Mínimo 8 caracteres, com maiúscula, minúscula, número e especial (@$!%*?&)
               </CardDescription>
             </CardHeader>
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="password">Nova senha</Label>
-                  <Input
+                  <PasswordInput
                     id="password"
-                    type="password"
-                    placeholder="••••••••"
                     value={form.password}
-                    onChange={(e) => setForm({ ...form, password: e.target.value })}
+                    onChange={(value) => setForm({ ...form, password: value })}
                     required
                   />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirmar senha</Label>
-                  <Input
+                  <PasswordInput
                     id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
                     value={form.confirmPassword}
-                    onChange={(e) => setForm({ ...form, confirmPassword: e.target.value })}
+                    onChange={(value) => setForm({ ...form, confirmPassword: value })}
                     required
                   />
                 </div>
