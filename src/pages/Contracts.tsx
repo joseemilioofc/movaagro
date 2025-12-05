@@ -6,7 +6,6 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import { DigitalContract } from "@/components/DigitalContract";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -19,9 +18,15 @@ import {
   CheckCircle2, 
   Clock,
   Calendar,
-  X
+  X,
+  FileDown
 } from "lucide-react";
 import { formatMZN } from "@/lib/currency";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import { format } from "date-fns";
+import { ptBR } from "date-fns/locale";
+import { toast } from "sonner";
 
 interface Contract {
   id: string;
@@ -164,6 +169,70 @@ const Contracts = () => {
     totalValue: contracts.reduce((sum, c) => sum + Number(c.price || 0), 0),
   };
 
+  const exportPDF = () => {
+    try {
+      const doc = new jsPDF();
+      const pageWidth = doc.internal.pageSize.getWidth();
+      
+      doc.setFontSize(20);
+      doc.setTextColor(34, 82, 67);
+      doc.text("Histórico de Contratos", pageWidth / 2, 20, { align: "center" });
+      
+      doc.setFontSize(12);
+      doc.setTextColor(100);
+      doc.text(`Gerado em: ${format(new Date(), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}`, pageWidth / 2, 30, { align: "center" });
+      
+      // Summary
+      doc.setFontSize(14);
+      doc.setTextColor(0);
+      doc.text("Resumo", 14, 45);
+      
+      autoTable(doc, {
+        startY: 50,
+        head: [["Métrica", "Valor"]],
+        body: [
+          ["Total de Contratos", stats.total.toString()],
+          ["Contratos Pendentes", stats.pending.toString()],
+          ["Contratos Assinados", stats.signed.toString()],
+          ["Valor Total", formatMZN(stats.totalValue)],
+        ],
+        theme: "striped",
+        headStyles: { fillColor: [34, 82, 67] },
+      });
+      
+      // Contracts table
+      const contractsY = (doc as any).lastAutoTable.finalY + 15;
+      doc.text("Lista de Contratos", 14, contractsY);
+      
+      autoTable(doc, {
+        startY: contractsY + 5,
+        head: [["Nº Contrato", "Origem", "Destino", "Data", "Valor", "Status"]],
+        body: filteredContracts.map(c => [
+          c.contract_number,
+          c.origin_address.substring(0, 20) + "...",
+          c.destination_address.substring(0, 20) + "...",
+          new Date(c.pickup_date).toLocaleDateString("pt-MZ"),
+          formatMZN(c.price),
+          c.status === "signed" ? "Assinado" : "Pendente",
+        ]),
+        theme: "striped",
+        headStyles: { fillColor: [34, 82, 67] },
+        styles: { fontSize: 8 },
+      });
+      
+      const footerY = doc.internal.pageSize.getHeight() - 10;
+      doc.setFontSize(10);
+      doc.setTextColor(150);
+      doc.text("MovaAgro - Plataforma de Transporte Agrícola", pageWidth / 2, footerY, { align: "center" });
+      
+      doc.save(`contratos-${format(new Date(), "yyyy-MM-dd")}.pdf`);
+      toast.success("PDF exportado com sucesso!");
+    } catch (error) {
+      console.error("Erro ao exportar PDF:", error);
+      toast.error("Erro ao exportar PDF");
+    }
+  };
+
   if (authLoading || loading) {
     return (
       <DashboardLayout>
@@ -178,9 +247,15 @@ const Contracts = () => {
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div>
-          <h1 className="text-3xl font-display font-bold text-foreground">Contratos Digitais</h1>
-          <p className="text-muted-foreground mt-1">Gerencie seus contratos de transporte</p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h1 className="text-3xl font-display font-bold text-foreground">Contratos Digitais</h1>
+            <p className="text-muted-foreground mt-1">Gerencie seus contratos de transporte</p>
+          </div>
+          <Button onClick={exportPDF} variant="outline">
+            <FileDown className="w-4 h-4 mr-2" />
+            Exportar PDF
+          </Button>
         </div>
 
         {/* Stats */}
