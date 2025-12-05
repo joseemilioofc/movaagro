@@ -247,67 +247,67 @@ const Contracts = () => {
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold text-foreground">Contratos Digitais</h1>
-            <p className="text-muted-foreground mt-1">Gerencie seus contratos de transporte</p>
+            <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">Contratos</h1>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">Gerencie seus contratos</p>
           </div>
-          <Button onClick={exportPDF} variant="outline">
+          <Button onClick={exportPDF} variant="outline" size="sm" className="self-start sm:self-auto">
             <FileDown className="w-4 h-4 mr-2" />
-            Exportar PDF
+            <span className="sm:inline">PDF</span>
           </Button>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 sm:gap-4">
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-light rounded-xl flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-primary" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-light rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <FileText className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total</p>
-                  <p className="text-2xl font-bold">{stats.total}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Total</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-yellow-600" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Pendentes</p>
-                  <p className="text-2xl font-bold">{stats.pending}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Pendentes</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.pending}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
-                  <CheckCircle2 className="w-6 h-6 text-green-600" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 dark:bg-green-900/20 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <CheckCircle2 className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Assinados</p>
-                  <p className="text-2xl font-bold">{stats.signed}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Assinados</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.signed}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <span className="text-lg font-bold text-primary">MZN</span>
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <span className="text-sm sm:text-lg font-bold text-primary">MZN</span>
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Valor Total</p>
-                  <p className="text-xl font-bold">{formatMZN(stats.totalValue)}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Valor</p>
+                  <p className="text-lg sm:text-xl font-bold">{formatMZN(stats.totalValue)}</p>
                 </div>
               </div>
             </CardContent>
@@ -316,30 +316,30 @@ const Contracts = () => {
 
         {/* Filters */}
         <Card>
-          <CardHeader className="pb-4">
-            <CardTitle className="text-lg flex items-center gap-2">
-              <Filter className="w-5 h-5" />
+          <CardHeader className="pb-3 sm:pb-4">
+            <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+              <Filter className="w-4 h-4 sm:w-5 sm:h-5" />
               Filtros
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="relative">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
+              <div className="relative col-span-2 md:col-span-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                 <Input
-                  placeholder="Buscar por número, endereço..."
+                  placeholder="Buscar..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-9"
+                  className="pl-9 h-9 sm:h-10 text-sm"
                 />
               </div>
               <div>
                 <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
+                  <SelectTrigger className="h-9 sm:h-10 text-sm">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">Todos os status</SelectItem>
+                    <SelectItem value="all">Todos</SelectItem>
                     <SelectItem value="pending">Pendente</SelectItem>
                     <SelectItem value="signed">Assinado</SelectItem>
                   </SelectContent>
@@ -350,13 +350,15 @@ const Contracts = () => {
                   type="date"
                   value={dateFilter}
                   onChange={(e) => setDateFilter(e.target.value)}
-                  placeholder="Data de coleta"
+                  placeholder="Data"
+                  className="h-9 sm:h-10 text-sm"
                 />
               </div>
               <div>
-                <Button variant="outline" onClick={clearFilters} className="w-full">
-                  <X className="w-4 h-4 mr-2" />
-                  Limpar filtros
+                <Button variant="outline" onClick={clearFilters} className="w-full h-9 sm:h-10 text-sm">
+                  <X className="w-4 h-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Limpar</span>
+                  <span className="sm:hidden">X</span>
                 </Button>
               </div>
             </div>

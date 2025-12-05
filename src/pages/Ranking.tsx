@@ -164,50 +164,50 @@ const Ranking = () => {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-display font-bold text-foreground flex items-center gap-3">
-            <Trophy className="w-8 h-8 text-yellow-500" />
-            Ranking de Transportadores
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground flex items-center gap-2 sm:gap-3">
+            <Trophy className="w-6 h-6 sm:w-8 sm:h-8 text-yellow-500" />
+            Ranking
           </h1>
-          <p className="text-muted-foreground mt-1">Veja os transportadores mais bem avaliados</p>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">Transportadores mais bem avaliados</p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Users className="w-6 h-6 text-primary" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-primary/10 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <Users className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Transportadores</p>
-                  <p className="text-2xl font-bold">{stats.totalTransporters}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Total</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.totalTransporters}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-xl flex items-center justify-center">
-                  <Star className="w-6 h-6 text-yellow-500" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-yellow-100 dark:bg-yellow-900/20 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <Star className="w-5 h-5 sm:w-6 sm:h-6 text-yellow-500" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Média Geral</p>
-                  <p className="text-2xl font-bold">{stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "N/A"}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Média</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.avgRating > 0 ? stats.avgRating.toFixed(1) : "N/A"}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900/20 rounded-xl flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-green-600" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-green-100 dark:bg-green-900/20 rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total de Avaliações</p>
-                  <p className="text-2xl font-bold">{stats.totalReviews}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Avaliações</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.totalReviews}</p>
                 </div>
               </div>
             </CardContent>
@@ -216,13 +216,13 @@ const Ranking = () => {
 
         {/* Ranking List */}
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
+          <CardHeader className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4">
             <div>
-              <CardTitle>Classificação</CardTitle>
-              <CardDescription>Baseado em avaliações de cooperativas</CardDescription>
+              <CardTitle className="text-lg sm:text-xl">Classificação</CardTitle>
+              <CardDescription className="text-xs sm:text-sm">Baseado em avaliações</CardDescription>
             </div>
             <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-48">
+              <SelectTrigger className="w-full sm:w-48">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -239,36 +239,36 @@ const Ranking = () => {
                 <p className="text-muted-foreground">Nenhum transportador encontrado</p>
               </div>
             ) : (
-              <div className="space-y-3">
+              <div className="space-y-2 sm:space-y-3">
                 {sortedRankings.map((transporter, index) => (
                   <div
                     key={transporter.userId}
-                    className={`flex items-center justify-between p-4 rounded-lg border transition-all ${getRankBg(index)}`}
+                    className={`flex items-center justify-between p-3 sm:p-4 rounded-lg border transition-all ${getRankBg(index)}`}
                   >
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 flex items-center justify-center">
+                    <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                      <div className="w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center shrink-0">
                         {getRankIcon(index)}
                       </div>
-                      <Avatar className="w-12 h-12">
-                        <AvatarFallback className="bg-primary/10 text-primary font-medium">
+                      <Avatar className="w-10 h-10 sm:w-12 sm:h-12 shrink-0">
+                        <AvatarFallback className="bg-primary/10 text-primary font-medium text-sm sm:text-base">
                           {transporter.name.split(" ").map(n => n[0]).join("").toUpperCase().slice(0, 2)}
                         </AvatarFallback>
                       </Avatar>
-                      <div>
-                        <h4 className="font-medium">{transporter.name}</h4>
-                        <div className="flex items-center gap-2 mt-1">
+                      <div className="min-w-0">
+                        <h4 className="font-medium text-sm sm:text-base truncate">{transporter.name}</h4>
+                        <div className="flex items-center gap-2 mt-0.5 sm:mt-1">
                           <RatingDisplay
                             rating={transporter.averageRating}
                             totalRatings={transporter.totalRatings}
-                            showBadges={true}
+                            showBadges={false}
                             size="sm"
                           />
                         </div>
                       </div>
                     </div>
-                    <div className="text-right">
-                      <Badge variant="secondary" className="mb-1">
-                        {transporter.completedTransports} transportes
+                    <div className="text-right shrink-0 ml-2">
+                      <Badge variant="secondary" className="text-[10px] sm:text-xs">
+                        {transporter.completedTransports} <span className="hidden sm:inline">transportes</span>
                       </Badge>
                     </div>
                   </div>

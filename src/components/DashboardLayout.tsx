@@ -54,15 +54,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="border-b border-border bg-card">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center gap-6">
+      <header className="border-b border-border bg-card sticky top-0 z-40">
+        <div className="container mx-auto px-3 sm:px-4">
+          <div className="flex items-center justify-between h-14 sm:h-16">
+            <div className="flex items-center gap-4 sm:gap-6">
               <Link to="/" className="flex items-center gap-2">
-                <div className="w-9 h-9 bg-gradient-primary rounded-lg flex items-center justify-center">
-                  <Truck className="w-5 h-5 text-primary-foreground" />
+                <div className="w-8 h-8 sm:w-9 sm:h-9 bg-gradient-primary rounded-lg flex items-center justify-center">
+                  <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
                 </div>
-                <span className="text-xl font-display font-bold text-foreground">MOVA</span>
+                <span className="text-lg sm:text-xl font-display font-bold text-foreground">MOVA</span>
               </Link>
 
               <nav className="hidden md:flex items-center gap-1">
@@ -81,25 +81,25 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               </nav>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 sm:gap-2">
               <NotificationBell
                 notifications={notifications}
                 onClearAll={clearAll}
                 onMarkAsRead={markAsRead}
               />
               <Link to="/profile">
-                <Button variant="ghost" size="sm" className="gap-2">
+                <Button variant="ghost" size="sm" className="gap-1 sm:gap-2 px-2 sm:px-3">
                   <User className="w-4 h-4" />
                   <span className="hidden sm:inline">Perfil</span>
                 </Button>
               </Link>
-              <Link to="/">
+              <Link to="/" className="hidden sm:block">
                 <Button variant="ghost" size="sm" className="gap-2">
                   <Home className="w-4 h-4" />
                   <span className="hidden sm:inline">Início</span>
                 </Button>
               </Link>
-              <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-2">
+              <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-1 sm:gap-2 px-2 sm:px-3">
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:inline">Sair</span>
               </Button>
@@ -108,18 +108,18 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         </div>
       </header>
 
-      {/* Mobile Navigation */}
-      <nav className="md:hidden border-b border-border bg-card px-4 py-2">
-        <div className="flex items-center gap-2 overflow-x-auto">
+      {/* Mobile Navigation - Bottom Fixed */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-border bg-card z-40 safe-area-pb">
+        <div className="flex items-center justify-around py-2">
           {navItems.map((item) => (
-            <Link key={item.href} to={item.href}>
+            <Link key={item.href} to={item.href} className="flex-1">
               <Button
                 variant={location.pathname === item.href ? "secondary" : "ghost"}
                 size="sm"
-                className="gap-2 whitespace-nowrap"
+                className="w-full flex-col gap-1 h-auto py-2 px-1"
               >
-                <item.icon className="w-4 h-4" />
-                {item.label}
+                <item.icon className="w-5 h-5" />
+                <span className="text-[10px] font-medium">{item.label}</span>
               </Button>
             </Link>
           ))}
@@ -127,11 +127,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </nav>
 
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 flex-1">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 flex-1 pb-20 md:pb-8">
         {children}
       </main>
 
-      <Footer />
+      <div className="hidden md:block">
+        <Footer />
+      </div>
     </div>
   );
 }

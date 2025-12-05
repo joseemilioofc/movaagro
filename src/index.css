@@ -160,6 +160,22 @@
   .animate-slide-up {
     animation: slideUp 0.6s ease-out forwards;
   }
+
+  /* Safe area padding for mobile devices */
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .safe-area-pt {
+    padding-top: env(safe-area-inset-top, 0px);
+  }
+
+  /* Improve touch targets on mobile */
+  @media (max-width: 640px) {
+    button, a, [role="button"] {
+      min-height: 44px;
+    }
+  }
 }
 
 @keyframes float {
