@@ -57,7 +57,6 @@ export const RatingDialog = ({
         transport_request_id: transportRequestId,
         reviewer_id: user.id,
         reviewed_id: reviewedId,
-        reviewer_role: reviewerRole,
         rating,
         comment: comment.trim() || null,
       } as any);
