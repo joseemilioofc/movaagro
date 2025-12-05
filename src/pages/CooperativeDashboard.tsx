@@ -226,10 +226,10 @@ const CooperativeDashboard = () => {
     <DashboardLayout>
       <div className="space-y-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-3xl font-display font-bold text-foreground">Meus Pedidos</h1>
-            <p className="text-muted-foreground mt-1">Gerencie seus pedidos de transporte</p>
+            <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">Meus Pedidos</h1>
+            <p className="text-sm sm:text-base text-muted-foreground mt-1">Gerencie seus pedidos de transporte</p>
           </div>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -238,7 +238,7 @@ const CooperativeDashboard = () => {
                 Criar Pedido
               </Button>
             </DialogTrigger>
-            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto">
+            <DialogContent className="max-w-lg max-h-[90vh] overflow-y-auto mx-2 sm:mx-auto">
               <DialogHeader>
                 <DialogTitle>Novo Pedido de Transporte</DialogTitle>
                 <DialogDescription>
@@ -251,42 +251,42 @@ const CooperativeDashboard = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-light rounded-xl flex items-center justify-center">
-                  <Package className="w-6 h-6 text-primary" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-light rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <Package className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Total de Pedidos</p>
-                  <p className="text-2xl font-bold">{stats.total}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Total</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.total}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-secondary rounded-xl flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-secondary-foreground" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-secondary rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <Clock className="w-5 h-5 sm:w-6 sm:h-6 text-secondary-foreground" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Pendentes</p>
-                  <p className="text-2xl font-bold">{stats.pending}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Pendentes</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.pending}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-light rounded-xl flex items-center justify-center">
-                  <CheckCircle className="w-6 h-6 text-primary" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-light rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Aceitos</p>
-                  <p className="text-2xl font-bold">{stats.accepted}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Aceitos</p>
+                  <p className="text-xl sm:text-2xl font-bold">{stats.accepted}</p>
                 </div>
               </div>
             </CardContent>

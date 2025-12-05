@@ -217,34 +217,34 @@ const TransporterDashboard = () => {
       <div className="space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-display font-bold text-foreground">Pedidos Disponíveis</h1>
-          <p className="text-muted-foreground mt-1">Visualize e aceite pedidos de transporte</p>
+          <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">Pedidos Disponíveis</h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-1">Visualize e aceite pedidos de transporte</p>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-2 sm:gap-4">
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-light rounded-xl flex items-center justify-center">
-                  <Package className="w-6 h-6 text-primary" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-light rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <Package className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Pedidos Disponíveis</p>
-                  <p className="text-2xl font-bold">{pendingRequests.length}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Disponíveis</p>
+                  <p className="text-xl sm:text-2xl font-bold">{pendingRequests.length}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-emerald-light rounded-xl flex items-center justify-center">
-                  <Truck className="w-6 h-6 text-primary" />
+            <CardContent className="p-3 sm:pt-6 sm:px-6">
+              <div className="flex flex-col sm:flex-row items-center sm:gap-4 text-center sm:text-left">
+                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-light rounded-lg sm:rounded-xl flex items-center justify-center mb-2 sm:mb-0">
+                  <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Meus Transportes</p>
-                  <p className="text-2xl font-bold">{myRequests.length}</p>
+                  <p className="text-[10px] sm:text-sm text-muted-foreground">Meus</p>
+                  <p className="text-xl sm:text-2xl font-bold">{myRequests.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -259,56 +259,58 @@ const TransporterDashboard = () => {
           </CardHeader>
           <CardContent>
             {pendingRequests.length === 0 ? (
-              <div className="text-center py-12">
-                <Package className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">Nenhum pedido disponível no momento</p>
+              <div className="text-center py-8 sm:py-12">
+                <Package className="w-10 h-10 sm:w-12 sm:h-12 text-muted-foreground mx-auto mb-3 sm:mb-4" />
+                <p className="text-sm sm:text-base text-muted-foreground">Nenhum pedido disponível no momento</p>
               </div>
             ) : (
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                 {pendingRequests.map((request) => (
                   <Card key={request.id} className="hover:shadow-md transition-shadow">
-                    <CardContent className="pt-6">
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between">
-                          <h4 className="font-semibold">{request.title}</h4>
-                          <Badge variant="secondary">Disponível</Badge>
+                    <CardContent className="p-4 sm:pt-6">
+                      <div className="space-y-2 sm:space-y-3">
+                        <div className="flex items-start justify-between gap-2">
+                          <h4 className="font-semibold text-sm sm:text-base line-clamp-1">{request.title}</h4>
+                          <Badge variant="secondary" className="text-[10px] sm:text-xs shrink-0">Disponível</Badge>
                         </div>
-                        <div className="space-y-2 text-sm">
-                          <div className="flex items-center gap-2 text-muted-foreground">
-                            <MapPin className="w-4 h-4" />
-                            <span>{request.origin_address} → {request.destination_address}</span>
+                        <div className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
+                          <div className="flex items-start gap-2 text-muted-foreground">
+                            <MapPin className="w-3.5 h-3.5 sm:w-4 sm:h-4 mt-0.5 shrink-0" />
+                            <span className="line-clamp-2">{request.origin_address} → {request.destination_address}</span>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground">
-                            <Package className="w-4 h-4" />
+                            <Package className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                             <span>{request.cargo_type}</span>
                           </div>
                           <div className="flex items-center gap-2 text-muted-foreground">
-                            <Calendar className="w-4 h-4" />
+                            <Calendar className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                             <span>{new Date(request.pickup_date).toLocaleDateString("pt-BR")}</span>
                           </div>
                           {request.weight_kg && (
                             <div className="flex items-center gap-2 text-muted-foreground">
-                              <Weight className="w-4 h-4" />
+                              <Weight className="w-3.5 h-3.5 sm:w-4 sm:h-4 shrink-0" />
                               <span>{request.weight_kg} kg</span>
                             </div>
                           )}
                         </div>
-                        <div className="flex gap-2 pt-2">
+                        <div className="flex gap-2 pt-1 sm:pt-2">
                           <Button
                             size="sm"
                             variant="outline"
                             onClick={() => setSelectedRequest(request)}
+                            className="text-xs sm:text-sm h-8 sm:h-9"
                           >
-                            <Eye className="w-4 h-4 mr-1" />
-                            Detalhes
+                            <Eye className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
+                            <span className="hidden sm:inline">Detalhes</span>
+                            <span className="sm:hidden">Ver</span>
                           </Button>
                           <Button
                             size="sm"
-                            className="bg-gradient-primary"
+                            className="bg-gradient-primary text-xs sm:text-sm h-8 sm:h-9"
                             onClick={() => handleAccept(request.id)}
                             disabled={isProcessing}
                           >
-                            <CheckCircle className="w-4 h-4 mr-1" />
+                            <CheckCircle className="w-3.5 h-3.5 sm:w-4 sm:h-4 mr-1" />
                             Aceitar
                           </Button>
                         </div>
