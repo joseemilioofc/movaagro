@@ -52,8 +52,8 @@ const Index = () => {
               Conectando o <span className="text-gradient">Campo</span> ao seu <span className="text-gradient">Destino</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-10 max-w-2xl mx-auto px-2">
-              A MOVA simplifica o transporte de produtos agrícolas. Conectando cooperativas, agricultores 
-              e transportadoras a oportunidades de forma rápida e segura.
+              A MOVA Simplifica o Transporte de Produtos Agrícolas. Conectando Cooperativas, Agricultores 
+              e Transportadoras a Oportunidades de Forma Rápida e Segura.
             </p>
             <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 px-2">
               <Link to="/auth?tab=signup&role=cooperative" className="w-full sm:w-auto">
