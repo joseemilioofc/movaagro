@@ -12,6 +12,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { logAuditAction } from "@/hooks/useAuditLog";
 
 interface RatingDialogProps {
   open: boolean;
@@ -53,15 +54,28 @@ export const RatingDialog = ({
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Usuário não autenticado");
 
-      const { error } = await supabase.from("ratings" as any).insert({
+      const { data, error } = await supabase.from("ratings" as any).insert({
         transport_request_id: transportRequestId,
         reviewer_id: user.id,
         reviewed_id: reviewedId,
         rating,
         comment: comment.trim() || null,
-      } as any);
+      } as any).select().single();
 
       if (error) throw error;
+
+      // Log the rating
+      await logAuditAction({
+        action: "rate",
+        entityType: "rating",
+        entityId: (data as any)?.id,
+        details: {
+          transport_request_id: transportRequestId,
+          reviewed_id: reviewedId,
+          rating,
+          action_description: "Avaliação enviada",
+        },
+      });
 
       toast({
         title: "Avaliação enviada!",
