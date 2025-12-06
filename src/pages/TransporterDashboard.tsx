@@ -12,6 +12,7 @@ import { RatingDialog } from "@/components/RatingDialog";
 import { GPSTrackingMap } from "@/components/GPSTrackingMap";
 import { DigitalContract } from "@/components/DigitalContract";
 import { useContracts } from "@/hooks/useContracts";
+import { logAuditAction } from "@/hooks/useAuditLog";
 import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye, MessageSquare, Star, Navigation, FileText } from "lucide-react";
 
 interface TransportRequest {
@@ -132,6 +133,20 @@ const TransporterDashboard = () => {
 
       if (error) throw error;
 
+      // Log the accept action
+      await logAuditAction({
+        action: "accept",
+        entityType: "transport_request",
+        entityId: requestId,
+        details: {
+          title: requestData.title,
+          origin: requestData.origin_address,
+          destination: requestData.destination_address,
+          cooperative_id: requestData.cooperative_id,
+          action_description: "Pedido de transporte aceito",
+        },
+      });
+
       // Send email notification to cooperative
       try {
         await supabase.functions.invoke("send-transport-confirmation", {
@@ -183,6 +198,16 @@ const TransporterDashboard = () => {
         .eq("id", requestId);
 
       if (error) throw error;
+
+      // Log the reject action
+      await logAuditAction({
+        action: "reject",
+        entityType: "transport_request",
+        entityId: requestId,
+        details: {
+          action_description: "Pedido de transporte recusado",
+        },
+      });
 
       toast({
         title: "Pedido recusado",

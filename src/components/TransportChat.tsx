@@ -10,6 +10,7 @@ import { Send, Loader2, User, Shield } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ProposalCard } from "./ProposalCard";
 import { ProposalForm } from "./ProposalForm";
+import { logAuditAction } from "@/hooks/useAuditLog";
 
 interface ChatMessage {
   id: string;
@@ -197,13 +198,24 @@ export const TransportChat = ({ requestId, requestTitle }: TransportChatProps) =
 
     setSending(true);
     try {
-      const { error } = await supabase.from("chat_messages").insert({
+      const { data, error } = await supabase.from("chat_messages").insert({
         transport_request_id: requestId,
         sender_id: user.id,
         message: newMessage.trim(),
-      });
+      }).select().single();
 
       if (error) throw error;
+
+      // Log the message send
+      await logAuditAction({
+        action: "send_message",
+        entityType: "chat_message",
+        entityId: data?.id,
+        details: {
+          transport_request_id: requestId,
+          action_description: "Mensagem enviada no chat",
+        },
+      });
 
       setNewMessage("");
     } catch (error: any) {

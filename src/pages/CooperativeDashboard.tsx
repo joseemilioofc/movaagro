@@ -13,6 +13,7 @@ import { RatingDialog } from "@/components/RatingDialog";
 import { GPSTrackingMap } from "@/components/GPSTrackingMap";
 import { DigitalContract } from "@/components/DigitalContract";
 import { useContracts } from "@/hooks/useContracts";
+import { logAuditAction } from "@/hooks/useAuditLog";
 import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink, MessageSquare, Star, MapPin, FileText } from "lucide-react";
 
 interface TransportRequest {
@@ -107,7 +108,7 @@ const CooperativeDashboard = () => {
         formData.observations ? `Observações: ${formData.observations}` : "",
       ].filter(Boolean).join("\n");
 
-      const { error } = await supabase.from("transport_requests").insert({
+      const { data, error } = await supabase.from("transport_requests").insert({
         cooperative_id: user?.id,
         title: `${formData.productType} - ${formData.fullName}`,
         description,
@@ -117,9 +118,24 @@ const CooperativeDashboard = () => {
         weight_kg: formData.quantity ? parseFloat(formData.quantity.replace(/[^\d.]/g, "")) || null : null,
         pickup_date: formData.pickupDate,
         external_form_link: formData.externalFormLink || null,
-      });
+      }).select().single();
 
       if (error) throw error;
+
+      // Log the transport request creation
+      await logAuditAction({
+        action: "create",
+        entityType: "transport_request",
+        entityId: data?.id,
+        details: {
+          title: `${formData.productType} - ${formData.fullName}`,
+          origin: formData.pickupLocation,
+          destination: formData.deliveryLocation,
+          cargo_type: formData.productType,
+          pickup_date: formData.pickupDate,
+          action_description: "Novo pedido de transporte criado",
+        },
+      });
 
       // Send confirmation email to cooperative
       try {

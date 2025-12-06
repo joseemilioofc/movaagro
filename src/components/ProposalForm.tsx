@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Send, DollarSign } from "lucide-react";
+import { logAuditAction } from "@/hooks/useAuditLog";
 
 interface ProposalFormProps {
   requestId: string;
@@ -76,15 +77,27 @@ export const ProposalForm = ({ requestId, onProposalSent }: ProposalFormProps) =
 
     setSending(true);
     try {
-      const { error } = await supabase.from("transport_proposals").insert({
+      const { data, error } = await supabase.from("transport_proposals").insert({
         transport_request_id: requestId,
         transporter_id: user?.id,
         description: description.trim(),
         price: priceNumber,
         mova_account: "863343229 J*** P**** E*****",
-      });
+      }).select().single();
 
       if (error) throw error;
+
+      // Log the proposal submission
+      await logAuditAction({
+        action: "submit_proposal",
+        entityType: "transport_proposal",
+        entityId: data?.id,
+        details: {
+          transport_request_id: requestId,
+          price: priceNumber,
+          action_description: "Proposta de transporte enviada",
+        },
+      });
 
       // Send notification email
       await supabase.functions.invoke("send-transport-confirmation", {

@@ -16,6 +16,27 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Helper function to log audit actions
+const logAuditAction = async (
+  userId: string,
+  action: string,
+  entityType: string,
+  entityId?: string,
+  details?: Record<string, any>
+) => {
+  try {
+    await supabase.from("audit_logs").insert({
+      user_id: userId,
+      action,
+      entity_type: entityType,
+      entity_id: entityId || null,
+      details: details || null,
+    });
+  } catch (error) {
+    console.error("Error logging audit action:", error);
+  }
+};
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
@@ -67,7 +88,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signUp = async (email: string, password: string, name: string, role: AppRole) => {
     const redirectUrl = `${window.location.origin}/`;
     
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email,
       password,
       options: {
@@ -79,19 +100,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       },
     });
     
+    // Log signup action
+    if (!error && data.user) {
+      await logAuditAction(data.user.id, "create", "user", data.user.id, {
+        email,
+        name,
+        role,
+        action_description: "Novo usuário registrado",
+      });
+    }
+    
     return { error };
   };
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
+    
+    // Log login action
+    if (!error && data.user) {
+      await logAuditAction(data.user.id, "login", "user", data.user.id, {
+        email,
+        action_description: "Usuário fez login",
+      });
+    }
     
     return { error };
   };
 
   const signOut = async () => {
+    // Log logout action before signing out
+    if (user) {
+      await logAuditAction(user.id, "logout", "user", user.id, {
+        action_description: "Usuário fez logout",
+      });
+    }
+    
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);

@@ -110,6 +110,14 @@ const AuditLogs = () => {
       login: { label: "Login", variant: "outline" },
       logout: { label: "Logout", variant: "outline" },
       email_sent: { label: "Email Enviado", variant: "secondary" },
+      view: { label: "Visualização", variant: "outline" },
+      accept: { label: "Aceito", variant: "default" },
+      reject: { label: "Rejeitado", variant: "destructive" },
+      sign_contract: { label: "Contrato Assinado", variant: "default" },
+      send_message: { label: "Mensagem", variant: "secondary" },
+      submit_proposal: { label: "Proposta", variant: "default" },
+      complete_transport: { label: "Transporte Concluído", variant: "default" },
+      rate: { label: "Avaliação", variant: "secondary" },
     };
     const actionConfig = config[action] || { label: action, variant: "outline" };
     return <Badge variant={actionConfig.variant}>{actionConfig.label}</Badge>;
@@ -122,6 +130,9 @@ const AuditLogs = () => {
       transport_proposal: "Proposta",
       profile: "Perfil",
       kpi_settings: "Config. KPI",
+      digital_contract: "Contrato",
+      chat_message: "Mensagem",
+      rating: "Avaliação",
     };
     return labels[entityType] || entityType;
   };
