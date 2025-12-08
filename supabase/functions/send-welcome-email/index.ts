@@ -1,5 +1,6 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { Resend } from "https://esm.sh/resend@2.0.0";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
 
@@ -12,13 +13,19 @@ interface WelcomeEmailRequest {
   email: string;
   name: string;
   role: string;
-  password: string;
 }
 
 const roleLabels: Record<string, string> = {
   admin: "Administrador",
   cooperative: "Cooperativa",
   transporter: "Transportadora",
+};
+
+// Mask email for logging (e.g., j***@example.com)
+const maskEmail = (email: string): string => {
+  const [local, domain] = email.split('@');
+  if (!local || !domain) return '***@***.***';
+  return `${local[0]}***@${domain}`;
 };
 
 const handler = async (req: Request): Promise<Response> => {
@@ -29,12 +36,36 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { email, name, role, password }: WelcomeEmailRequest = await req.json();
+    const { email, name, role }: WelcomeEmailRequest = await req.json();
 
-    console.log(`Sending welcome email to ${email} for role ${role}`);
+    // Log with masked email for security
+    console.log(`Processing welcome email for role ${role} to ${maskEmail(email)}`);
 
     const roleLabel = roleLabels[role] || role;
-    const loginUrl = `${req.headers.get("origin") || "https://movaagro.com"}/auth`;
+    const origin = req.headers.get("origin") || "https://movaagro.com";
+    
+    // Generate password reset link instead of sending plain password
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+
+    // Generate a secure password reset link
+    const { data: resetData, error: resetError } = await supabaseAdmin.auth.admin.generateLink({
+      type: 'recovery',
+      email: email,
+      options: {
+        redirectTo: `${origin}/reset-password`
+      }
+    });
+
+    if (resetError) {
+      console.error("Error generating reset link:", resetError.message);
+      throw new Error("Erro ao gerar link de recuperação");
+    }
+
+    const resetLink = resetData?.properties?.action_link || `${origin}/auth`;
 
     const emailResponse = await resend.emails.send({
       from: "MovaAgro <onboarding@resend.dev>",
@@ -50,9 +81,10 @@ const handler = async (req: Request): Promise<Response> => {
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
             .header { background: linear-gradient(135deg, #225243, #2d6a54); color: white; padding: 30px; text-align: center; border-radius: 10px 10px 0 0; }
             .content { background: #f9f9f9; padding: 30px; border-radius: 0 0 10px 10px; }
-            .credentials { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #225243; }
+            .info-box { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #225243; }
             .button { display: inline-block; background: #225243; color: white; padding: 12px 30px; text-decoration: none; border-radius: 6px; margin-top: 20px; }
             .footer { text-align: center; margin-top: 20px; color: #666; font-size: 12px; }
+            .warning { background: #fff3cd; border-left: 4px solid #ffc107; padding: 15px; margin: 20px 0; border-radius: 4px; }
           </style>
         </head>
         <body>
@@ -65,19 +97,24 @@ const handler = async (req: Request): Promise<Response> => {
               <h2>Olá, ${name}!</h2>
               <p>Sua conta de <strong>${roleLabel}</strong> foi criada com sucesso na plataforma MovaAgro.</p>
               
-              <div class="credentials">
+              <div class="info-box">
                 <h3>📧 Suas Credenciais de Acesso:</h3>
                 <p><strong>Email:</strong> ${email}</p>
-                <p><strong>Senha:</strong> ${password}</p>
               </div>
               
-              <p>⚠️ <strong>Importante:</strong> Recomendamos que altere sua senha após o primeiro acesso.</p>
+              <div class="warning">
+                <p>⚠️ <strong>Importante:</strong> Para sua segurança, clique no botão abaixo para definir sua senha de acesso.</p>
+              </div>
               
-              <p>Acesse a plataforma para começar a utilizar nossos serviços:</p>
+              <p style="text-align: center;">
+                <a href="${resetLink}" class="button">Definir Minha Senha</a>
+              </p>
               
-              <a href="${loginUrl}" class="button">Acessar Plataforma</a>
+              <p style="margin-top: 30px; font-size: 14px; color: #666;">
+                Este link é válido por 24 horas. Se expirar, você pode solicitar um novo link na página de login.
+              </p>
               
-              <p style="margin-top: 30px;">Se você não solicitou esta conta, por favor entre em contato conosco.</p>
+              <p style="margin-top: 20px;">Se você não solicitou esta conta, por favor ignore este email.</p>
             </div>
             <div class="footer">
               <p>© ${new Date().getFullYear()} MovaAgro - Todos os direitos reservados</p>
@@ -89,14 +126,14 @@ const handler = async (req: Request): Promise<Response> => {
       `,
     });
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log("Email sent successfully");
 
     return new Response(JSON.stringify({ success: true, ...emailResponse }), {
       status: 200,
       headers: { "Content-Type": "application/json", ...corsHeaders },
     });
   } catch (error: any) {
-    console.error("Error sending welcome email:", error);
+    console.error("Error sending welcome email:", error.message);
     return new Response(
       JSON.stringify({ error: error.message }),
       { status: 500, headers: { "Content-Type": "application/json", ...corsHeaders } }

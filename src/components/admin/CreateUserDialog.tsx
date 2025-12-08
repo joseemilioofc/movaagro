@@ -106,7 +106,7 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
         }
       }
 
-      // Send welcome email if enabled
+      // Send welcome email if enabled (password reset link, not plain password)
       if (sendWelcomeEmail) {
         try {
           await supabase.functions.invoke("send-welcome-email", {
@@ -114,7 +114,6 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
               email: formData.email,
               name: formData.name,
               role: formData.role,
-              password: formData.password,
             },
           });
         } catch (emailError) {
@@ -254,7 +253,7 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
               />
               <Label htmlFor="sendEmail" className="flex items-center gap-2 text-sm font-normal cursor-pointer">
                 <Mail className="w-4 h-4" />
-                Enviar email de boas-vindas com credenciais
+                Enviar email de boas-vindas com link para definir senha
               </Label>
             </div>
           </div>
