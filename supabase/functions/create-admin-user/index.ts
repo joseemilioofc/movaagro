@@ -6,6 +6,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Mask email for logging (e.g., j***@example.com)
+const maskEmail = (email: string): string => {
+  const [local, domain] = email.split('@');
+  if (!local || !domain) return '***@***.***';
+  return `${local[0]}***@${domain}`;
+};
+
 serve(async (req) => {
   console.log("create-admin-user function called");
   
@@ -15,7 +22,8 @@ serve(async (req) => {
 
   try {
     const { email, password, name } = await req.json();
-    console.log("Creating admin user:", email);
+    // Log with masked email for security
+    console.log("Creating admin user:", maskEmail(email));
 
     // Verify that the caller is authenticated and is an admin
     const authHeader = req.headers.get("Authorization");
@@ -35,7 +43,7 @@ serve(async (req) => {
     const { data: { user: callerUser }, error: authError } = await supabaseAdmin.auth.getUser(token);
     
     if (authError || !callerUser) {
-      console.error("Auth error:", authError);
+      console.error("Authentication failed");
       throw new Error("Não autorizado");
     }
 
@@ -48,7 +56,7 @@ serve(async (req) => {
       .single();
 
     if (roleError || !roleData) {
-      console.error("Caller is not admin:", roleError);
+      console.error("Caller is not admin");
       throw new Error("Apenas administradores podem criar outros administradores");
     }
 
@@ -61,18 +69,18 @@ serve(async (req) => {
     });
 
     if (createError) {
-      console.error("Error creating user:", createError);
+      console.error("Error creating user:", createError.message);
       throw createError;
     }
 
-    console.log("Admin user created successfully:", userData.user?.id);
+    console.log("Admin user created successfully");
 
     return new Response(
       JSON.stringify({ success: true, user: userData.user }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
     );
   } catch (error: any) {
-    console.error("Error in create-admin-user:", error);
+    console.error("Error in create-admin-user:", error.message);
     return new Response(
       JSON.stringify({ error: error.message }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 400 }

@@ -1,7 +1,7 @@
 project_id = "xnrckjigfltaaanzfzml"
 
 [functions.send-transport-confirmation]
-verify_jwt = false
+verify_jwt = true
 
 [functions.create-admin-user]
-verify_jwt = false
+verify_jwt = true
