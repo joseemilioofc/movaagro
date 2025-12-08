@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Truck, Wheat, Shield, ArrowLeft, Loader2 } from "lucide-react";
+import { Truck, Wheat, Shield, ArrowLeft, Loader2, Chrome } from "lucide-react";
 import { z } from "zod";
 import { Footer } from "@/components/Footer";
 import { PasswordInput } from "@/components/PasswordInput";
@@ -134,6 +135,39 @@ const Auth = () => {
           variant: "destructive",
         });
       }
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleGoogleLogin = async () => {
+    setIsSubmitting(true);
+    
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth`,
+          queryParams: {
+            access_type: 'offline',
+            prompt: 'consent',
+          },
+        },
+      });
+
+      if (error) {
+        toast({
+          title: "Erro ao entrar com Google",
+          description: error.message,
+          variant: "destructive",
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: "Erro ao entrar com Google",
+        description: "Ocorreu um erro inesperado. Tente novamente.",
+        variant: "destructive",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -363,6 +397,24 @@ const Auth = () => {
                       >
                         Esqueceu sua senha?
                       </button>
+
+                      <div className="relative my-4">
+                        <Separator />
+                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+                          ou continue com
+                        </span>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={handleGoogleLogin}
+                        disabled={isSubmitting}
+                      >
+                        <Chrome className="w-4 h-4 mr-2" />
+                        Entrar com Google
+                      </Button>
                     </form>
                   </TabsContent>
 
@@ -446,6 +498,24 @@ const Auth = () => {
                       <Button type="submit" className="w-full bg-gradient-primary" disabled={isSubmitting}>
                         {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                         Criar Conta
+                      </Button>
+
+                      <div className="relative my-4">
+                        <Separator />
+                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
+                          ou continue com
+                        </span>
+                      </div>
+
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full"
+                        onClick={handleGoogleLogin}
+                        disabled={isSubmitting}
+                      >
+                        <Chrome className="w-4 h-4 mr-2" />
+                        Cadastrar com Google
                       </Button>
                     </form>
                   </TabsContent>
