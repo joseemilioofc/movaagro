@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { Settings, Loader2, Bell, History, Target, Mail, RefreshCw } from "lucide-react";
+import { Settings, Loader2, Bell, History, Target, Mail, RefreshCw, UserPlus } from "lucide-react";
 import { format } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { KPIGoalsSettings } from "@/components/admin/KPIGoalsSettings";
@@ -55,6 +55,7 @@ const AdminSettings = () => {
   const [goals, setGoals] = useState<KPIGoal[]>([]);
   const [alerts, setAlerts] = useState<KPIAlert[]>([]);
   const [sendingTestAlert, setSendingTestAlert] = useState(false);
+  const [creatingDemoUser, setCreatingDemoUser] = useState(false);
 
   useEffect(() => {
     if (!authLoading && (!user || role !== "admin")) {
@@ -145,6 +146,37 @@ const AdminSettings = () => {
     }
   };
 
+  const createDemoUser = async () => {
+    setCreatingDemoUser(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("create-demo-user", {
+        body: {},
+      });
+
+      if (error) throw error;
+
+      toast({
+        title: "Conta Demo Criada!",
+        description: (
+          <div className="space-y-2">
+            <p><strong>Email:</strong> Teste@demo.com</p>
+            <p><strong>Senha:</strong> 123teste123</p>
+            <p><strong>Papéis:</strong> Admin, Cooperativa, Transportadora</p>
+          </div>
+        ),
+      });
+    } catch (error: any) {
+      console.error("Error creating demo user:", error);
+      toast({
+        title: "Erro ao criar conta demo",
+        description: error.message,
+        variant: "destructive",
+      });
+    } finally {
+      setCreatingDemoUser(false);
+    }
+  };
+
   if (authLoading || loading) {
     return (
       <DashboardLayout>
@@ -182,6 +214,10 @@ const AdminSettings = () => {
             <TabsTrigger value="history" className="flex items-center gap-2">
               <History className="w-4 h-4" />
               Histórico
+            </TabsTrigger>
+            <TabsTrigger value="demo" className="flex items-center gap-2">
+              <UserPlus className="w-4 h-4" />
+              Demo
             </TabsTrigger>
           </TabsList>
 
@@ -265,6 +301,55 @@ const AdminSettings = () => {
                     ))}
                   </TableBody>
                 </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Demo Tab */}
+          <TabsContent value="demo" className="space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Conta Demo</CardTitle>
+                <CardDescription>
+                  Crie uma conta demo para testar todas as funcionalidades do sistema
+                </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                <div className="p-4 bg-muted/30 rounded-lg space-y-3">
+                  <h3 className="font-medium">Credenciais da Conta Demo</h3>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <span className="text-muted-foreground">Email:</span>
+                    <span className="font-mono">Teste@demo.com</span>
+                    <span className="text-muted-foreground">Senha:</span>
+                    <span className="font-mono">123teste123</span>
+                    <span className="text-muted-foreground">Papéis:</span>
+                    <div className="flex gap-1 flex-wrap">
+                      <Badge variant="default">Admin</Badge>
+                      <Badge variant="secondary">Cooperativa</Badge>
+                      <Badge variant="outline">Transportadora</Badge>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="p-4 bg-amber-500/10 border border-amber-500/20 rounded-lg">
+                  <p className="text-sm text-amber-600 dark:text-amber-400">
+                    <strong>Atenção:</strong> Esta conta tem acesso a todos os papéis do sistema. 
+                    Use apenas para testes. Se a conta já existir, será recriada.
+                  </p>
+                </div>
+
+                <Button 
+                  onClick={createDemoUser} 
+                  disabled={creatingDemoUser}
+                  className="w-full"
+                >
+                  {creatingDemoUser ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <UserPlus className="w-4 h-4 mr-2" />
+                  )}
+                  Criar Conta Demo
+                </Button>
               </CardContent>
             </Card>
           </TabsContent>
