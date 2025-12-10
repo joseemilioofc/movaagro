@@ -427,12 +427,31 @@ const Auth = () => {
                         type="button"
                         variant="secondary"
                         className="w-full"
-                        onClick={() => {
-                          setLoginForm({ email: "teste@demo.com", password: "123teste123" });
+                        onClick={async () => {
+                          setIsSubmitting(true);
+                          try {
+                            const { error } = await signIn("teste@demo.com", "123teste123");
+                            if (error) {
+                              toast({
+                                title: "Erro ao entrar com conta demo",
+                                description: error.message === "Invalid login credentials" 
+                                  ? "Credenciais de demo inválidas. Contacte o suporte." 
+                                  : error.message,
+                                variant: "destructive",
+                              });
+                            } else {
+                              toast({
+                                title: "Bem-vindo!",
+                                description: "Login demo realizado com sucesso.",
+                              });
+                            }
+                          } finally {
+                            setIsSubmitting(false);
+                          }
                         }}
                         disabled={isSubmitting}
                       >
-                        <UserCircle className="w-4 h-4 mr-2" />
+                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <UserCircle className="w-4 h-4 mr-2" />}
                         Login Demo
                       </Button>
                     </form>

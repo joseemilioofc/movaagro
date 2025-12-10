@@ -22,6 +22,11 @@ const Index = () => {
             <span className="text-xl sm:text-2xl font-display font-bold text-foreground">MOVA</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/pricing">
+              <Button variant="ghost" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4">
+                Preços
+              </Button>
+            </Link>
             <Link to="/auth">
               <Button variant="outline" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4 border-2">
                 Entrar
@@ -189,31 +194,31 @@ const Index = () => {
                 <TableCell className="font-medium">Milho</TableCell>
                 <TableCell>30</TableCell>
                 <TableCell>100 - 200</TableCell>
-                <TableCell className="text-right text-primary font-semibold">R$ 3.500 - R$ 5.000</TableCell>
+                <TableCell className="text-right text-primary font-semibold">7.500 - 15.000 MZN</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Soja</TableCell>
                 <TableCell>28</TableCell>
                 <TableCell>200 - 400</TableCell>
-                <TableCell className="text-right text-primary font-semibold">R$ 5.500 - R$ 8.000</TableCell>
+                <TableCell className="text-right text-primary font-semibold">15.680 - 31.360 MZN</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Trigo</TableCell>
                 <TableCell>25</TableCell>
                 <TableCell>150 - 300</TableCell>
-                <TableCell className="text-right text-primary font-semibold">R$ 4.000 - R$ 6.500</TableCell>
+                <TableCell className="text-right text-primary font-semibold">9.750 - 19.500 MZN</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Café</TableCell>
                 <TableCell>20</TableCell>
                 <TableCell>100 - 250</TableCell>
-                <TableCell className="text-right text-primary font-semibold">R$ 4.500 - R$ 7.000</TableCell>
+                <TableCell className="text-right text-primary font-semibold">7.000 - 17.500 MZN</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Açúcar</TableCell>
                 <TableCell>32</TableCell>
                 <TableCell>300 - 500</TableCell>
-                <TableCell className="text-right text-primary font-semibold">R$ 7.000 - R$ 10.000</TableCell>
+                <TableCell className="text-right text-primary font-semibold">23.040 - 38.400 MZN</TableCell>
               </TableRow>
             </TableBody>
           </Table>
