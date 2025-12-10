@@ -63,12 +63,12 @@ serve(async (req) => {
       console.log("Existing demo user deleted");
     }
 
-    // Create demo user
+    // Create demo user with cooperative role (trigger will create this)
     const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
       email: demoEmail,
       password: demoPassword,
       email_confirm: true,
-      user_metadata: { name: demoName, role: "admin" },
+      user_metadata: { name: demoName, role: "cooperative" },
     });
 
     if (createError) {
@@ -78,31 +78,27 @@ serve(async (req) => {
 
     const userId = userData.user.id;
 
-    // The trigger will create profile and one role, we need to add the other two roles
+    // The trigger will create profile and cooperative role, we need to add transporter role
     // Wait a bit for trigger to execute
     await new Promise(resolve => setTimeout(resolve, 500));
 
-    // Add all three roles (admin is already added by trigger)
-    const rolesToAdd = ["cooperative", "transporter"];
-    
-    for (const role of rolesToAdd) {
-      const { error: roleInsertError } = await supabaseAdmin
-        .from("user_roles")
-        .upsert({ 
-          user_id: userId, 
-          role: role 
-        }, { 
-          onConflict: "user_id,role" 
-        });
+    // Add transporter role (cooperative is already added by trigger)
+    const { error: roleInsertError } = await supabaseAdmin
+      .from("user_roles")
+      .upsert({ 
+        user_id: userId, 
+        role: "transporter" 
+      }, { 
+        onConflict: "user_id,role" 
+      });
 
-      if (roleInsertError) {
-        console.error(`Error adding ${role} role:`, roleInsertError.message);
-      } else {
-        console.log(`${role} role added successfully`);
-      }
+    if (roleInsertError) {
+      console.error("Error adding transporter role:", roleInsertError.message);
+    } else {
+      console.log("transporter role added successfully");
     }
 
-    console.log("Demo user created successfully with all roles");
+    console.log("Demo user created successfully with cooperative and transporter roles");
 
     return new Response(
       JSON.stringify({ 
@@ -111,7 +107,7 @@ serve(async (req) => {
         credentials: {
           email: demoEmail,
           password: "********", // Don't expose password in response
-          roles: ["admin", "cooperative", "transporter"]
+          roles: ["cooperative", "transporter"]
         }
       }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 }
