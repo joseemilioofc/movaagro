@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Truck, Wheat, Shield, ArrowRight, UserCircle, DollarSign, Settings, CheckCircle } from "lucide-react";
+import { Truck, Wheat, Shield, ArrowRight, UserCircle, DollarSign, Settings, CheckCircle, ChevronDown, Package, HelpCircle } from "lucide-react";
 import { Footer } from "@/components/Footer";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import wheatFieldHero from "@/assets/wheat-field-hero.jpg";
 import cornHarvest from "@/assets/corn-harvest.jpg";
 import truckCabinView from "@/assets/truck-cabin-view.jpg";
@@ -11,7 +13,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="container mx-auto px-3 sm:px-4 py-4 sm:py-6">
+      <header className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <nav className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
@@ -21,12 +23,13 @@ const Index = () => {
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
             <Link to="/auth">
-              <Button variant="ghost" size="sm" className="font-medium text-sm sm:text-base px-2 sm:px-4">Entrar</Button>
+              <Button variant="outline" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4 border-2">
+                Entrar
+              </Button>
             </Link>
             <Link to="/auth?tab=signup">
               <Button size="sm" className="bg-gradient-primary text-primary-foreground font-medium shadow-glow text-sm sm:text-base px-3 sm:px-4">
-                <span className="hidden sm:inline">Começar Agora</span>
-                <span className="sm:hidden">Começar</span>
+                Cadastrar
               </Button>
             </Link>
           </div>
@@ -52,20 +55,20 @@ const Index = () => {
               Conectando o <span className="text-gradient">Campo</span> ao seu <span className="text-gradient">Destino</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-10 max-w-2xl mx-auto px-2">
-              A MOVA Simplifica o Transporte de Produtos Agrícolas. Conectando Cooperativas, Agricultores 
+              A MOVA Simplifica o Transporte de Produtos Agrícolas. Conectando Cooperativas
               e Transportadoras a Oportunidades de Forma Rápida e Segura.
             </p>
             <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 px-2">
               <Link to="/auth?tab=signup&role=cooperative" className="w-full sm:w-auto">
                 <Button size="lg" className="w-full sm:w-auto bg-gradient-primary text-primary-foreground font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg shadow-glow">
                   <Wheat className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Sou Cooperativa/Agricultor
+                  Sou Cooperativa
                 </Button>
               </Link>
               <Link to="/auth?tab=signup&role=transporter" className="w-full sm:w-auto">
                 <Button size="lg" variant="outline" className="w-full sm:w-auto font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg border-2 bg-background/80 backdrop-blur-sm">
-                  <Truck className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Sou Transportadora
+                  <Package className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Procuro Carga
                 </Button>
               </Link>
             </div>
@@ -86,13 +89,13 @@ const Index = () => {
             step={1}
             icon={<UserCircle className="w-12 h-12" />}
             title="Cadastre-se"
-            description="Escolha seu perfil, agricultor ou transportadora, e crie sua conta em minutos."
+            description="Escolha seu perfil, cooperativa ou transportadora, e crie sua conta em minutos."
           />
           <StepCard
             step={2}
             icon={<Truck className="w-12 h-12" />}
             title="Crie ou Encontre um Frete"
-            description="Agricultores publicam suas necessidades de transporte. Transportadoras encontram as melhores ofertas."
+            description="Cooperativas publicam suas necessidades de transporte. Transportadoras encontram as melhores ofertas."
           />
           <StepCard
             step={3}
@@ -124,7 +127,7 @@ const Index = () => {
             <div className="p-5 sm:p-8">
               <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
                 <Wheat className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                Para Cooperativas e Agricultores
+                Para Cooperativas
               </h3>
               <ul className="space-y-2 sm:space-y-3">
                 <AdvantageItem text="Alcance novos mercados." />
@@ -146,8 +149,8 @@ const Index = () => {
             </div>
             <div className="p-5 sm:p-8">
               <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
-                <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                Para Transportadoras
+                <Package className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                Para Quem Procura Carga
               </h3>
               <ul className="space-y-2 sm:space-y-3">
                 <AdvantageItem text="Acesso a novas oportunidades de frete." />
@@ -156,6 +159,68 @@ const Index = () => {
                 <AdvantageItem text="Pagamentos seguros e pontuais." />
               </ul>
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Price Table Section */}
+      <section className="container mx-auto px-3 sm:px-4 py-12 sm:py-20 bg-muted/30">
+        <div className="text-center mb-8 sm:mb-16">
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+            Tabela de Preços Simulada
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Os valores abaixo são estimativas para referência. O preço final é negociado entre as partes.
+          </p>
+        </div>
+
+        <div className="max-w-4xl mx-auto bg-card rounded-xl sm:rounded-2xl shadow-lg border border-border overflow-hidden">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-muted/50">
+                <TableHead className="font-bold text-foreground">Tipo de Carga</TableHead>
+                <TableHead className="font-bold text-foreground">Peso (ton)</TableHead>
+                <TableHead className="font-bold text-foreground">Distância (km)</TableHead>
+                <TableHead className="font-bold text-foreground text-right">Preço Estimado</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              <TableRow>
+                <TableCell className="font-medium">Milho</TableCell>
+                <TableCell>30</TableCell>
+                <TableCell>100 - 200</TableCell>
+                <TableCell className="text-right text-primary font-semibold">R$ 3.500 - R$ 5.000</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Soja</TableCell>
+                <TableCell>28</TableCell>
+                <TableCell>200 - 400</TableCell>
+                <TableCell className="text-right text-primary font-semibold">R$ 5.500 - R$ 8.000</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Trigo</TableCell>
+                <TableCell>25</TableCell>
+                <TableCell>150 - 300</TableCell>
+                <TableCell className="text-right text-primary font-semibold">R$ 4.000 - R$ 6.500</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Café</TableCell>
+                <TableCell>20</TableCell>
+                <TableCell>100 - 250</TableCell>
+                <TableCell className="text-right text-primary font-semibold">R$ 4.500 - R$ 7.000</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="font-medium">Açúcar</TableCell>
+                <TableCell>32</TableCell>
+                <TableCell>300 - 500</TableCell>
+                <TableCell className="text-right text-primary font-semibold">R$ 7.000 - R$ 10.000</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+          <div className="p-4 bg-muted/30 border-t border-border">
+            <p className="text-xs sm:text-sm text-muted-foreground text-center">
+              * Valores sujeitos a variação conforme disponibilidade, urgência e condições da rota.
+            </p>
           </div>
         </div>
       </section>
@@ -205,6 +270,89 @@ const Index = () => {
         </div>
       </section>
 
+      {/* FAQ Section */}
+      <section className="container mx-auto px-3 sm:px-4 py-12 sm:py-20 bg-muted/30">
+        <div className="text-center mb-8 sm:mb-16">
+          <div className="flex items-center justify-center gap-2 mb-4">
+            <HelpCircle className="w-8 h-8 text-primary" />
+          </div>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-foreground mb-4">
+            Perguntas Frequentes
+          </h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto">
+            Tire suas dúvidas sobre o funcionamento da MOVA
+          </p>
+        </div>
+
+        <div className="max-w-3xl mx-auto">
+          <Accordion type="single" collapsible className="space-y-4">
+            <AccordionItem value="item-1" className="bg-card rounded-xl border border-border px-4 sm:px-6">
+              <AccordionTrigger className="text-left font-medium text-sm sm:text-base">
+                O que é a MOVA?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-sm sm:text-base">
+                A MOVA é uma plataforma digital que conecta cooperativas agrícolas a transportadoras de forma rápida e segura. 
+                Nosso objetivo é simplificar a logística do agronegócio, reduzindo custos e tempo de espera para encontrar fretes.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-2" className="bg-card rounded-xl border border-border px-4 sm:px-6">
+              <AccordionTrigger className="text-left font-medium text-sm sm:text-base">
+                Como funciona o cadastro na plataforma?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-sm sm:text-base">
+                O cadastro é simples e gratuito. Basta escolher seu perfil (cooperativa ou transportadora), 
+                preencher seus dados básicos e começar a usar. Cooperativas podem publicar pedidos de transporte 
+                e transportadoras podem visualizar e aceitar as ofertas disponíveis.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-3" className="bg-card rounded-xl border border-border px-4 sm:px-6">
+              <AccordionTrigger className="text-left font-medium text-sm sm:text-base">
+                Quanto custa usar a MOVA?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-sm sm:text-base">
+                O cadastro e uso básico da plataforma são gratuitos. Cobramos apenas uma pequena taxa de intermediação 
+                quando um frete é confirmado e concluído com sucesso. Isso garante que você só paga quando obtém resultados.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-4" className="bg-card rounded-xl border border-border px-4 sm:px-6">
+              <AccordionTrigger className="text-left font-medium text-sm sm:text-base">
+                Como é garantida a segurança das transações?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-sm sm:text-base">
+                Todos os usuários passam por verificação de cadastro. Além disso, mantemos um histórico completo 
+                de todas as transações, sistema de avaliações entre usuários e suporte dedicado para resolver 
+                qualquer problema que possa surgir.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-5" className="bg-card rounded-xl border border-border px-4 sm:px-6">
+              <AccordionTrigger className="text-left font-medium text-sm sm:text-base">
+                Posso acompanhar minha carga em tempo real?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-sm sm:text-base">
+                Sim! A MOVA oferece rastreamento GPS em tempo real para todas as cargas em trânsito. 
+                Você pode acompanhar a localização do veículo, tempo estimado de chegada e receber 
+                notificações sobre o status da entrega.
+              </AccordionContent>
+            </AccordionItem>
+
+            <AccordionItem value="item-6" className="bg-card rounded-xl border border-border px-4 sm:px-6">
+              <AccordionTrigger className="text-left font-medium text-sm sm:text-base">
+                Quais tipos de carga posso transportar pela MOVA?
+              </AccordionTrigger>
+              <AccordionContent className="text-muted-foreground text-sm sm:text-base">
+                A MOVA é especializada em produtos agrícolas como grãos (soja, milho, trigo), café, açúcar, 
+                fertilizantes e outros insumos agrícolas. Nossa plataforma conecta você com transportadoras 
+                especializadas nesse tipo de carga.
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </section>
+
       {/* CTA Section */}
       <section className="container mx-auto px-3 sm:px-4 py-12 sm:py-20">
         <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden">
@@ -219,14 +367,22 @@ const Index = () => {
               Pronto para começar?
             </h2>
             <p className="text-primary-foreground/80 text-base sm:text-lg mb-6 sm:mb-8 max-w-xl mx-auto">
-              Cadastre-se gratuitamente e comece a usar o Serviço MOVA hoje mesmo.
+              Cadastre-se e comece a usar o Serviço MOVA hoje mesmo.
             </p>
-            <Link to="/auth?tab=signup">
-              <Button size="lg" variant="secondary" className="font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg">
-                Criar Conta Grátis
-                <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-              </Button>
-            </Link>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+              <Link to="/auth?tab=signup&role=cooperative">
+                <Button size="lg" variant="secondary" className="font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg w-full sm:w-auto">
+                  <Wheat className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Sou Cooperativa
+                </Button>
+              </Link>
+              <Link to="/auth?tab=signup&role=transporter">
+                <Button size="lg" variant="outline" className="font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/20 w-full sm:w-auto">
+                  <Package className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Procuro Carga
+                </Button>
+              </Link>
+            </div>
           </div>
         </div>
       </section>
