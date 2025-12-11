@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Truck, Wheat, Shield, ArrowLeft, Loader2, Chrome, UserCircle, Package } from "lucide-react";
+import { Truck, Wheat, Shield, ArrowLeft, Loader2, Chrome, Package } from "lucide-react";
 import { z } from "zod";
 import { Footer } from "@/components/Footer";
 import { PasswordInput } from "@/components/PasswordInput";
@@ -62,10 +62,8 @@ const Auth = () => {
     if (user && role && !authLoading) {
       if (role === "admin") {
         navigate("/admin");
-      } else if (role === "cooperative") {
-        navigate("/cooperative");
-      } else if (role === "transporter") {
-        navigate("/transporter");
+      } else {
+        navigate("/home");
       }
     }
   }, [user, role, authLoading, navigate]);
@@ -414,45 +412,6 @@ const Auth = () => {
                       >
                         <Chrome className="w-4 h-4 mr-2" />
                         Entrar com Google
-                      </Button>
-
-                      <div className="relative my-4">
-                        <Separator />
-                        <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-card px-2 text-xs text-muted-foreground">
-                          teste rápido
-                        </span>
-                      </div>
-
-                      <Button
-                        type="button"
-                        variant="secondary"
-                        className="w-full"
-                        onClick={async () => {
-                          setIsSubmitting(true);
-                          try {
-                            const { error } = await signIn("teste@demo.com", "123teste123");
-                            if (error) {
-                              toast({
-                                title: "Erro ao entrar com conta demo",
-                                description: error.message === "Invalid login credentials" 
-                                  ? "Credenciais de demo inválidas. Contacte o suporte." 
-                                  : error.message,
-                                variant: "destructive",
-                              });
-                            } else {
-                              toast({
-                                title: "Bem-vindo!",
-                                description: "Login demo realizado com sucesso.",
-                              });
-                            }
-                          } finally {
-                            setIsSubmitting(false);
-                          }
-                        }}
-                        disabled={isSubmitting}
-                      >
-                        {isSubmitting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <UserCircle className="w-4 h-4 mr-2" />}
-                        Login Demo
                       </Button>
                     </form>
                   </TabsContent>
