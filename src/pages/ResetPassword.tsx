@@ -9,6 +9,7 @@ import { ArrowLeft, Loader2, Lock, CheckCircle } from "lucide-react";
 import { z } from "zod";
 import { Footer } from "@/components/Footer";
 import { PasswordInput } from "@/components/PasswordInput";
+import { PasswordStrengthIndicator } from "@/components/PasswordStrengthIndicator";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -240,6 +241,7 @@ const ResetPassword = () => {
                     onChange={(value) => setForm({ ...form, password: value })}
                     required
                   />
+                  <PasswordStrengthIndicator password={form.password} />
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="confirmPassword">Confirmar senha</Label>

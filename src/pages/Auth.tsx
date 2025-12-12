@@ -14,6 +14,7 @@ import { Truck, Wheat, Shield, ArrowLeft, Loader2, Chrome, Package } from "lucid
 import { z } from "zod";
 import { Footer } from "@/components/Footer";
 import { PasswordInput } from "@/components/PasswordInput";
+import { PasswordStrengthIndicator } from "@/components/PasswordStrengthIndicator";
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]{8,}$/;
 
@@ -447,9 +448,7 @@ const Auth = () => {
                           onChange={(value) => setSignupForm({ ...signupForm, password: value })}
                           required
                         />
-                        <p className="text-xs text-muted-foreground">
-                          Mínimo 8 caracteres, com maiúscula e minúscula
-                        </p>
+                        <PasswordStrengthIndicator password={signupForm.password} />
                       </div>
                       <div className="space-y-2">
                         <Label htmlFor="signup-confirm-password">Confirmar Senha</Label>
