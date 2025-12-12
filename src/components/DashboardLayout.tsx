@@ -6,6 +6,7 @@ import { Truck, LogOut, Home, Package, Shield, ScrollText, Settings, User, FileT
 import { Footer } from "@/components/Footer";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -138,6 +139,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
       {/* Main Content */}
       <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 flex-1 pb-20 md:pb-8">
+        <Breadcrumbs />
         {children}
       </main>
 
