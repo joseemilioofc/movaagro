@@ -82,7 +82,7 @@ export const ProposalForm = ({ requestId, onProposalSent }: ProposalFormProps) =
         transporter_id: user?.id,
         description: description.trim(),
         price: priceNumber,
-        mova_account: "863343229 J*** P**** E*****",
+        mova_account: "+258 87 780 1500 MOVA AGRO",
       }).select().single();
 
       if (error) throw error;
