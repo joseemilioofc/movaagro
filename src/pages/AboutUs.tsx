@@ -20,13 +20,13 @@ const teamMembers: TeamMember[] = [
     isFounder: true,
   },
   {
-    name: "Junior Alexandre Pedro",
+    name: "Junior Pedro",
     role: "Gestão de Dados",
     description: "Especialista em gestão de dados.",
     icon: <Database className="w-12 h-12" />,
   },
   {
-    name: "Aldo Calisto Mundulai",
+    name: "Aldo Mundulai",
     role: "Agricultura",
     description: "Agricultor.",
     icon: <Leaf className="w-12 h-12" />,
