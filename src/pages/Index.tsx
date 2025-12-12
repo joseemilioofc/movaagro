@@ -22,6 +22,11 @@ const Index = () => {
             <span className="text-xl sm:text-2xl font-display font-bold text-foreground">MOVA</span>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">
+            <Link to="/about">
+              <Button variant="ghost" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4">
+                Sobre Nós
+              </Button>
+            </Link>
             <Link to="/pricing">
               <Button variant="ghost" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4">
                 Preços

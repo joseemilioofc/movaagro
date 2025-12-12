@@ -23,6 +23,7 @@ import Security from "./pages/Security";
 import Contracts from "./pages/Contracts";
 import Install from "./pages/Install";
 import Ranking from "./pages/Ranking";
+import AboutUs from "./pages/AboutUs";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => (
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/security" element={<Security />} />
+            <Route path="/about" element={<AboutUs />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
