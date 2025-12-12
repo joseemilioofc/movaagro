@@ -109,20 +109,30 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       </header>
 
       {/* Mobile Navigation - Bottom Fixed */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-border bg-card z-40 safe-area-pb">
-        <div className="flex items-center justify-around py-2">
-          {navItems.map((item) => (
-            <Link key={item.href} to={item.href} className="flex-1">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 border-t border-border bg-card/95 backdrop-blur-sm z-40 safe-area-pb">
+        <div className="grid grid-cols-5 py-1">
+          {navItems.slice(0, 4).map((item) => (
+            <Link key={item.href} to={item.href} className="flex flex-col items-center">
               <Button
                 variant={location.pathname === item.href ? "secondary" : "ghost"}
                 size="sm"
-                className="w-full flex-col gap-1 h-auto py-2 px-1"
+                className="w-full flex-col gap-0.5 h-auto py-2 px-1 rounded-none"
               >
                 <item.icon className="w-5 h-5" />
-                <span className="text-[10px] font-medium">{item.label}</span>
+                <span className="text-[9px] font-medium leading-tight">{item.label}</span>
               </Button>
             </Link>
           ))}
+          <Link to="/profile" className="flex flex-col items-center">
+            <Button
+              variant={location.pathname === "/profile" ? "secondary" : "ghost"}
+              size="sm"
+              className="w-full flex-col gap-0.5 h-auto py-2 px-1 rounded-none"
+            >
+              <User className="w-5 h-5" />
+              <span className="text-[9px] font-medium leading-tight">Perfil</span>
+            </Button>
+          </Link>
         </div>
       </nav>
 

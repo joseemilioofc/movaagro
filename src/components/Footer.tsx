@@ -99,7 +99,7 @@ export function Footer() {
         href={whatsappLink}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-20 md:bottom-6 right-4 sm:right-6 z-50 flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-[hsl(142,70%,35%)] hover:bg-[hsl(142,70%,30%)] text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110"
+        className="fixed bottom-24 md:bottom-6 right-4 sm:right-6 z-40 flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 bg-[hsl(142,70%,35%)] hover:bg-[hsl(142,70%,30%)] text-primary-foreground rounded-full shadow-lg hover:shadow-xl transition-all hover:scale-110"
         aria-label="Contactar via WhatsApp"
       >
         <MessageCircle className="w-6 h-6 sm:w-7 sm:h-7" />

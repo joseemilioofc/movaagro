@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Truck, Wheat, Shield, ArrowRight, UserCircle, DollarSign, Settings, CheckCircle, ChevronDown, Package, HelpCircle } from "lucide-react";
+import { Truck, Wheat, Shield, ArrowRight, UserCircle, DollarSign, Settings, CheckCircle, ChevronDown, Package, HelpCircle, Info } from "lucide-react";
+import { MobileMenu } from "@/components/MobileMenu";
 import { Footer } from "@/components/Footer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -13,36 +14,41 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="container mx-auto px-3 sm:px-4 py-4 sm:py-6 sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
+      <header className="container mx-auto px-4 py-4 sm:py-6 sticky top-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
         <nav className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-primary rounded-lg flex items-center justify-center">
               <Truck className="w-5 h-5 sm:w-6 sm:h-6 text-primary-foreground" />
             </div>
             <span className="text-xl sm:text-2xl font-display font-bold text-foreground">MOVA</span>
+          </Link>
+          
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-6">
+            <Link to="/about" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+              Sobre Nós
+            </Link>
+            <Link to="/pricing" className="text-muted-foreground hover:text-foreground transition-colors font-medium">
+              Preços
+            </Link>
           </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Link to="/about">
-              <Button variant="ghost" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4">
-                Sobre Nós
-              </Button>
-            </Link>
-            <Link to="/pricing">
-              <Button variant="ghost" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4">
-                Preços
-              </Button>
-            </Link>
+
+          {/* Desktop Auth Buttons */}
+          <div className="hidden md:flex items-center gap-3">
             <Link to="/auth">
-              <Button variant="outline" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4 border-2">
+              <Button variant="outline" size="sm" className="font-medium border-2">
                 Entrar
               </Button>
             </Link>
             <Link to="/auth?tab=signup">
-              <Button size="sm" className="bg-gradient-primary text-primary-foreground font-medium shadow-glow text-sm sm:text-base px-3 sm:px-4">
+              <Button size="sm" className="bg-gradient-primary text-primary-foreground font-medium shadow-glow">
                 Cadastrar
               </Button>
             </Link>
           </div>
+
+          {/* Mobile Menu */}
+          <MobileMenu />
         </nav>
       </header>
 
