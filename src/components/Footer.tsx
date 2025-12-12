@@ -48,6 +48,11 @@ export function Footer() {
             <h4 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Legal</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <li>
+                <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
+                  Sobre Nós
+                </Link>
+              </li>
+              <li>
                 <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
                   Privacidade
                 </Link>
