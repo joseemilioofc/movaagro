@@ -98,8 +98,8 @@ const AboutUs = () => {
           <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-display font-bold text-foreground mb-4 sm:mb-6 leading-tight">
             Sobre <span className="text-gradient">Nós</span>
           </h1>
-          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Equipa complementar, cobrindo finanças, dados, operação, agricultura e tecnologia, totalmente alinhada à realidade.
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 max-w-3xl mx-auto">
+            Somos uma equipa multidisciplinar que une conhecimento em gestão, tecnologia e agronegócio para resolver um dos maiores desafios do sector agrícola moçambicano: a logística de escoamento da produção. Cada membro traz uma visão estratégica que, em conjunto, transforma a forma como o campo se conecta ao mercado.
           </p>
         </div>
       </section>
