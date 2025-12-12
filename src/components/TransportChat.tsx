@@ -233,9 +233,9 @@ export const TransportChat = ({ requestId, requestTitle }: TransportChatProps) =
     switch (senderRole) {
       case "admin":
         return (
-          <Badge variant="destructive" className="ml-2 text-xs">
+          <Badge className="ml-2 text-xs bg-gradient-to-r from-amber-500 to-orange-500 text-white border-0 shadow-sm">
             <Shield className="w-3 h-3 mr-1" />
-            Admin
+            Admin MOVA
           </Badge>
         );
       case "transporter":
@@ -321,10 +321,16 @@ export const TransportChat = ({ requestId, requestTitle }: TransportChatProps) =
                           isOwn
                             ? "bg-primary text-primary-foreground"
                             : msg.sender_role === "admin"
-                            ? "bg-destructive/10 border border-destructive/20"
+                            ? "bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/30 dark:to-orange-950/30 border-2 border-amber-400/50 shadow-sm"
                             : "bg-muted"
                         }`}
                       >
+                        {msg.sender_role === "admin" && !isOwn && (
+                          <div className="flex items-center gap-1 mb-1 text-amber-600 dark:text-amber-400">
+                            <Shield className="w-3 h-3" />
+                            <span className="text-xs font-semibold">Admin MOVA</span>
+                          </div>
+                        )}
                         <p className="text-sm">{msg.message}</p>
                       </div>
                       <span className="text-xs text-muted-foreground mt-1">
