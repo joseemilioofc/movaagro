@@ -10,12 +10,12 @@ import { z } from "zod";
 import { Footer } from "@/components/Footer";
 import { PasswordInput } from "@/components/PasswordInput";
 
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const passwordSchema = z.object({
   password: z.string()
     .min(8, "A senha deve ter pelo menos 8 caracteres")
-    .regex(passwordRegex, "A senha deve conter: letra maiúscula, minúscula, número e caractere especial (@$!%*?&)"),
+    .regex(passwordRegex, "A senha deve conter letra maiúscula e minúscula"),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
@@ -227,7 +227,7 @@ const ResetPassword = () => {
             <CardHeader>
               <CardTitle>Nova Senha</CardTitle>
               <CardDescription>
-                Mínimo 8 caracteres, com maiúscula, minúscula, número e especial (@$!%*?&)
+                Mínimo 8 caracteres, com maiúscula e minúscula
               </CardDescription>
             </CardHeader>
             <CardContent>

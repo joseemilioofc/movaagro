@@ -15,7 +15,7 @@ import { z } from "zod";
 import { Footer } from "@/components/Footer";
 import { PasswordInput } from "@/components/PasswordInput";
 
-const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])[A-Za-z\d@$!%*?&]{8,}$/;
 
 const loginSchema = z.object({
   email: z.string().email("Email inválido"),
@@ -27,7 +27,7 @@ const signupSchema = z.object({
   name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres"),
   password: z.string()
     .min(8, "A senha deve ter pelo menos 8 caracteres")
-    .regex(passwordRegex, "A senha deve conter: letra maiúscula, minúscula, número e caractere especial (@$!%*?&)"),
+    .regex(passwordRegex, "A senha deve conter letra maiúscula e minúscula"),
   confirmPassword: z.string(),
   role: z.enum(["cooperative", "transporter"]),
 }).refine((data) => data.password === data.confirmPassword, {
@@ -448,7 +448,7 @@ const Auth = () => {
                           required
                         />
                         <p className="text-xs text-muted-foreground">
-                          Mínimo 8 caracteres, com maiúscula, minúscula, número e especial (@$!%*?&)
+                          Mínimo 8 caracteres, com maiúscula e minúscula
                         </p>
                       </div>
                       <div className="space-y-2">
