@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import DOMPurify from "dompurify";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/contexts/AuthContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -137,14 +138,23 @@ export const DigitalContract = ({
   };
 
   const handleDownload = () => {
-    const printContent = contractRef.current?.innerHTML || "";
+    // Sanitize innerHTML to prevent XSS attacks
+    const rawContent = contractRef.current?.innerHTML || "";
+    const printContent = DOMPurify.sanitize(rawContent, {
+      ALLOWED_TAGS: ['h1', 'h2', 'h3', 'p', 'div', 'span', 'strong', 'em', 'br', 'hr'],
+      ALLOWED_ATTR: ['style', 'class'],
+    });
+    
+    // Also sanitize the contract number for the title
+    const safeContractNumber = DOMPurify.sanitize(contract.contract_number);
+    
     const printWindow = window.open("", "_blank");
     if (printWindow) {
       printWindow.document.write(`
         <!DOCTYPE html>
         <html>
         <head>
-          <title>Contrato ${contract.contract_number}</title>
+          <title>Contrato ${safeContractNumber}</title>
           <style>
             body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
             h1 { text-align: center; color: #16a34a; }
