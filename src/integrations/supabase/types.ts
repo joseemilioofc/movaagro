@@ -250,6 +250,48 @@ export type Database = {
         }
         Relationships: []
       }
+      price_alerts: {
+        Row: {
+          base_price: number
+          cargo_type: string
+          created_at: string
+          destination: string
+          id: string
+          is_active: boolean
+          last_notified_at: string | null
+          origin: string
+          threshold_percentage: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          base_price: number
+          cargo_type: string
+          created_at?: string
+          destination: string
+          id?: string
+          is_active?: boolean
+          last_notified_at?: string | null
+          origin: string
+          threshold_percentage?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          base_price?: number
+          cargo_type?: string
+          created_at?: string
+          destination?: string
+          id?: string
+          is_active?: boolean
+          last_notified_at?: string | null
+          origin?: string
+          threshold_percentage?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       price_calculations: {
         Row: {
           cargo_type: string
@@ -508,6 +550,39 @@ export type Database = {
           transporter_id?: string | null
           updated_at?: string
           weight_kg?: number | null
+        }
+        Relationships: []
+      }
+      transporter_availability: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          is_available: boolean
+          max_capacity_kg: number | null
+          notes: string | null
+          transporter_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          date: string
+          id?: string
+          is_available?: boolean
+          max_capacity_kg?: number | null
+          notes?: string | null
+          transporter_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          is_available?: boolean
+          max_capacity_kg?: number | null
+          notes?: string | null
+          transporter_id?: string
+          updated_at?: string
         }
         Relationships: []
       }

@@ -14,6 +14,9 @@ import { PriceComparison } from "@/components/PriceComparison";
 import { PriceComparisonChart } from "@/components/PriceComparisonChart";
 import { PriceExportPDF } from "@/components/PriceExportPDF";
 import { TravelTimeEstimate, calculateTravelTime } from "@/components/TravelTimeEstimate";
+import { ShareQuoteButtons } from "@/components/ShareQuoteButtons";
+import { TransporterAvailabilityCalendar } from "@/components/TransporterAvailabilityCalendar";
+import { PriceAlertManager } from "@/components/PriceAlertManager";
 import { ArrowLeft, Calculator, Truck, MapPin, Package, Info, Wheat, TrendingUp, Route, Star, Save, Loader2 } from "lucide-react";
 import { formatMZN } from "@/lib/currency";
 import { mozambiqueLocations, popularRoutes, getCitiesByProvince, calculateDistance } from "@/data/mozambiqueLocations";
@@ -387,7 +390,17 @@ const Pricing = () => {
                       <Info className="w-5 h-5 text-primary" />
                       Resultado da Estimativa
                     </h3>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <ShareQuoteButtons
+                        origin={origin}
+                        destination={destination}
+                        cargoLabel={cargoTypes.find(c => c.value === cargoType)?.label || cargoType}
+                        weight={parseFloat(weight)}
+                        distance={distance}
+                        priceMin={calculatedPrice.min}
+                        priceMax={calculatedPrice.max}
+                        travelTime={calculateTravelTime(distance).formatted}
+                      />
                       <PriceExportPDF
                         origin={origin}
                         destination={destination}
@@ -466,6 +479,22 @@ const Pricing = () => {
             />
           </section>
         )}
+
+        {/* Transporter Availability Calendar */}
+        <section className="container mx-auto px-3 sm:px-4 pb-12">
+          <TransporterAvailabilityCalendar />
+        </section>
+
+        {/* Price Alerts Section */}
+        <section className="container mx-auto px-3 sm:px-4 pb-12">
+          <PriceAlertManager
+            userId={user?.id || null}
+            origin={origin}
+            destination={destination}
+            cargoType={cargoType}
+            currentPrice={calculatedPrice ? (calculatedPrice.min + calculatedPrice.max) / 2 : undefined}
+          />
+        </section>
 
         {/* Province Coverage */}
         <section className="container mx-auto px-3 sm:px-4 py-8 bg-muted/30">
