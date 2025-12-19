@@ -8,8 +8,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Footer } from "@/components/Footer";
 import MozambiqueMap from "@/components/MozambiqueMap";
-import { ArrowLeft, Calculator, Truck, MapPin, Package, Info, Wheat } from "lucide-react";
+import { ArrowLeft, Calculator, Truck, MapPin, Package, Info, Wheat, TrendingUp, Route, Star } from "lucide-react";
 import { formatMZN } from "@/lib/currency";
+import { mozambiqueLocations, popularRoutes, getAllCityNames, getCitiesByProvince, calculateDistance } from "@/data/mozambiqueLocations";
 
 const cargoTypes = [
   { value: "milho", label: "Milho", pricePerKmTon: 2.5 },
@@ -26,124 +27,13 @@ const cargoTypes = [
   { value: "castanha", label: "Castanha de Caju", pricePerKmTon: 4.0 },
   { value: "copra", label: "Copra", pricePerKmTon: 3.0 },
   { value: "gergelim", label: "Gergelim", pricePerKmTon: 3.5 },
+  { value: "cha", label: "Chá", pricePerKmTon: 4.2 },
+  { value: "coco", label: "Coco", pricePerKmTon: 2.8 },
+  { value: "banana", label: "Banana", pricePerKmTon: 2.6 },
+  { value: "citrinos", label: "Citrinos", pricePerKmTon: 2.9 },
+  { value: "horticolas", label: "Hortícolas", pricePerKmTon: 3.2 },
   { value: "outros", label: "Outros", pricePerKmTon: 2.5 },
 ];
-
-// All major cities of Mozambique with coordinates
-const cityData = [
-  // Maputo Province
-  { name: "Maputo", lat: -25.9692, lng: 32.5732, province: "Maputo Cidade" },
-  { name: "Matola", lat: -25.9625, lng: 32.4589, province: "Maputo" },
-  { name: "Boane", lat: -26.0333, lng: 32.3333, province: "Maputo" },
-  { name: "Marracuene", lat: -25.7333, lng: 32.6667, province: "Maputo" },
-  { name: "Namaacha", lat: -25.9833, lng: 32.0167, province: "Maputo" },
-  
-  // Gaza Province
-  { name: "Xai-Xai", lat: -25.0519, lng: 35.0473, province: "Gaza" },
-  { name: "Chókwè", lat: -24.5333, lng: 32.9833, province: "Gaza" },
-  { name: "Chibuto", lat: -24.0833, lng: 33.5333, province: "Gaza" },
-  { name: "Bilene", lat: -25.2833, lng: 33.2333, province: "Gaza" },
-  { name: "Mandlakazi", lat: -24.0667, lng: 34.9667, province: "Gaza" },
-  { name: "Macia", lat: -25.0333, lng: 33.1000, province: "Gaza" },
-  
-  // Inhambane Province
-  { name: "Inhambane", lat: -23.8650, lng: 35.3833, province: "Inhambane" },
-  { name: "Maxixe", lat: -23.8500, lng: 35.3333, province: "Inhambane" },
-  { name: "Vilankulo", lat: -22.0000, lng: 35.3167, province: "Inhambane" },
-  { name: "Massinga", lat: -23.3167, lng: 35.3833, province: "Inhambane" },
-  { name: "Jangamo", lat: -24.0833, lng: 35.0167, province: "Inhambane" },
-  { name: "Morrumbene", lat: -23.6833, lng: 35.3500, province: "Inhambane" },
-  
-  // Sofala Province
-  { name: "Beira", lat: -19.8436, lng: 34.8389, province: "Sofala" },
-  { name: "Dondo", lat: -19.6167, lng: 34.7333, province: "Sofala" },
-  { name: "Gorongosa", lat: -18.6833, lng: 34.0667, province: "Sofala" },
-  { name: "Nhamatanda", lat: -19.1833, lng: 34.1667, province: "Sofala" },
-  { name: "Marromeu", lat: -18.2833, lng: 35.9333, province: "Sofala" },
-  { name: "Búzi", lat: -19.8833, lng: 34.1167, province: "Sofala" },
-  
-  // Manica Province
-  { name: "Chimoio", lat: -19.1164, lng: 33.4833, province: "Manica" },
-  { name: "Manica", lat: -18.9500, lng: 32.8833, province: "Manica" },
-  { name: "Catandica", lat: -18.0500, lng: 33.1833, province: "Manica" },
-  { name: "Gondola", lat: -19.0833, lng: 33.6667, province: "Manica" },
-  { name: "Sussundenga", lat: -19.3333, lng: 33.2333, province: "Manica" },
-  { name: "Báruè", lat: -17.6333, lng: 33.4000, province: "Manica" },
-  
-  // Tete Province
-  { name: "Tete", lat: -16.1564, lng: 33.5867, province: "Tete" },
-  { name: "Moatize", lat: -16.1167, lng: 33.7500, province: "Tete" },
-  { name: "Songo", lat: -15.6167, lng: 32.7667, province: "Tete" },
-  { name: "Ulónguè", lat: -14.7167, lng: 34.3667, province: "Tete" },
-  { name: "Changara", lat: -16.3833, lng: 33.1833, province: "Tete" },
-  { name: "Zumbo", lat: -15.6167, lng: 30.4167, province: "Tete" },
-  { name: "Cahora Bassa", lat: -15.6000, lng: 32.7167, province: "Tete" },
-  
-  // Zambézia Province
-  { name: "Quelimane", lat: -17.8786, lng: 36.8883, province: "Zambézia" },
-  { name: "Mocuba", lat: -16.8500, lng: 36.9833, province: "Zambézia" },
-  { name: "Gurué", lat: -15.4667, lng: 36.9833, province: "Zambézia" },
-  { name: "Milange", lat: -16.1167, lng: 35.7667, province: "Zambézia" },
-  { name: "Alto Molócuè", lat: -15.6167, lng: 37.7000, province: "Zambézia" },
-  { name: "Nicoadala", lat: -17.6167, lng: 36.8333, province: "Zambézia" },
-  { name: "Maganja da Costa", lat: -17.3167, lng: 37.5000, province: "Zambézia" },
-  { name: "Pebane", lat: -17.2667, lng: 38.1500, province: "Zambézia" },
-  
-  // Nampula Province
-  { name: "Nampula", lat: -15.1167, lng: 39.2667, province: "Nampula" },
-  { name: "Nacala", lat: -14.5667, lng: 40.6833, province: "Nampula" },
-  { name: "Angoche", lat: -16.2333, lng: 39.9167, province: "Nampula" },
-  { name: "Monapo", lat: -15.0333, lng: 40.2667, province: "Nampula" },
-  { name: "Ilha de Moçambique", lat: -15.0333, lng: 40.7333, province: "Nampula" },
-  { name: "Ribaué", lat: -15.0667, lng: 38.2667, province: "Nampula" },
-  { name: "Malema", lat: -14.9500, lng: 37.4000, province: "Nampula" },
-  { name: "Meconta", lat: -15.1000, lng: 39.5667, province: "Nampula" },
-  
-  // Niassa Province
-  { name: "Lichinga", lat: -13.3000, lng: 35.2333, province: "Niassa" },
-  { name: "Cuamba", lat: -14.8000, lng: 36.5333, province: "Niassa" },
-  { name: "Mandimba", lat: -14.3500, lng: 35.7167, province: "Niassa" },
-  { name: "Marrupa", lat: -13.1833, lng: 37.5000, province: "Niassa" },
-  { name: "Metangula", lat: -12.7000, lng: 34.7500, province: "Niassa" },
-  { name: "Ngauma", lat: -13.1333, lng: 35.5333, province: "Niassa" },
-  
-  // Cabo Delgado Province
-  { name: "Pemba", lat: -12.9667, lng: 40.5000, province: "Cabo Delgado" },
-  { name: "Montepuez", lat: -13.1333, lng: 39.0000, province: "Cabo Delgado" },
-  { name: "Chiúre", lat: -13.4167, lng: 39.8500, province: "Cabo Delgado" },
-  { name: "Mocímboa da Praia", lat: -11.3500, lng: 40.3500, province: "Cabo Delgado" },
-  { name: "Palma", lat: -10.7667, lng: 40.4667, province: "Cabo Delgado" },
-  { name: "Mueda", lat: -11.6833, lng: 39.5500, province: "Cabo Delgado" },
-  { name: "Macomia", lat: -12.2333, lng: 40.1333, province: "Cabo Delgado" },
-  { name: "Ancuabe", lat: -13.0500, lng: 39.8500, province: "Cabo Delgado" },
-  { name: "Ibo", lat: -12.3500, lng: 40.6000, province: "Cabo Delgado" },
-];
-
-const origins = cityData.map(c => c.name).sort();
-const destinations = [...origins];
-
-// Function to calculate approximate distance between two cities
-const calculateDistance = (city1: string, city2: string): number => {
-  const c1 = cityData.find(c => c.name === city1);
-  const c2 = cityData.find(c => c.name === city2);
-  
-  if (!c1 || !c2) return 500;
-  if (city1 === city2) return 0;
-  
-  // Haversine formula for distance calculation
-  const R = 6371; // Earth's radius in km
-  const dLat = (c2.lat - c1.lat) * Math.PI / 180;
-  const dLon = (c2.lng - c1.lng) * Math.PI / 180;
-  const a = 
-    Math.sin(dLat/2) * Math.sin(dLat/2) +
-    Math.cos(c1.lat * Math.PI / 180) * Math.cos(c2.lat * Math.PI / 180) *
-    Math.sin(dLon/2) * Math.sin(dLon/2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-  const straightLineDistance = R * c;
-  
-  // Add 30% for road distance approximation
-  return Math.round(straightLineDistance * 1.3);
-};
 
 const priceTableData = [
   { cargo: "Milho", weight: "30 ton", distance: "100 - 200 km", priceMin: 7500, priceMax: 15000 },
@@ -158,6 +48,14 @@ const priceTableData = [
   { cargo: "Tabaco", weight: "12 ton", distance: "200 - 500 km", priceMin: 9120, priceMax: 22800 },
 ];
 
+// Convert mozambiqueLocations to the format expected by MozambiqueMap
+const cityData = mozambiqueLocations.map(loc => ({
+  name: loc.name,
+  lat: loc.lat,
+  lng: loc.lng,
+  province: loc.province,
+}));
+
 const Pricing = () => {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
@@ -165,6 +63,10 @@ const Pricing = () => {
   const [weight, setWeight] = useState("");
   const [calculatedPrice, setCalculatedPrice] = useState<{ min: number; max: number } | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
+
+  const allCities = getAllCityNames();
+  const citiesByProvince = getCitiesByProvince();
+  const provinces = Object.keys(citiesByProvince).sort();
 
   const calculatePrice = () => {
     if (!origin || !destination || !cargoType || !weight) {
@@ -202,6 +104,21 @@ const Pricing = () => {
     } else {
       setDestination(city);
     }
+  };
+
+  const handlePopularRouteSelect = (route: typeof popularRoutes[0]) => {
+    setOrigin(route.origin);
+    setDestination(route.destination);
+  };
+
+  const getFrequencyBadge = (frequency: string) => {
+    const colors: Record<string, string> = {
+      "muito alta": "bg-green-500/20 text-green-700 dark:text-green-400",
+      "alta": "bg-blue-500/20 text-blue-700 dark:text-blue-400",
+      "média": "bg-yellow-500/20 text-yellow-700 dark:text-yellow-400",
+      "baixa": "bg-gray-500/20 text-gray-700 dark:text-gray-400",
+    };
+    return colors[frequency] || colors["média"];
   };
 
   return (
@@ -243,9 +160,52 @@ const Pricing = () => {
             </h1>
             <p className="text-muted-foreground max-w-2xl mx-auto text-base sm:text-lg">
               Calcule o custo estimado do seu frete com base na origem, destino, tipo de carga e peso.
-              Cobertura em todas as províncias de Moçambique.
+              Cobertura em todas as {provinces.length} províncias de Moçambique com {mozambiqueLocations.length} localidades.
             </p>
           </div>
+        </section>
+
+        {/* Popular Routes Section */}
+        <section className="container mx-auto px-3 sm:px-4 pb-8">
+          <Card className="border-2 border-primary/20">
+            <CardHeader className="pb-3">
+              <CardTitle className="text-xl flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-primary" />
+                Rotas Populares
+              </CardTitle>
+              <CardDescription>
+                As rotas mais utilizadas com preços médios de referência
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                {popularRoutes.map((route, index) => (
+                  <div
+                    key={index}
+                    onClick={() => handlePopularRouteSelect(route)}
+                    className="p-3 bg-muted/50 rounded-lg border border-border hover:border-primary/50 hover:bg-muted cursor-pointer transition-all group"
+                  >
+                    <div className="flex items-center gap-2 mb-2">
+                      <Route className="w-4 h-4 text-primary" />
+                      <span className="font-medium text-sm text-foreground">
+                        {route.origin} → {route.destination}
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-2 text-xs">
+                      <span className="font-semibold text-primary">{formatMZN(route.avgPrice)}</span>
+                      <span className={`px-2 py-0.5 rounded-full ${getFrequencyBadge(route.frequency)}`}>
+                        {route.frequency}
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mt-1">{route.cargo}</p>
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-muted-foreground mt-4 text-center">
+                Clique numa rota para preencher automaticamente a calculadora
+              </p>
+            </CardContent>
+          </Card>
         </section>
 
         {/* Map Section */}
@@ -267,7 +227,7 @@ const Pricing = () => {
                 Calculadora de Frete
               </CardTitle>
               <CardDescription className="text-primary-foreground/80">
-                Preencha os campos abaixo para obter uma estimativa de preço - {cityData.length} cidades disponíveis
+                {mozambiqueLocations.length} localidades disponíveis em {provinces.length} províncias
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 sm:p-8">
@@ -282,14 +242,19 @@ const Pricing = () => {
                       <SelectValue placeholder="Selecione a cidade de origem" />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
-                      {origins.map((city) => {
-                        const cityInfo = cityData.find(c => c.name === city);
-                        return (
-                          <SelectItem key={city} value={city}>
-                            {city} {cityInfo && <span className="text-muted-foreground text-xs">({cityInfo.province})</span>}
-                          </SelectItem>
-                        );
-                      })}
+                      {provinces.map((province) => (
+                        <div key={province}>
+                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted sticky top-0">
+                            {province} ({citiesByProvince[province].length})
+                          </div>
+                          {citiesByProvince[province].map((loc) => (
+                            <SelectItem key={`${province}-${loc.name}`} value={loc.name}>
+                              {loc.name}
+                              {loc.type === "capital" && <Star className="w-3 h-3 inline ml-1 text-yellow-500" />}
+                            </SelectItem>
+                          ))}
+                        </div>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -304,14 +269,19 @@ const Pricing = () => {
                       <SelectValue placeholder="Selecione a cidade de destino" />
                     </SelectTrigger>
                     <SelectContent className="max-h-[300px]">
-                      {destinations.map((city) => {
-                        const cityInfo = cityData.find(c => c.name === city);
-                        return (
-                          <SelectItem key={city} value={city}>
-                            {city} {cityInfo && <span className="text-muted-foreground text-xs">({cityInfo.province})</span>}
-                          </SelectItem>
-                        );
-                      })}
+                      {provinces.map((province) => (
+                        <div key={province}>
+                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted sticky top-0">
+                            {province} ({citiesByProvince[province].length})
+                          </div>
+                          {citiesByProvince[province].map((loc) => (
+                            <SelectItem key={`${province}-${loc.name}`} value={loc.name}>
+                              {loc.name}
+                              {loc.type === "capital" && <Star className="w-3 h-3 inline ml-1 text-yellow-500" />}
+                            </SelectItem>
+                          ))}
+                        </div>
+                      ))}
                     </SelectContent>
                   </Select>
                 </div>
@@ -392,19 +362,26 @@ const Pricing = () => {
         <section className="container mx-auto px-3 sm:px-4 py-8 bg-muted/30">
           <div className="text-center mb-6">
             <h2 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2">
-              Cobertura Nacional
+              Cobertura Nacional Completa
             </h2>
             <p className="text-muted-foreground text-sm">
-              Todas as 11 províncias de Moçambique cobertas
+              Todas as {provinces.length} províncias e {mozambiqueLocations.length} localidades cobertas
             </p>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 max-w-4xl mx-auto">
-            {["Maputo Cidade", "Maputo", "Gaza", "Inhambane", "Sofala", "Manica", "Tete", "Zambézia", "Nampula", "Niassa", "Cabo Delgado"].map((province) => {
-              const count = cityData.filter(c => c.province === province).length;
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-2 max-w-5xl mx-auto">
+            {provinces.map((province) => {
+              const count = citiesByProvince[province].length;
+              const capitals = citiesByProvince[province].filter(c => c.type === "capital");
               return (
-                <div key={province} className="bg-card p-3 rounded-lg border border-border text-center">
-                  <p className="font-medium text-sm text-foreground">{province}</p>
-                  <p className="text-xs text-muted-foreground">{count} {count === 1 ? "cidade" : "cidades"}</p>
+                <div key={province} className="bg-card p-3 rounded-lg border border-border text-center hover:border-primary/50 transition-colors">
+                  <p className="font-medium text-sm text-foreground truncate">{province}</p>
+                  <p className="text-xs text-muted-foreground">{count} localidades</p>
+                  {capitals.length > 0 && (
+                    <p className="text-xs text-primary flex items-center justify-center gap-1 mt-1">
+                      <Star className="w-3 h-3" />
+                      {capitals[0].name}
+                    </p>
+                  )}
                 </div>
               );
             })}
@@ -476,7 +453,7 @@ const Pricing = () => {
               <CardHeader>
                 <CardTitle className="text-lg flex items-center gap-2">
                   <Package className="w-5 h-5 text-primary" />
-                  Rastreamento
+                  Rastreamento GPS
                 </CardTitle>
               </CardHeader>
               <CardContent>
