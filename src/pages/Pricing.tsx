@@ -11,6 +11,9 @@ import MozambiqueMap from "@/components/MozambiqueMap";
 import { CitySearchSelect } from "@/components/CitySearchSelect";
 import { PriceHistory } from "@/components/PriceHistory";
 import { PriceComparison } from "@/components/PriceComparison";
+import { PriceComparisonChart } from "@/components/PriceComparisonChart";
+import { PriceExportPDF } from "@/components/PriceExportPDF";
+import { TravelTimeEstimate, calculateTravelTime } from "@/components/TravelTimeEstimate";
 import { ArrowLeft, Calculator, Truck, MapPin, Package, Info, Wheat, TrendingUp, Route, Star, Save, Loader2 } from "lucide-react";
 import { formatMZN } from "@/lib/currency";
 import { mozambiqueLocations, popularRoutes, getCitiesByProvince, calculateDistance } from "@/data/mozambiqueLocations";
@@ -283,6 +286,9 @@ const Pricing = () => {
 
         {/* Map Section */}
         <section className="container mx-auto px-3 sm:px-4 pb-8">
+          <div className="mb-2 text-center text-sm text-muted-foreground">
+            💡 Dica: Clique no mapa para selecionar origem e destino
+          </div>
           <MozambiqueMap 
             cities={cityData}
             origin={origin}
@@ -374,34 +380,48 @@ const Pricing = () => {
                 Calcular Preço
               </Button>
 
-              {calculatedPrice && (
+              {calculatedPrice && distance && (
                 <div className="mt-8 p-6 bg-muted/50 rounded-xl border border-border">
-                  <div className="flex items-center justify-between mb-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
                     <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
                       <Info className="w-5 h-5 text-primary" />
                       Resultado da Estimativa
                     </h3>
-                    {user && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={saveCalculation}
-                        disabled={saving}
-                      >
-                        {saving ? (
-                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        ) : (
-                          <Save className="w-4 h-4 mr-2" />
-                        )}
-                        Salvar
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <PriceExportPDF
+                        origin={origin}
+                        destination={destination}
+                        cargoType={cargoType}
+                        cargoLabel={cargoTypes.find(c => c.value === cargoType)?.label || cargoType}
+                        weight={parseFloat(weight)}
+                        distance={distance}
+                        priceMin={calculatedPrice.min}
+                        priceMax={calculatedPrice.max}
+                        travelTime={calculateTravelTime(distance).formatted}
+                      />
+                      {user && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={saveCalculation}
+                          disabled={saving}
+                        >
+                          {saving ? (
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                          ) : (
+                            <Save className="w-4 h-4 mr-2" />
+                          )}
+                          Salvar
+                        </Button>
+                      )}
+                    </div>
                   </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                     <div className="bg-card p-4 rounded-lg border border-border">
                       <p className="text-sm text-muted-foreground mb-1">Distância Estimada</p>
                       <p className="text-xl font-bold text-foreground">{distance} km</p>
                     </div>
+                    <TravelTimeEstimate distance={distance} />
                     <div className="bg-card p-4 rounded-lg border border-border">
                       <p className="text-sm text-muted-foreground mb-1">Preço Mínimo</p>
                       <p className="text-xl font-bold text-primary">{formatMZN(calculatedPrice.min)}</p>
@@ -425,6 +445,19 @@ const Pricing = () => {
         {origin && destination && weight && (
           <section className="container mx-auto px-3 sm:px-4 pb-12">
             <PriceComparison
+              origin={origin}
+              destination={destination}
+              weight={weight}
+              cargoTypes={cargoTypes}
+              selectedCargoType={cargoType}
+            />
+          </section>
+        )}
+
+        {/* Price Comparison Chart Section */}
+        {origin && destination && weight && (
+          <section className="container mx-auto px-3 sm:px-4 pb-12">
+            <PriceComparisonChart
               origin={origin}
               destination={destination}
               weight={weight}
