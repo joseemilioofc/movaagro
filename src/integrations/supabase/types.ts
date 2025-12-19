@@ -250,6 +250,45 @@ export type Database = {
         }
         Relationships: []
       }
+      price_calculations: {
+        Row: {
+          cargo_type: string
+          created_at: string
+          destination: string
+          distance_km: number
+          id: string
+          origin: string
+          price_max: number
+          price_min: number
+          user_id: string
+          weight_kg: number
+        }
+        Insert: {
+          cargo_type: string
+          created_at?: string
+          destination: string
+          distance_km: number
+          id?: string
+          origin: string
+          price_max: number
+          price_min: number
+          user_id: string
+          weight_kg: number
+        }
+        Update: {
+          cargo_type?: string
+          created_at?: string
+          destination?: string
+          distance_km?: number
+          id?: string
+          origin?: string
+          price_max?: number
+          price_min?: number
+          user_id?: string
+          weight_kg?: number
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           company_name: string | null

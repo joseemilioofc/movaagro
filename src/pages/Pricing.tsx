@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,9 +8,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Footer } from "@/components/Footer";
 import MozambiqueMap from "@/components/MozambiqueMap";
-import { ArrowLeft, Calculator, Truck, MapPin, Package, Info, Wheat, TrendingUp, Route, Star } from "lucide-react";
+import { CitySearchSelect } from "@/components/CitySearchSelect";
+import { PriceHistory } from "@/components/PriceHistory";
+import { PriceComparison } from "@/components/PriceComparison";
+import { ArrowLeft, Calculator, Truck, MapPin, Package, Info, Wheat, TrendingUp, Route, Star, Save, Loader2 } from "lucide-react";
 import { formatMZN } from "@/lib/currency";
-import { mozambiqueLocations, popularRoutes, getAllCityNames, getCitiesByProvince, calculateDistance } from "@/data/mozambiqueLocations";
+import { mozambiqueLocations, popularRoutes, getCitiesByProvince, calculateDistance } from "@/data/mozambiqueLocations";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 
 const cargoTypes = [
   { value: "milho", label: "Milho", pricePerKmTon: 2.5 },
@@ -57,32 +63,33 @@ const cityData = mozambiqueLocations.map(loc => ({
 }));
 
 const Pricing = () => {
+  const { user } = useAuth();
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [cargoType, setCargoType] = useState("");
   const [weight, setWeight] = useState("");
   const [calculatedPrice, setCalculatedPrice] = useState<{ min: number; max: number } | null>(null);
   const [distance, setDistance] = useState<number | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [historyKey, setHistoryKey] = useState(0);
 
-  const allCities = getAllCityNames();
   const citiesByProvince = getCitiesByProvince();
   const provinces = Object.keys(citiesByProvince).sort();
 
-  const calculatePrice = () => {
+  const doCalculatePrice = () => {
     if (!origin || !destination || !cargoType || !weight) {
-      return;
+      return null;
     }
 
     const weightNum = parseFloat(weight);
     if (isNaN(weightNum) || weightNum <= 0) {
-      return;
+      return null;
     }
 
     const cargo = cargoTypes.find(c => c.value === cargoType);
-    if (!cargo) return;
+    if (!cargo) return null;
 
     const dist = calculateDistance(origin, destination);
-    setDistance(dist);
 
     // Base price calculation: price per km per ton * distance * weight
     const basePrice = cargo.pricePerKmTon * dist * weightNum;
@@ -95,7 +102,45 @@ const Pricing = () => {
     const finalMin = Math.max(minPrice, 5000);
     const finalMax = Math.max(maxPrice, 7500);
 
-    setCalculatedPrice({ min: finalMin, max: finalMax });
+    return { min: finalMin, max: finalMax, distance: dist };
+  };
+
+  const calculatePrice = () => {
+    const result = doCalculatePrice();
+    if (result) {
+      setDistance(result.distance);
+      setCalculatedPrice({ min: result.min, max: result.max });
+    }
+  };
+
+  const saveCalculation = async () => {
+    if (!user || !calculatedPrice || !distance) {
+      toast.error("Faça login para salvar o cálculo");
+      return;
+    }
+
+    setSaving(true);
+    try {
+      const { error } = await supabase.from("price_calculations").insert({
+        user_id: user.id,
+        origin,
+        destination,
+        cargo_type: cargoType,
+        weight_kg: parseFloat(weight),
+        distance_km: distance,
+        price_min: calculatedPrice.min,
+        price_max: calculatedPrice.max,
+      });
+
+      if (error) throw error;
+      toast.success("Cálculo salvo no histórico!");
+      setHistoryKey(prev => prev + 1); // Refresh history
+    } catch (error) {
+      console.error("Error saving calculation:", error);
+      toast.error("Erro ao salvar cálculo");
+    } finally {
+      setSaving(false);
+    }
   };
 
   const handleCitySelect = (city: string, type: "origin" | "destination") => {
@@ -109,6 +154,15 @@ const Pricing = () => {
   const handlePopularRouteSelect = (route: typeof popularRoutes[0]) => {
     setOrigin(route.origin);
     setDestination(route.destination);
+  };
+
+  const handleHistorySelect = (calc: any) => {
+    setOrigin(calc.origin);
+    setDestination(calc.destination);
+    setCargoType(calc.cargo_type);
+    setWeight(calc.weight_kg.toString());
+    setDistance(calc.distance_km);
+    setCalculatedPrice({ min: calc.price_min, max: calc.price_max });
   };
 
   const getFrequencyBadge = (frequency: string) => {
@@ -133,16 +187,26 @@ const Pricing = () => {
             <span className="text-xl sm:text-2xl font-display font-bold text-foreground">MOVA</span>
           </Link>
           <div className="flex items-center gap-2 sm:gap-4">
-            <Link to="/auth">
-              <Button variant="outline" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4 border-2">
-                Entrar
-              </Button>
-            </Link>
-            <Link to="/auth?tab=signup">
-              <Button size="sm" className="bg-gradient-primary text-primary-foreground font-medium shadow-glow text-sm sm:text-base px-3 sm:px-4">
-                Cadastrar
-              </Button>
-            </Link>
+            {user ? (
+              <Link to="/dashboard">
+                <Button size="sm" className="bg-gradient-primary text-primary-foreground font-medium shadow-glow text-sm sm:text-base px-3 sm:px-4">
+                  Dashboard
+                </Button>
+              </Link>
+            ) : (
+              <>
+                <Link to="/auth">
+                  <Button variant="outline" size="sm" className="font-medium text-sm sm:text-base px-3 sm:px-4 border-2">
+                    Entrar
+                  </Button>
+                </Link>
+                <Link to="/auth?tab=signup">
+                  <Button size="sm" className="bg-gradient-primary text-primary-foreground font-medium shadow-glow text-sm sm:text-base px-3 sm:px-4">
+                    Cadastrar
+                  </Button>
+                </Link>
+              </>
+            )}
           </div>
         </nav>
       </header>
@@ -179,7 +243,7 @@ const Pricing = () => {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {popularRoutes.map((route, index) => (
+                {popularRoutes.slice(0, 12).map((route, index) => (
                   <div
                     key={index}
                     onClick={() => handlePopularRouteSelect(route)}
@@ -208,6 +272,15 @@ const Pricing = () => {
           </Card>
         </section>
 
+        {/* History Section for logged users */}
+        <section className="container mx-auto px-3 sm:px-4 pb-8">
+          <PriceHistory 
+            key={historyKey}
+            userId={user?.id || null} 
+            onSelectCalculation={handleHistorySelect}
+          />
+        </section>
+
         {/* Map Section */}
         <section className="container mx-auto px-3 sm:px-4 pb-8">
           <MozambiqueMap 
@@ -227,63 +300,35 @@ const Pricing = () => {
                 Calculadora de Frete
               </CardTitle>
               <CardDescription className="text-primary-foreground/80">
-                {mozambiqueLocations.length} localidades disponíveis em {provinces.length} províncias
+                {mozambiqueLocations.length} localidades disponíveis em {provinces.length} províncias • Pesquisa por nome
               </CardDescription>
             </CardHeader>
             <CardContent className="p-6 sm:p-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="origin" className="flex items-center gap-2">
+                  <Label className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-green-500" />
                     Origem
                   </Label>
-                  <Select value={origin} onValueChange={setOrigin}>
-                    <SelectTrigger id="origin">
-                      <SelectValue placeholder="Selecione a cidade de origem" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[300px]">
-                      {provinces.map((province) => (
-                        <div key={province}>
-                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted sticky top-0">
-                            {province} ({citiesByProvince[province].length})
-                          </div>
-                          {citiesByProvince[province].map((loc) => (
-                            <SelectItem key={`${province}-${loc.name}`} value={loc.name}>
-                              {loc.name}
-                              {loc.type === "capital" && <Star className="w-3 h-3 inline ml-1 text-yellow-500" />}
-                            </SelectItem>
-                          ))}
-                        </div>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <CitySearchSelect
+                    locations={mozambiqueLocations}
+                    value={origin}
+                    onValueChange={setOrigin}
+                    placeholder="Pesquisar cidade de origem..."
+                  />
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="destination" className="flex items-center gap-2">
+                  <Label className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-red-500" />
                     Destino
                   </Label>
-                  <Select value={destination} onValueChange={setDestination}>
-                    <SelectTrigger id="destination">
-                      <SelectValue placeholder="Selecione a cidade de destino" />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-[300px]">
-                      {provinces.map((province) => (
-                        <div key={province}>
-                          <div className="px-2 py-1.5 text-xs font-semibold text-muted-foreground bg-muted sticky top-0">
-                            {province} ({citiesByProvince[province].length})
-                          </div>
-                          {citiesByProvince[province].map((loc) => (
-                            <SelectItem key={`${province}-${loc.name}`} value={loc.name}>
-                              {loc.name}
-                              {loc.type === "capital" && <Star className="w-3 h-3 inline ml-1 text-yellow-500" />}
-                            </SelectItem>
-                          ))}
-                        </div>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <CitySearchSelect
+                    locations={mozambiqueLocations}
+                    value={destination}
+                    onValueChange={setDestination}
+                    placeholder="Pesquisar cidade de destino..."
+                  />
                 </div>
 
                 <div className="space-y-2">
@@ -331,10 +376,27 @@ const Pricing = () => {
 
               {calculatedPrice && (
                 <div className="mt-8 p-6 bg-muted/50 rounded-xl border border-border">
-                  <h3 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
-                    <Info className="w-5 h-5 text-primary" />
-                    Resultado da Estimativa
-                  </h3>
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                      <Info className="w-5 h-5 text-primary" />
+                      Resultado da Estimativa
+                    </h3>
+                    {user && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={saveCalculation}
+                        disabled={saving}
+                      >
+                        {saving ? (
+                          <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                        ) : (
+                          <Save className="w-4 h-4 mr-2" />
+                        )}
+                        Salvar
+                      </Button>
+                    )}
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="bg-card p-4 rounded-lg border border-border">
                       <p className="text-sm text-muted-foreground mb-1">Distância Estimada</p>
@@ -351,12 +413,26 @@ const Pricing = () => {
                   </div>
                   <p className="text-xs text-muted-foreground mt-4">
                     * Este é um valor estimado. O preço final será negociado entre as partes envolvidas.
+                    {!user && " Faça login para salvar este cálculo no seu histórico."}
                   </p>
                 </div>
               )}
             </CardContent>
           </Card>
         </section>
+
+        {/* Price Comparison Section */}
+        {origin && destination && weight && (
+          <section className="container mx-auto px-3 sm:px-4 pb-12">
+            <PriceComparison
+              origin={origin}
+              destination={destination}
+              weight={weight}
+              cargoTypes={cargoTypes}
+              selectedCargoType={cargoType}
+            />
+          </section>
+        )}
 
         {/* Province Coverage */}
         <section className="container mx-auto px-3 sm:px-4 py-8 bg-muted/30">
