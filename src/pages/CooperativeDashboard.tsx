@@ -14,7 +14,7 @@ import { GPSTrackingMap } from "@/components/GPSTrackingMap";
 import { DigitalContract } from "@/components/DigitalContract";
 import { useContracts } from "@/hooks/useContracts";
 import { logAuditAction } from "@/hooks/useAuditLog";
-import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, ExternalLink, MessageSquare, Star, MapPin, FileText } from "lucide-react";
+import { Plus, Package, Clock, CheckCircle, XCircle, Loader2, MessageSquare, Star, MapPin, FileText } from "lucide-react";
 
 interface TransportRequest {
   id: string;
@@ -26,7 +26,6 @@ interface TransportRequest {
   weight_kg: number | null;
   pickup_date: string;
   status: string;
-  external_form_link: string | null;
   created_at: string;
   transporter_id: string | null;
 }
@@ -117,7 +116,6 @@ const CooperativeDashboard = () => {
         cargo_type: formData.productType,
         weight_kg: formData.quantity ? parseFloat(formData.quantity.replace(/[^\d.]/g, "")) || null : null,
         pickup_date: formData.pickupDate,
-        external_form_link: formData.externalFormLink || null,
       }).select().single();
 
       if (error) throw error;
@@ -387,17 +385,6 @@ const CooperativeDashboard = () => {
                           <Star className="w-4 h-4 mr-1" />
                           Avaliar
                         </Button>
-                      )}
-                      {request.external_form_link && (
-                        <a
-                          href={request.external_form_link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-primary hover:underline flex items-center gap-1 text-sm"
-                        >
-                          <ExternalLink className="w-3 h-3" />
-                          Form
-                        </a>
                       )}
                       {getStatusBadge(request.status)}
                     </div>
