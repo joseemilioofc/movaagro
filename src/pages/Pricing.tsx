@@ -17,9 +17,9 @@ import { TravelTimeEstimate, calculateTravelTime } from "@/components/TravelTime
 import { ShareQuoteButtons } from "@/components/ShareQuoteButtons";
 import { TransporterAvailabilityCalendar } from "@/components/TransporterAvailabilityCalendar";
 import { PriceAlertManager } from "@/components/PriceAlertManager";
-import { ArrowLeft, Calculator, Truck, MapPin, Package, Info, Wheat, TrendingUp, Route, Star, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Calculator, Truck, MapPin, Package, Info, Wheat, Star, Save, Loader2 } from "lucide-react";
 import { formatMZN } from "@/lib/currency";
-import { mozambiqueLocations, popularRoutes, getCitiesByProvince, calculateDistance } from "@/data/mozambiqueLocations";
+import { mozambiqueLocations, getCitiesByProvince, calculateDistance } from "@/data/mozambiqueLocations";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import { useAuth } from "@/contexts/AuthContext";
@@ -157,10 +157,6 @@ const Pricing = () => {
     }
   };
 
-  const handlePopularRouteSelect = (route: typeof popularRoutes[0]) => {
-    setOrigin(route.origin);
-    setDestination(route.destination);
-  };
 
   const handleHistorySelect = (calc: any) => {
     setOrigin(calc.origin);
@@ -233,49 +229,6 @@ const Pricing = () => {
               Cobertura em todas as {provinces.length} províncias de Moçambique com {mozambiqueLocations.length} localidades.
             </p>
           </div>
-        </section>
-
-        {/* Popular Routes Section */}
-        <section className="container mx-auto px-3 sm:px-4 pb-8">
-          <Card className="border-2 border-primary/20">
-            <CardHeader className="pb-3">
-              <CardTitle className="text-xl flex items-center gap-2">
-                <TrendingUp className="w-5 h-5 text-primary" />
-                Rotas Populares
-              </CardTitle>
-              <CardDescription>
-                As rotas mais utilizadas com preços médios de referência
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                {popularRoutes.slice(0, 12).map((route, index) => (
-                  <div
-                    key={index}
-                    onClick={() => handlePopularRouteSelect(route)}
-                    className="p-3 bg-muted/50 rounded-lg border border-border hover:border-primary/50 hover:bg-muted cursor-pointer transition-all group"
-                  >
-                    <div className="flex items-center gap-2 mb-2">
-                      <Route className="w-4 h-4 text-primary" />
-                      <span className="font-medium text-sm text-foreground">
-                        {route.origin} → {route.destination}
-                      </span>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-2 text-xs">
-                      <span className="font-semibold text-primary">{formatMZN(route.avgPrice)}</span>
-                      <span className={`px-2 py-0.5 rounded-full ${getFrequencyBadge(route.frequency)}`}>
-                        {route.frequency}
-                      </span>
-                    </div>
-                    <p className="text-xs text-muted-foreground mt-1">{route.cargo}</p>
-                  </div>
-                ))}
-              </div>
-              <p className="text-xs text-muted-foreground mt-4 text-center">
-                Clique numa rota para preencher automaticamente a calculadora
-              </p>
-            </CardContent>
-          </Card>
         </section>
 
         {/* History Section for logged users */}
