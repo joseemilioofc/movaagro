@@ -5,7 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Loader2, ChevronLeft, ChevronRight, Truck, ExternalLink } from "lucide-react";
+import { Loader2, ChevronLeft, ChevronRight, Truck } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TransportFormData {
@@ -31,7 +31,6 @@ interface TransportFormData {
   whoPays: string;
   // Page 5
   observations: string;
-  externalFormLink: string;
 }
 
 interface TransportRequestFormProps {
@@ -57,10 +56,7 @@ const initialFormData: TransportFormData = {
   paymentMethod: "",
   whoPays: "remetente",
   observations: "",
-  externalFormLink: "https://abre.ai/pedido-de-transporte-formulario",
 };
-
-const EXTERNAL_FORM_URL = "https://abre.ai/pedido-de-transporte-formulario";
 
 export const TransportRequestForm = ({ onSubmit, isSubmitting }: TransportRequestFormProps) => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -324,38 +320,6 @@ export const TransportRequestForm = ({ onSubmit, isSubmitting }: TransportReques
           onChange={(e) => updateField("observations", e.target.value)}
           rows={4}
         />
-      </div>
-
-      <div className="space-y-4">
-        <div className="bg-primary/10 border border-primary/20 p-4 rounded-lg">
-          <p className="text-sm font-medium text-primary mb-2">Formulário alternativo</p>
-          <p className="text-xs text-muted-foreground mb-3">
-            Se preferir, pode preencher o formulário externo:
-          </p>
-          <a
-            href={EXTERNAL_FORM_URL}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-2 text-sm text-primary hover:underline font-medium"
-          >
-            <ExternalLink className="w-4 h-4" />
-            Abrir formulário externo
-          </a>
-        </div>
-
-        <div className="space-y-2">
-          <Label htmlFor="externalFormLink">Link personalizado (opcional)</Label>
-          <Input
-            id="externalFormLink"
-            type="url"
-            placeholder="https://forms.google.com/..."
-            value={formData.externalFormLink}
-            onChange={(e) => updateField("externalFormLink", e.target.value)}
-          />
-          <p className="text-xs text-muted-foreground">
-            Ou adicione um link diferente se preferir
-          </p>
-        </div>
       </div>
 
       <div className="bg-muted/50 p-4 rounded-lg space-y-2 text-sm">
