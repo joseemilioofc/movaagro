@@ -10,6 +10,31 @@ export interface Location {
 }
 
 export const mozambiqueLocations: Location[] = [
+  // ===== ZAMBÉZIA PROVINCE (PRIORITÁRIA) =====
+  { name: "Quelimane", lat: -17.8786, lng: 36.8883, province: "Zambézia", type: "capital" },
+  { name: "Mocuba", lat: -16.8500, lng: 36.9833, province: "Zambézia", district: "Mocuba", type: "city" },
+  { name: "Gurué", lat: -15.4667, lng: 36.9833, province: "Zambézia", district: "Gurué", type: "city" },
+  { name: "Milange", lat: -16.1167, lng: 35.7667, province: "Zambézia", district: "Milange", type: "district" },
+  { name: "Alto Molócuè", lat: -15.6167, lng: 37.7000, province: "Zambézia", district: "Alto Molócuè", type: "district" },
+  { name: "Nicoadala", lat: -17.6167, lng: 36.8333, province: "Zambézia", district: "Nicoadala", type: "district" },
+  { name: "Maganja da Costa", lat: -17.3167, lng: 37.5000, province: "Zambézia", district: "Maganja da Costa", type: "district" },
+  { name: "Pebane", lat: -17.2667, lng: 38.1500, province: "Zambézia", district: "Pebane", type: "district" },
+  { name: "Namacurra", lat: -17.4167, lng: 36.9500, province: "Zambézia", district: "Namacurra", type: "district" },
+  { name: "Morrumbala", lat: -17.3167, lng: 35.5833, province: "Zambézia", district: "Morrumbala", type: "district" },
+  { name: "Chinde", lat: -18.5833, lng: 36.4667, province: "Zambézia", district: "Chinde", type: "district" },
+  { name: "Lugela", lat: -16.3167, lng: 36.4000, province: "Zambézia", district: "Lugela", type: "district" },
+  { name: "Inhassunge", lat: -18.0167, lng: 36.4333, province: "Zambézia", district: "Inhassunge", type: "district" },
+  { name: "Gilé", lat: -16.1500, lng: 38.3167, province: "Zambézia", district: "Gilé", type: "district" },
+  { name: "Ile", lat: -15.9167, lng: 37.3500, province: "Zambézia", district: "Ile", type: "district" },
+  { name: "Mopeia", lat: -17.9667, lng: 35.7167, province: "Zambézia", district: "Mopeia", type: "district" },
+  { name: "Namarroi", lat: -15.8500, lng: 36.7000, province: "Zambézia", district: "Namarroi", type: "district" },
+  { name: "Errego", lat: -16.1000, lng: 37.0667, province: "Zambézia", district: "Errego", type: "district" },
+  { name: "Mulevala", lat: -16.0167, lng: 37.5000, province: "Zambézia", district: "Mulevala", type: "district" },
+  { name: "Derre", lat: -17.7833, lng: 35.6667, province: "Zambézia", district: "Derre", type: "district" },
+  { name: "Luabo", lat: -18.4000, lng: 36.1333, province: "Zambézia", district: "Luabo", type: "district" },
+  { name: "Mocubela", lat: -17.0333, lng: 38.0167, province: "Zambézia", district: "Mocubela", type: "district" },
+  { name: "Lioma", lat: -15.4833, lng: 37.6500, province: "Zambézia", type: "town" },
+
   // ===== MAPUTO CIDADE =====
   { name: "Maputo", lat: -25.9692, lng: 32.5732, province: "Maputo Cidade", type: "capital" },
   { name: "Catembe", lat: -26.0333, lng: 32.5500, province: "Maputo Cidade", type: "town" },
@@ -116,31 +141,6 @@ export const mozambiqueLocations: Location[] = [
   { name: "Chipanga", lat: -16.4000, lng: 34.0667, province: "Tete", type: "town" },
   { name: "Zobue", lat: -15.6333, lng: 33.0667, province: "Tete", type: "town" },
   { name: "Fingoe", lat: -15.0167, lng: 31.0500, province: "Tete", type: "town" },
-  
-  // ===== ZAMBÉZIA PROVINCE =====
-  { name: "Quelimane", lat: -17.8786, lng: 36.8883, province: "Zambézia", type: "capital" },
-  { name: "Mocuba", lat: -16.8500, lng: 36.9833, province: "Zambézia", district: "Mocuba", type: "city" },
-  { name: "Gurué", lat: -15.4667, lng: 36.9833, province: "Zambézia", district: "Gurué", type: "city" },
-  { name: "Milange", lat: -16.1167, lng: 35.7667, province: "Zambézia", district: "Milange", type: "district" },
-  { name: "Alto Molócuè", lat: -15.6167, lng: 37.7000, province: "Zambézia", district: "Alto Molócuè", type: "district" },
-  { name: "Nicoadala", lat: -17.6167, lng: 36.8333, province: "Zambézia", district: "Nicoadala", type: "district" },
-  { name: "Maganja da Costa", lat: -17.3167, lng: 37.5000, province: "Zambézia", district: "Maganja da Costa", type: "district" },
-  { name: "Pebane", lat: -17.2667, lng: 38.1500, province: "Zambézia", district: "Pebane", type: "district" },
-  { name: "Namacurra", lat: -17.4167, lng: 36.9500, province: "Zambézia", district: "Namacurra", type: "district" },
-  { name: "Morrumbala", lat: -17.3167, lng: 35.5833, province: "Zambézia", district: "Morrumbala", type: "district" },
-  { name: "Chinde", lat: -18.5833, lng: 36.4667, province: "Zambézia", district: "Chinde", type: "district" },
-  { name: "Lugela", lat: -16.3167, lng: 36.4000, province: "Zambézia", district: "Lugela", type: "district" },
-  { name: "Inhassunge", lat: -18.0167, lng: 36.4333, province: "Zambézia", district: "Inhassunge", type: "district" },
-  { name: "Gilé", lat: -16.1500, lng: 38.3167, province: "Zambézia", district: "Gilé", type: "district" },
-  { name: "Ile", lat: -15.9167, lng: 37.3500, province: "Zambézia", district: "Ile", type: "district" },
-  { name: "Mopeia", lat: -17.9667, lng: 35.7167, province: "Zambézia", district: "Mopeia", type: "district" },
-  { name: "Namarroi", lat: -15.8500, lng: 36.7000, province: "Zambézia", district: "Namarroi", type: "district" },
-  { name: "Errego", lat: -16.1000, lng: 37.0667, province: "Zambézia", district: "Errego", type: "district" },
-  { name: "Mulevala", lat: -16.0167, lng: 37.5000, province: "Zambézia", district: "Mulevala", type: "district" },
-  { name: "Derre", lat: -17.7833, lng: 35.6667, province: "Zambézia", district: "Derre", type: "district" },
-  { name: "Luabo", lat: -18.4000, lng: 36.1333, province: "Zambézia", district: "Luabo", type: "district" },
-  { name: "Mocubela", lat: -17.0333, lng: 38.0167, province: "Zambézia", district: "Mocubela", type: "district" },
-  { name: "Lioma", lat: -15.4833, lng: 37.6500, province: "Zambézia", type: "town" },
   
   // ===== NAMPULA PROVINCE =====
   { name: "Nampula", lat: -15.1167, lng: 39.2667, province: "Nampula", type: "capital" },
