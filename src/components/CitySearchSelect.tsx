@@ -1,12 +1,11 @@
 import { useState, useMemo } from "react";
-import { Check, ChevronsUpDown, Search } from "lucide-react";
+import { Check, ChevronsUpDown, Search, MapPin } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
   CommandGroup,
-  CommandInput,
   CommandItem,
   CommandList,
 } from "@/components/ui/command";
@@ -35,20 +34,25 @@ export function CitySearchSelect({
 }: CitySearchSelectProps) {
   const [open, setOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
+  const [zambeziaOnly, setZambeziaOnly] = useState(false);
 
   // Group locations by province
   const groupedLocations = useMemo(() => {
+    const filteredLocs = zambeziaOnly 
+      ? locations.filter(loc => loc.province === "Zambézia")
+      : locations;
+      
     if (!groupByProvince) {
-      return { "Todas": locations };
+      return { "Todas": filteredLocs };
     }
-    return locations.reduce((acc, loc) => {
+    return filteredLocs.reduce((acc, loc) => {
       if (!acc[loc.province]) {
         acc[loc.province] = [];
       }
       acc[loc.province].push(loc);
       return acc;
     }, {} as Record<string, Location[]>);
-  }, [locations, groupByProvince]);
+  }, [locations, groupByProvince, zambeziaOnly]);
 
   // Filter locations based on search query
   const filteredGroups = useMemo(() => {
@@ -116,6 +120,26 @@ export function CitySearchSelect({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />
+          </div>
+          <div className="flex items-center gap-2 px-3 py-2 border-b bg-muted/30">
+            <button
+              type="button"
+              onClick={() => setZambeziaOnly(!zambeziaOnly)}
+              className={cn(
+                "flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all",
+                zambeziaOnly
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-background border border-border hover:bg-muted"
+              )}
+            >
+              <MapPin className="w-3 h-3" />
+              Zambézia
+            </button>
+            {zambeziaOnly && (
+              <span className="text-xs text-muted-foreground">
+                Mostrando apenas Zambézia
+              </span>
+            )}
           </div>
           <CommandList className="max-h-[300px]">
             {totalFilteredCount === 0 ? (
