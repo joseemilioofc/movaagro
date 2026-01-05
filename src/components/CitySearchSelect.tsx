@@ -122,7 +122,12 @@ export function CitySearchSelect({
               <CommandEmpty>Nenhuma cidade encontrada.</CommandEmpty>
             ) : (
               Object.entries(filteredGroups)
-                .sort(([a], [b]) => a.localeCompare(b))
+                .sort(([a], [b]) => {
+                  // Zambézia always first
+                  if (a === "Zambézia") return -1;
+                  if (b === "Zambézia") return 1;
+                  return a.localeCompare(b);
+                })
                 .map(([province, locs]) => (
                   <CommandGroup
                     key={province}
