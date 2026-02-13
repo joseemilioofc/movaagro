@@ -2,7 +2,8 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Truck, LogOut, Home, Package, Shield, ScrollText, Settings, User, FileText, Smartphone, Trophy } from "lucide-react";
+import { Truck, LogOut, Home, Package, Shield, ShieldCheck, ScrollText, Settings, User, FileText, Smartphone, Trophy } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Footer } from "@/components/Footer";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
@@ -70,6 +71,11 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-primary-foreground" />
                 </div>
                 <span className="text-lg sm:text-xl font-display font-bold text-foreground">MOVA</span>
+                {(role === "admin" || role === "secondary_admin") && (
+                  <Badge variant={role === "admin" ? "default" : "secondary"} className="hidden sm:inline-flex text-[10px] px-1.5 py-0">
+                    {role === "admin" ? "Supremo" : "Secundário"}
+                  </Badge>
+                )}
               </Link>
 
               <nav className="hidden md:flex items-center gap-1">
