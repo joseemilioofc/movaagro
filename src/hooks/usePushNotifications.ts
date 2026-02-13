@@ -37,7 +37,7 @@ export const usePushNotifications = () => {
   const getExistingSubscription = async () => {
     try {
       const registration = await navigator.serviceWorker.ready;
-      const subscription = await registration.pushManager.getSubscription();
+      const subscription = await (registration as any).pushManager.getSubscription();
       setState(prev => ({ ...prev, subscription }));
     } catch (error) {
       console.error("Error getting subscription:", error);
@@ -103,13 +103,13 @@ export const usePushNotifications = () => {
       const registration = await navigator.serviceWorker.ready;
       
       // Unsubscribe from any existing subscription
-      const existingSubscription = await registration.pushManager.getSubscription();
+      const existingSubscription = await (registration as any).pushManager.getSubscription();
       if (existingSubscription) {
         await existingSubscription.unsubscribe();
       }
 
       // Subscribe to push notifications
-      const subscription = await registration.pushManager.subscribe({
+      const subscription = await (registration as any).pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(VAPID_PUBLIC_KEY).buffer as ArrayBuffer,
       });
