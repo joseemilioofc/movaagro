@@ -13,7 +13,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/DashboardLayout";
-import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield, MessageSquare, TrendingUp, DollarSign, CheckCircle, Clock, Calendar, Bell } from "lucide-react";
+import { Users, Package, Truck, Wheat, Trash2, Loader2, Shield, MessageSquare, TrendingUp, DollarSign, CheckCircle, Clock, Calendar, Bell, Pencil } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from "recharts";
 import { format, subDays, isAfter } from "date-fns";
 import { ptBR } from "date-fns/locale";
@@ -259,6 +259,29 @@ const AdminDashboard = () => {
       </DashboardLayout>
     );
   }
+
+  const roleOptions = [
+    { value: "admin", label: "Admin Supremo" },
+    { value: "secondary_admin", label: "Admin Secundário" },
+    { value: "cooperative", label: "Cooperativa" },
+    { value: "transporter", label: "Transportadora" },
+  ];
+
+  const handleChangeRole = async (userId: string, newRole: string) => {
+    try {
+      const { error } = await supabase
+        .from("user_roles")
+        .update({ role: newRole as any })
+        .eq("user_id", userId);
+
+      if (error) throw error;
+
+      toast({ title: "Papel atualizado", description: `Papel alterado para ${roleOptions.find(r => r.value === newRole)?.label}.` });
+      fetchData();
+    } catch (error: any) {
+      toast({ title: "Erro ao alterar papel", description: error.message, variant: "destructive" });
+    }
+  };
 
   const cooperatives = filteredData.profiles.filter((p) => getUserRole(p.user_id) === "cooperative");
   const transporters = filteredData.profiles.filter((p) => getUserRole(p.user_id) === "transporter");
@@ -631,7 +654,21 @@ const AdminDashboard = () => {
                         <TableRow key={profile.id}>
                           <TableCell className="font-medium">{profile.name}</TableCell>
                           <TableCell>{profile.email}</TableCell>
-                          <TableCell>{getRoleBadge(getUserRole(profile.user_id))}</TableCell>
+                          <TableCell>
+                            <Select
+                              value={getUserRole(profile.user_id)}
+                              onValueChange={(value) => handleChangeRole(profile.user_id, value)}
+                            >
+                              <SelectTrigger className="w-[180px]">
+                                <SelectValue />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {roleOptions.map((opt) => (
+                                  <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </TableCell>
                           <TableCell>{new Date(profile.created_at).toLocaleDateString("pt-BR")}</TableCell>
                           <TableCell>
                             <Button
