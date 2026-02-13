@@ -14,7 +14,7 @@ interface CreateUserDialogProps {
   onUserCreated: () => void;
 }
 
-type UserRole = "admin" | "cooperative" | "transporter";
+type UserRole = "admin" | "secondary_admin" | "cooperative" | "transporter";
 
 export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
   const [open, setOpen] = useState(false);
@@ -31,7 +31,8 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
   const { toast } = useToast();
 
   const roleLabels: Record<UserRole, string> = {
-    admin: "Administrador",
+    admin: "Administrador Supremo",
+    secondary_admin: "Administrador Secundário",
     cooperative: "Cooperativa",
     transporter: "Transportadora",
   };
@@ -61,13 +62,14 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
 
     try {
       // Use the edge function to create admin users, or signUp for others
-      if (formData.role === "admin") {
+      if (formData.role === "admin" || formData.role === "secondary_admin") {
         console.log("Creating admin user via edge function...");
         const { data, error } = await supabase.functions.invoke("create-admin-user", {
           body: {
             email: formData.email,
             password: formData.password,
             name: formData.name,
+            adminRole: formData.role,
           },
         });
 
@@ -188,7 +190,8 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Administrador</SelectItem>
+                  <SelectItem value="admin">Administrador Supremo</SelectItem>
+                  <SelectItem value="secondary_admin">Administrador Secundário</SelectItem>
                   <SelectItem value="cooperative">Cooperativa</SelectItem>
                   <SelectItem value="transporter">Transportadora</SelectItem>
                 </SelectContent>

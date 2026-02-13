@@ -21,9 +21,9 @@ serve(async (req) => {
   }
 
   try {
-    const { email, password, name } = await req.json();
+    const { email, password, name, adminRole } = await req.json();
     // Log with masked email for security
-    console.log("Creating admin user:", maskEmail(email));
+    console.log("Creating admin user:", maskEmail(email), "role:", adminRole || "admin");
 
     // Verify that the caller is authenticated and is an admin
     const authHeader = req.headers.get("Authorization");
@@ -61,11 +61,13 @@ serve(async (req) => {
     }
 
     // Create user with admin metadata
+    const roleToAssign = adminRole === "secondary_admin" ? "secondary_admin" : "admin";
+    
     const { data: userData, error: createError } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
-      user_metadata: { name, role: "admin" },
+      user_metadata: { name, role: roleToAssign },
     });
 
     if (createError) {

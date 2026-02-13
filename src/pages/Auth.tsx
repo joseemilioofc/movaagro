@@ -36,7 +36,7 @@ const signupSchema = z.object({
   path: ["confirmPassword"],
 });
 
-type AppRole = "admin" | "cooperative" | "transporter";
+type AppRole = "admin" | "secondary_admin" | "cooperative" | "transporter";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -61,7 +61,7 @@ const Auth = () => {
 
   useEffect(() => {
     if (user && role && !authLoading) {
-      if (role === "admin") {
+      if (role === "admin" || role === "secondary_admin") {
         navigate("/admin");
       } else {
         navigate("/home");
