@@ -101,7 +101,7 @@ const AdminDashboard = () => {
 
   // Real-time notifications
   useRealtimeNotifications({
-    enabled: notificationsEnabled && role === "admin",
+    enabled: notificationsEnabled && (role === "admin" || role === "secondary_admin"),
     onNewRequest: fetchData,
   });
 
@@ -166,20 +166,23 @@ const AdminDashboard = () => {
     return data;
   }, [requests, proposals, profiles, dateFilter]);
 
+  const isAnyAdmin = role === "admin" || role === "secondary_admin";
+  const isSupremeAdmin = role === "admin";
+
   useEffect(() => {
-    if (!authLoading && (!user || role !== "admin")) {
+    if (!authLoading && (!user || !isAnyAdmin)) {
       navigate("/auth?admin=true");
     }
   }, [user, role, authLoading, navigate]);
 
   useEffect(() => {
-    if (user && role === "admin") {
+    if (user && isAnyAdmin) {
       fetchData();
     }
   }, [user, role]);
 
   useEffect(() => {
-    if (user && role === "admin") {
+    if (user && isAnyAdmin) {
       fetchData();
     }
   }, [user, role, fetchData]);
@@ -189,13 +192,14 @@ const AdminDashboard = () => {
     return userRole?.role || "unknown";
   };
 
-  const getRoleBadge = (role: string) => {
+  const getRoleBadge = (roleName: string) => {
     const config: Record<string, { label: string; variant: "default" | "secondary" | "outline" }> = {
-      admin: { label: "Admin", variant: "default" },
+      admin: { label: "Admin Supremo", variant: "default" },
+      secondary_admin: { label: "Admin Secundário", variant: "default" },
       cooperative: { label: "Cooperativa", variant: "secondary" },
       transporter: { label: "Transportadora", variant: "outline" },
     };
-    const roleConfig = config[role] || { label: role, variant: "outline" };
+    const roleConfig = config[roleName] || { label: roleName, variant: "outline" };
     return <Badge variant={roleConfig.variant}>{roleConfig.label}</Badge>;
   };
 
@@ -338,7 +342,7 @@ const AdminDashboard = () => {
                 }}
                 dateFilter={dateFilterLabels[dateFilter]}
               />
-              <CreateUserDialog onUserCreated={fetchData} />
+              {isSupremeAdmin && <CreateUserDialog onUserCreated={fetchData} />}
             </div>
           </div>
         </div>
@@ -598,52 +602,54 @@ const AdminDashboard = () => {
         />
 
         {/* Tabs */}
-        <Tabs defaultValue="users">
+        <Tabs defaultValue={isSupremeAdmin ? "users" : "requests"}>
           <TabsList>
-            <TabsTrigger value="users">Usuários</TabsTrigger>
+            {isSupremeAdmin && <TabsTrigger value="users">Usuários</TabsTrigger>}
             <TabsTrigger value="requests">Pedidos</TabsTrigger>
           </TabsList>
 
-          <TabsContent value="users" className="mt-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Usuários Cadastrados</CardTitle>
-                <CardDescription>Lista de todos os usuários da plataforma</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Nome</TableHead>
-                      <TableHead>Email</TableHead>
-                      <TableHead>Tipo</TableHead>
-                      <TableHead>Cadastro</TableHead>
-                      <TableHead className="w-[100px]">Ações</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {profiles.map((profile) => (
-                      <TableRow key={profile.id}>
-                        <TableCell className="font-medium">{profile.name}</TableCell>
-                        <TableCell>{profile.email}</TableCell>
-                        <TableCell>{getRoleBadge(getUserRole(profile.user_id))}</TableCell>
-                        <TableCell>{new Date(profile.created_at).toLocaleDateString("pt-BR")}</TableCell>
-                        <TableCell>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => setDeleteDialog({ type: "user", id: profile.id })}
-                          >
-                            <Trash2 className="w-4 h-4 text-destructive" />
-                          </Button>
-                        </TableCell>
+          {isSupremeAdmin && (
+            <TabsContent value="users" className="mt-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Usuários Cadastrados</CardTitle>
+                  <CardDescription>Lista de todos os usuários da plataforma</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Nome</TableHead>
+                        <TableHead>Email</TableHead>
+                        <TableHead>Tipo</TableHead>
+                        <TableHead>Cadastro</TableHead>
+                        <TableHead className="w-[100px]">Ações</TableHead>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                    </TableHeader>
+                    <TableBody>
+                      {profiles.map((profile) => (
+                        <TableRow key={profile.id}>
+                          <TableCell className="font-medium">{profile.name}</TableCell>
+                          <TableCell>{profile.email}</TableCell>
+                          <TableCell>{getRoleBadge(getUserRole(profile.user_id))}</TableCell>
+                          <TableCell>{new Date(profile.created_at).toLocaleDateString("pt-BR")}</TableCell>
+                          <TableCell>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => setDeleteDialog({ type: "user", id: profile.id })}
+                            >
+                              <Trash2 className="w-4 h-4 text-destructive" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </CardContent>
+              </Card>
+            </TabsContent>
+          )}
 
           <TabsContent value="requests" className="mt-6">
             <Card>
@@ -685,13 +691,15 @@ const AdminDashboard = () => {
                                 <MessageSquare className="w-4 h-4 text-primary" />
                               </Button>
                             )}
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => setDeleteDialog({ type: "request", id: request.id })}
-                            >
-                              <Trash2 className="w-4 h-4 text-destructive" />
-                            </Button>
+                            {isSupremeAdmin && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => setDeleteDialog({ type: "request", id: request.id })}
+                              >
+                                <Trash2 className="w-4 h-4 text-destructive" />
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>

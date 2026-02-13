@@ -94,6 +94,8 @@ const Home = () => {
               ? "Gerencie suas solicitações de transporte e acompanhe suas cargas."
               : role === "transporter"
               ? "Encontre novas oportunidades de transporte e gerencie seus serviços."
+              : role === "secondary_admin"
+              ? "Acompanhe as operações da plataforma."
               : "Gerencie a plataforma e monitore todas as operações."}
           </p>
         </div>

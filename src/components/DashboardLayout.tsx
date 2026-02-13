@@ -31,6 +31,12 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           { label: "Ranking", href: "/ranking", icon: Trophy },
           { label: "Configurações", href: "/admin/settings", icon: Settings },
         ];
+      case "secondary_admin":
+        return [
+          { label: "Dashboard", href: "/admin", icon: Shield },
+          { label: "Contratos", href: "/contracts", icon: FileText },
+          { label: "Ranking", href: "/ranking", icon: Trophy },
+        ];
       case "cooperative":
         return [
           { label: "Meus Pedidos", href: "/cooperative", icon: Package },
