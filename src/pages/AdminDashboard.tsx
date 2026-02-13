@@ -70,6 +70,7 @@ const AdminDashboard = () => {
   const [proposals, setProposals] = useState<Proposal[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteDialog, setDeleteDialog] = useState<{ type: "user" | "request"; id: string } | null>(null);
+  const [roleChangeDialog, setRoleChangeDialog] = useState<{ userId: string; userName: string; currentRole: string; newRole: string } | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [dateFilter, setDateFilter] = useState<DateFilter>("30d");
   const [notificationsEnabled, setNotificationsEnabled] = useState(true);
@@ -267,19 +268,36 @@ const AdminDashboard = () => {
     { value: "transporter", label: "Transportadora" },
   ];
 
-  const handleChangeRole = async (userId: string, newRole: string) => {
+  const handleRoleChangeRequest = (userId: string, newRole: string) => {
+    if (userId === user?.id) {
+      toast({ title: "Ação bloqueada", description: "Não é possível alterar seu próprio papel.", variant: "destructive" });
+      return;
+    }
+    const profile = profiles.find(p => p.user_id === userId);
+    setRoleChangeDialog({
+      userId,
+      userName: profile?.name || "Usuário",
+      currentRole: getUserRole(userId),
+      newRole,
+    });
+  };
+
+  const handleConfirmRoleChange = async () => {
+    if (!roleChangeDialog) return;
     try {
       const { error } = await supabase
         .from("user_roles")
-        .update({ role: newRole as any })
-        .eq("user_id", userId);
+        .update({ role: roleChangeDialog.newRole as any })
+        .eq("user_id", roleChangeDialog.userId);
 
       if (error) throw error;
 
-      toast({ title: "Papel atualizado", description: `Papel alterado para ${roleOptions.find(r => r.value === newRole)?.label}.` });
+      toast({ title: "Papel atualizado", description: `Papel alterado para ${roleOptions.find(r => r.value === roleChangeDialog.newRole)?.label}.` });
+      setRoleChangeDialog(null);
       fetchData();
     } catch (error: any) {
       toast({ title: "Erro ao alterar papel", description: error.message, variant: "destructive" });
+      setRoleChangeDialog(null);
     }
   };
 
@@ -657,7 +675,8 @@ const AdminDashboard = () => {
                           <TableCell>
                             <Select
                               value={getUserRole(profile.user_id)}
-                              onValueChange={(value) => handleChangeRole(profile.user_id, value)}
+                              onValueChange={(value) => handleRoleChangeRequest(profile.user_id, value)}
+                              disabled={profile.user_id === user?.id}
                             >
                               <SelectTrigger className="w-[180px]">
                                 <SelectValue />
@@ -769,6 +788,28 @@ const AdminDashboard = () => {
               >
                 {isDeleting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
                 Excluir
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Role Change Confirmation Dialog */}
+        <Dialog open={!!roleChangeDialog} onOpenChange={() => setRoleChangeDialog(null)}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Confirmar alteração de papel</DialogTitle>
+              <DialogDescription>
+                Deseja alterar o papel de <strong>{roleChangeDialog?.userName}</strong> de{" "}
+                <strong>{roleOptions.find(r => r.value === roleChangeDialog?.currentRole)?.label}</strong> para{" "}
+                <strong>{roleOptions.find(r => r.value === roleChangeDialog?.newRole)?.label}</strong>?
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setRoleChangeDialog(null)}>
+                Cancelar
+              </Button>
+              <Button onClick={handleConfirmRoleChange}>
+                Confirmar
               </Button>
             </DialogFooter>
           </DialogContent>
