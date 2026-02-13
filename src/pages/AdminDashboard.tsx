@@ -292,6 +292,20 @@ const AdminDashboard = () => {
 
       if (error) throw error;
 
+      // Log audit action for role change
+      await supabase.from("audit_logs").insert({
+        user_id: user!.id,
+        action: "update",
+        entity_type: "user",
+        entity_id: roleChangeDialog.userId,
+        details: {
+          action_description: "Papel de usuário alterado",
+          user_name: roleChangeDialog.userName,
+          old_role: roleChangeDialog.currentRole,
+          new_role: roleChangeDialog.newRole,
+        },
+      });
+
       toast({ title: "Papel atualizado", description: `Papel alterado para ${roleOptions.find(r => r.value === roleChangeDialog.newRole)?.label}.` });
       setRoleChangeDialog(null);
       fetchData();
