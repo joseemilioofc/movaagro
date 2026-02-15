@@ -397,7 +397,7 @@ const AdminDashboard = () => {
                 }}
                 dateFilter={dateFilterLabels[dateFilter]}
               />
-              {isSupremeAdmin && <CreateUserDialog onUserCreated={fetchData} />}
+              <CreateUserDialog onUserCreated={fetchData} isSecondaryAdmin={!isSupremeAdmin} />
             </div>
           </div>
         </div>
@@ -657,36 +657,36 @@ const AdminDashboard = () => {
         />
 
         {/* Tabs */}
-        <Tabs defaultValue={isSupremeAdmin ? "users" : "requests"}>
+        <Tabs defaultValue="users">
           <TabsList>
-            {isSupremeAdmin && <TabsTrigger value="users">Usuários</TabsTrigger>}
+            <TabsTrigger value="users">Usuários</TabsTrigger>
             <TabsTrigger value="requests">Pedidos</TabsTrigger>
           </TabsList>
 
-          {isSupremeAdmin && (
-            <TabsContent value="users" className="mt-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Usuários Cadastrados</CardTitle>
-                  <CardDescription>Lista de todos os usuários da plataforma</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Nome</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Tipo</TableHead>
-                        <TableHead>Cadastro</TableHead>
-                        <TableHead className="w-[100px]">Ações</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {profiles.map((profile) => (
-                        <TableRow key={profile.id}>
-                          <TableCell className="font-medium">{profile.name}</TableCell>
-                          <TableCell>{profile.email}</TableCell>
-                          <TableCell>
+          <TabsContent value="users" className="mt-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Usuários Cadastrados</CardTitle>
+                <CardDescription>Lista de todos os usuários da plataforma</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Nome</TableHead>
+                      <TableHead>Email</TableHead>
+                      <TableHead>Tipo</TableHead>
+                      <TableHead>Cadastro</TableHead>
+                      {isSupremeAdmin && <TableHead className="w-[100px]">Ações</TableHead>}
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {profiles.map((profile) => (
+                      <TableRow key={profile.id}>
+                        <TableCell className="font-medium">{profile.name}</TableCell>
+                        <TableCell>{profile.email}</TableCell>
+                        <TableCell>
+                          {isSupremeAdmin ? (
                             <Select
                               value={getUserRole(profile.user_id)}
                               onValueChange={(value) => handleRoleChangeRequest(profile.user_id, value)}
@@ -701,8 +701,12 @@ const AdminDashboard = () => {
                                 ))}
                               </SelectContent>
                             </Select>
-                          </TableCell>
-                          <TableCell>{new Date(profile.created_at).toLocaleDateString("pt-BR")}</TableCell>
+                          ) : (
+                            getRoleBadge(getUserRole(profile.user_id))
+                          )}
+                        </TableCell>
+                        <TableCell>{new Date(profile.created_at).toLocaleDateString("pt-BR")}</TableCell>
+                        {isSupremeAdmin && (
                           <TableCell>
                             <Button
                               variant="ghost"
@@ -712,14 +716,14 @@ const AdminDashboard = () => {
                               <Trash2 className="w-4 h-4 text-destructive" />
                             </Button>
                           </TableCell>
-                        </TableRow>
-                      ))}
-                    </TableBody>
-                  </Table>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          )}
+                        )}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="requests" className="mt-6">
             <Card>

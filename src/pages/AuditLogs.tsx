@@ -55,21 +55,23 @@ const AuditLogs = () => {
     to: undefined,
   });
 
+  const isAnyAdmin = role === "admin" || role === "secondary_admin";
+
   useEffect(() => {
-    if (!authLoading && (!user || role !== "admin")) {
+    if (!authLoading && (!user || !isAnyAdmin)) {
       navigate("/auth?admin=true");
     }
   }, [user, role, authLoading, navigate]);
 
   useEffect(() => {
-    if (user && role === "admin") {
+    if (user && isAnyAdmin) {
       fetchData();
     }
   }, [user, role, currentPage]);
 
   // Fetch all logs for stats when filters/date change
   useEffect(() => {
-    if (user && role === "admin") {
+    if (user && isAnyAdmin) {
       fetchAllLogs();
     }
   }, [user, role]);

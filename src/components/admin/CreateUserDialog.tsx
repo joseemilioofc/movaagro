@@ -12,11 +12,12 @@ import { UserPlus, Loader2, Mail } from "lucide-react";
 
 interface CreateUserDialogProps {
   onUserCreated: () => void;
+  isSecondaryAdmin?: boolean;
 }
 
 type UserRole = "admin" | "secondary_admin" | "cooperative" | "transporter";
 
-export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
+export const CreateUserDialog = ({ onUserCreated, isSecondaryAdmin = false }: CreateUserDialogProps) => {
   const [open, setOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [sendWelcomeEmail, setSendWelcomeEmail] = useState(true);
@@ -190,11 +191,11 @@ export const CreateUserDialog = ({ onUserCreated }: CreateUserDialogProps) => {
                   <SelectValue placeholder="Selecione o tipo" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="admin">Administrador Supremo</SelectItem>
-                  <SelectItem value="secondary_admin">Administrador Secundário</SelectItem>
-                  <SelectItem value="cooperative">Cooperativa</SelectItem>
-                  <SelectItem value="transporter">Transportadora</SelectItem>
-                </SelectContent>
+                   {!isSecondaryAdmin && <SelectItem value="admin">Administrador Supremo</SelectItem>}
+                   {!isSecondaryAdmin && <SelectItem value="secondary_admin">Administrador Secundário</SelectItem>}
+                   <SelectItem value="cooperative">Cooperativa</SelectItem>
+                   <SelectItem value="transporter">Transportadora</SelectItem>
+                 </SelectContent>
               </Select>
             </div>
             <div className="grid gap-2">
