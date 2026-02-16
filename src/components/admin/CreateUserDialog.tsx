@@ -62,52 +62,32 @@ export const CreateUserDialog = ({ onUserCreated, isSecondaryAdmin = false }: Cr
     setIsCreating(true);
 
     try {
-      // Use the edge function to create admin users, or signUp for others
-      if (formData.role === "admin" || formData.role === "secondary_admin") {
-        console.log("Creating admin user via edge function...");
-        const { data, error } = await supabase.functions.invoke("create-admin-user", {
-          body: {
+      // Use edge function for ALL user creation to avoid session swap
+      const functionName = (formData.role === "admin" || formData.role === "secondary_admin") 
+        ? "create-admin-user" 
+        : "create-user";
+      
+      const body = (formData.role === "admin" || formData.role === "secondary_admin")
+        ? {
             email: formData.email,
             password: formData.password,
             name: formData.name,
             adminRole: formData.role,
-          },
-        });
-
-        console.log("Edge function response:", data, error);
-        if (error) throw error;
-        if (data?.error) throw new Error(data.error);
-      } else {
-        // For cooperatives and transporters, use standard signup
-        const { data, error } = await supabase.auth.signUp({
-          email: formData.email,
-          password: formData.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/`,
-            data: {
-              name: formData.name,
-              role: formData.role,
-            },
-          },
-        });
-
-        if (error) throw error;
-
-        // Update profile with additional info if user was created
-        if (data.user) {
-          const { error: profileError } = await supabase
-            .from("profiles")
-            .update({
-              company_name: formData.companyName || null,
-              phone: formData.phone || null,
-            })
-            .eq("user_id", data.user.id);
-
-          if (profileError) {
-            console.error("Erro ao atualizar perfil:", profileError);
           }
-        }
-      }
+        : {
+            email: formData.email,
+            password: formData.password,
+            name: formData.name,
+            role: formData.role,
+            companyName: formData.companyName,
+            phone: formData.phone,
+          };
+
+      console.log("Creating user via edge function:", functionName);
+      const { data, error } = await supabase.functions.invoke(functionName, { body });
+
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
 
       // Send welcome email if enabled (password reset link, not plain password)
       if (sendWelcomeEmail) {
