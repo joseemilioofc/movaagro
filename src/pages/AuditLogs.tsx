@@ -55,7 +55,7 @@ const AuditLogs = () => {
     to: undefined,
   });
 
-  const isAnyAdmin = role === "admin" || role === "secondary_admin";
+  const isAnyAdmin = role === "admin";
 
   useEffect(() => {
     if (!authLoading && (!user || !isAnyAdmin)) {
