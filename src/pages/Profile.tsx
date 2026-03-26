@@ -247,6 +247,7 @@ const Profile = () => {
         <IdentityVerificationCard
           identityStatus={profile?.identity_status || "not_started"}
           userId={user?.id}
+          onStatusUpdate={(status) => setProfile(prev => prev ? { ...prev, identity_status: status } : prev)}
         />
 
         <Card>
