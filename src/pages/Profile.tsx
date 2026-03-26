@@ -244,6 +244,11 @@ const Profile = () => {
           </CardContent>
         </Card>
 
+        <IdentityVerificationCard
+          identityStatus={profile?.identity_status || "not_started"}
+          userId={user?.id}
+        />
+
         <Card>
           <CardHeader>
             <CardTitle>Segurança</CardTitle>
