@@ -8,7 +8,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, User, Mail, Phone, Building, Save } from "lucide-react";
+import { Loader2, User, Mail, Phone, Building, Save, ShieldCheck, Clock, XCircle, CheckCircle2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { z } from "zod";
 
 const profileSchema = z.object({
