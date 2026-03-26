@@ -284,5 +284,66 @@ const Profile = () => {
     </DashboardLayout>
   );
 };
+const identityStatusConfig: Record<string, { label: string; icon: React.ReactNode; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  not_started: { label: "Não iniciado", icon: <Clock className="w-4 h-4" />, variant: "secondary" },
+  pending: { label: "Em verificação", icon: <Loader2 className="w-4 h-4 animate-spin" />, variant: "outline" },
+  approved: { label: "Verificado", icon: <CheckCircle2 className="w-4 h-4" />, variant: "default" },
+  rejected: { label: "Rejeitado", icon: <XCircle className="w-4 h-4" />, variant: "destructive" },
+};
+
+const IdentityVerificationCard = ({ identityStatus, userId }: { identityStatus: string; userId?: string }) => {
+  const [isStarting, setIsStarting] = useState(false);
+  const { toast } = useToast();
+  const config = identityStatusConfig[identityStatus] || identityStatusConfig.not_started;
+  const canVerify = identityStatus === "not_started" || identityStatus === "rejected";
+
+  const handleStartVerification = async () => {
+    if (!userId) return;
+    setIsStarting(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("didit-start-verification", {
+        body: { user_id: userId },
+      });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+
+      if (data?.url) {
+        window.open(data.url, "_blank");
+      }
+      toast({ title: "Verificação iniciada", description: "Siga as instruções para completar a verificação." });
+    } catch (error: any) {
+      toast({ title: "Erro", description: error.message || "Não foi possível iniciar a verificação.", variant: "destructive" });
+    } finally {
+      setIsStarting(false);
+    }
+  };
+
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle className="flex items-center gap-2">
+          <ShieldCheck className="w-5 h-5" />
+          Verificação de Identidade
+        </CardTitle>
+        <CardDescription>Verifique sua identidade para maior segurança e confiança</CardDescription>
+      </CardHeader>
+      <CardContent className="space-y-4">
+        <div className="flex items-center gap-3">
+          <span className="text-sm text-muted-foreground">Status:</span>
+          <Badge variant={config.variant} className="flex items-center gap-1.5">
+            {config.icon}
+            {config.label}
+          </Badge>
+        </div>
+        {canVerify && (
+          <Button onClick={handleStartVerification} disabled={isStarting} className="bg-gradient-primary">
+            {isStarting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
+            Verificar identidade
+          </Button>
+        )}
+      </CardContent>
+    </Card>
+  );
+};
 
 export default Profile;
