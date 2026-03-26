@@ -25,6 +25,8 @@ interface ProfileData {
   email: string;
   phone: string | null;
   company_name: string | null;
+  identity_status: string;
+  didit_session_id: string | null;
 }
 
 const Profile = () => {
