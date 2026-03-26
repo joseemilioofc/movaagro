@@ -247,6 +247,7 @@ const Profile = () => {
         <IdentityVerificationCard
           identityStatus={profile?.identity_status || "not_started"}
           userId={user?.id}
+          onStatusUpdate={(status) => setProfile(prev => prev ? { ...prev, identity_status: status } : prev)}
         />
 
         <Card>
@@ -291,11 +292,36 @@ const identityStatusConfig: Record<string, { label: string; icon: React.ReactNod
   rejected: { label: "Rejeitado", icon: <XCircle className="w-4 h-4" />, variant: "destructive" },
 };
 
-const IdentityVerificationCard = ({ identityStatus, userId }: { identityStatus: string; userId?: string }) => {
+const IdentityVerificationCard = ({ identityStatus, userId, onStatusUpdate }: { identityStatus: string; userId?: string; onStatusUpdate?: (status: string) => void }) => {
   const [isStarting, setIsStarting] = useState(false);
+  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
   const { toast } = useToast();
   const config = identityStatusConfig[identityStatus] || identityStatusConfig.not_started;
   const canVerify = identityStatus === "not_started" || identityStatus === "rejected";
+
+  useEffect(() => {
+    if (userId && identityStatus !== "approved") {
+      checkStatus();
+    }
+  }, [userId]);
+
+  const checkStatus = async () => {
+    if (!userId) return;
+    setIsCheckingStatus(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("didit-check-status", {
+        body: { user_id: userId },
+      });
+      if (error) throw error;
+      if (data?.identity_status && data.identity_status !== identityStatus) {
+        onStatusUpdate?.(data.identity_status);
+      }
+    } catch (error) {
+      console.error("Error checking identity status:", error);
+    } finally {
+      setIsCheckingStatus(false);
+    }
+  };
 
   const handleStartVerification = async () => {
     if (!userId) return;
@@ -308,14 +334,19 @@ const IdentityVerificationCard = ({ identityStatus, userId }: { identityStatus: 
       if (data?.error) throw new Error(data.error);
 
       if (data?.url) {
-        window.open(data.url, "_blank");
+        window.location.href = data.url;
       }
-      toast({ title: "Verificação iniciada", description: "Siga as instruções para completar a verificação." });
     } catch (error: any) {
       toast({ title: "Erro", description: error.message || "Não foi possível iniciar a verificação.", variant: "destructive" });
     } finally {
       setIsStarting(false);
     }
+  };
+
+  const statusMessage: Record<string, string> = {
+    pending: "Sua verificação está em análise",
+    approved: "Sua identidade foi verificada com sucesso",
+    rejected: "Sua verificação foi rejeitada. Você pode tentar novamente.",
   };
 
   return (
@@ -330,15 +361,22 @@ const IdentityVerificationCard = ({ identityStatus, userId }: { identityStatus: 
       <CardContent className="space-y-4">
         <div className="flex items-center gap-3">
           <span className="text-sm text-muted-foreground">Status:</span>
-          <Badge variant={config.variant} className="flex items-center gap-1.5">
-            {config.icon}
-            {config.label}
-          </Badge>
+          {isCheckingStatus ? (
+            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+          ) : (
+            <Badge variant={config.variant} className="flex items-center gap-1.5">
+              {config.icon}
+              {config.label}
+            </Badge>
+          )}
         </div>
+        {statusMessage[identityStatus] && (
+          <p className="text-sm text-muted-foreground">{statusMessage[identityStatus]}</p>
+        )}
         {canVerify && (
-          <Button onClick={handleStartVerification} disabled={isStarting} className="bg-gradient-primary">
+          <Button onClick={handleStartVerification} disabled={isStarting || isCheckingStatus} className="bg-gradient-primary">
             {isStarting ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <ShieldCheck className="w-4 h-4 mr-2" />}
-            Verificar identidade
+            {identityStatus === "rejected" ? "Tentar novamente" : "Verificar identidade"}
           </Button>
         )}
       </CardContent>
