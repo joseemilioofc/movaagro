@@ -74,12 +74,47 @@ Deno.serve(async (req) => {
       });
     }
 
-    // If no session or already approved, return current status
-    if (!profile.didit_session_id || profile.identity_status === "approved") {
+    // If already approved, return current status
+    if (profile.identity_status === "approved") {
       return new Response(
         JSON.stringify({ identity_status: profile.identity_status }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
+    }
+
+    // If no session, return current status
+    if (!profile.didit_session_id) {
+      return new Response(
+        JSON.stringify({ identity_status: profile.identity_status }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Check if pending verification has exceeded 2 hours
+    if (profile.identity_status === "pending") {
+      const { data: profileFull } = await serviceClient
+        .from("profiles")
+        .select("updated_at")
+        .eq("user_id", userId)
+        .single();
+
+      if (profileFull?.updated_at) {
+        const updatedAt = new Date(profileFull.updated_at).getTime();
+        const now = Date.now();
+        const twoHoursMs = 2 * 60 * 60 * 1000;
+
+        if (now - updatedAt > twoHoursMs) {
+          await serviceClient
+            .from("profiles")
+            .update({ identity_status: "rejected" })
+            .eq("user_id", userId);
+
+          return new Response(
+            JSON.stringify({ identity_status: "rejected" }),
+            { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          );
+        }
+      }
     }
 
     // Query Didit for session decision
