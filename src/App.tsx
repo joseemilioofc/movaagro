@@ -24,6 +24,7 @@ import Contracts from "./pages/Contracts";
 import Install from "./pages/Install";
 import Ranking from "./pages/Ranking";
 import AboutUs from "./pages/AboutUs";
+import Company from "./pages/Company";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ const App = () => (
             <Route path="/terms" element={<Terms />} />
             <Route path="/security" element={<Security />} />
             <Route path="/about" element={<AboutUs />} />
+            <Route path="/company" element={<Company />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
