@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        <div className="grid gap-6 sm:gap-8 grid-cols-2 md:grid-cols-5">
+        <div className="grid gap-6 sm:gap-8 grid-cols-2 md:grid-cols-4">
           {/* Logo e descrição */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-3 sm:mb-4">
@@ -21,23 +21,13 @@ export function Footer() {
             </p>
           </div>
 
-          {/* Links úteis */}
+          {/* Comercial */}
           <div>
-            <h4 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Links Úteis</h4>
+            <h4 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Comercial</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <li>
-                <Link to="/" className="text-muted-foreground hover:text-primary transition-colors">
-                  Início
-                </Link>
-              </li>
-              <li>
-                <Link to="/auth" className="text-muted-foreground hover:text-primary transition-colors">
-                  Entrar
-                </Link>
-              </li>
-              <li>
-                <Link to="/auth?tab=signup" className="text-muted-foreground hover:text-primary transition-colors">
-                  Criar Conta
+                <Link to="/company" className="text-muted-foreground hover:text-primary transition-colors">
+                  Empresa
                 </Link>
               </li>
             </ul>
@@ -70,20 +60,8 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Comercial */}
-          <div>
-            <h4 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Comercial</h4>
-            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
-              <li>
-                <Link to="/company" className="text-muted-foreground hover:text-primary transition-colors">
-                  Empresa
-                </Link>
-              </li>
-            </ul>
-          </div>
-
           {/* Contato */}
-          <div className="col-span-2 md:col-span-1">
+          <div>
             <h4 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Contacto</h4>
             <a
               href={whatsappLink}
