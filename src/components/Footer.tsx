@@ -7,7 +7,7 @@ export function Footer() {
   return (
     <footer className="border-t border-border bg-card">
       <div className="container mx-auto px-3 sm:px-4 py-6 sm:py-8">
-        <div className="grid gap-6 sm:gap-8 grid-cols-2 md:grid-cols-4">
+        <div className="grid gap-6 sm:gap-8 grid-cols-2 md:grid-cols-5">
           {/* Logo e descrição */}
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center gap-2 mb-3 sm:mb-4">
@@ -43,9 +43,9 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Legal */}
+          {/* Informação Legal */}
           <div>
-            <h4 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Legal</h4>
+            <h4 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Informação Legal</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
               <li>
                 <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
@@ -53,13 +53,8 @@ export function Footer() {
                 </Link>
               </li>
               <li>
-                <Link to="/company" className="text-muted-foreground hover:text-primary transition-colors">
-                  Empresa
-                </Link>
-              </li>
-              <li>
                 <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
-                  Privacidade
+                  Política de Privacidade
                 </Link>
               </li>
               <li>
@@ -70,6 +65,18 @@ export function Footer() {
               <li>
                 <Link to="/security" className="text-muted-foreground hover:text-primary transition-colors">
                   Segurança
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Comercial */}
+          <div>
+            <h4 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Comercial</h4>
+            <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
+              <li>
+                <Link to="/company" className="text-muted-foreground hover:text-primary transition-colors">
+                  Empresa
                 </Link>
               </li>
             </ul>
