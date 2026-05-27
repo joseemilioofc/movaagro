@@ -8,7 +8,6 @@ export function MobileMenu() {
   const [open, setOpen] = useState(false);
 
   const menuItems = [
-    { label: "Sobre Nós", href: "/about", icon: Info },
     { label: "Preços", href: "/pricing", icon: DollarSign },
   ];
 
