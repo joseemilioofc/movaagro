@@ -592,6 +592,54 @@ export type Database = {
         }
         Relationships: []
       }
+      transporter_details: {
+        Row: {
+          alvara_document_url: string
+          alvara_number: string
+          approval_status: string
+          body_type: string
+          capacity_tons: number
+          created_at: string
+          id: string
+          rejection_reason: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          truck_plate: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          alvara_document_url: string
+          alvara_number: string
+          approval_status?: string
+          body_type: string
+          capacity_tons: number
+          created_at?: string
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          truck_plate: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          alvara_document_url?: string
+          alvara_number?: string
+          approval_status?: string
+          body_type?: string
+          capacity_tons?: number
+          created_at?: string
+          id?: string
+          rejection_reason?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          truck_plate?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_roles: {
         Row: {
           id: string
@@ -623,6 +671,7 @@ export type Database = {
         Returns: boolean
       }
       is_any_admin: { Args: { _user_id: string }; Returns: boolean }
+      is_transporter_approved: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       app_role: "admin" | "cooperative" | "transporter" | "secondary_admin"
