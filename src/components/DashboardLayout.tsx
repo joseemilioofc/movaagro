@@ -28,6 +28,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
         return [
           { label: "Dashboard", href: "/admin", icon: Shield },
           { label: "Auditoria", href: "/admin/audit", icon: ScrollText },
+          { label: "Aprovações", href: "/admin/transporter-approvals", icon: ShieldCheck },
           { label: "Contratos", href: "/contracts", icon: FileText },
           { label: "Ranking", href: "/ranking", icon: Trophy },
           { label: "Configurações", href: "/admin/settings", icon: Settings },
