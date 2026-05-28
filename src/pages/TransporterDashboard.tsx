@@ -14,6 +14,7 @@ import { DigitalContract } from "@/components/DigitalContract";
 import { useContracts } from "@/hooks/useContracts";
 import { logAuditAction } from "@/hooks/useAuditLog";
 import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye, MessageSquare, Star, Navigation, FileText } from "lucide-react";
+import { TransporterApprovalForm } from "@/components/TransporterApprovalForm";
 
 interface TransportRequest {
   id: string;
@@ -245,6 +246,8 @@ const TransporterDashboard = () => {
           <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">Pedidos Disponíveis</h1>
           <p className="text-sm sm:text-base text-muted-foreground mt-1">Visualize e aceite pedidos de transporte</p>
         </div>
+
+        <TransporterApprovalForm />
 
         {/* Stats */}
         <div className="grid grid-cols-2 gap-2 sm:gap-4">

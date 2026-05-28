@@ -15,6 +15,7 @@ import CooperativeDashboard from "./pages/CooperativeDashboard";
 import TransporterDashboard from "./pages/TransporterDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminSettings from "./pages/AdminSettings";
+import AdminTransporterApprovals from "./pages/AdminTransporterApprovals";
 import AuditLogs from "./pages/AuditLogs";
 import ChatPage from "./pages/ChatPage";
 import Privacy from "./pages/Privacy";
@@ -48,6 +49,7 @@ const App = () => (
             <Route path="/transporter" element={<TransporterDashboard />} />
             <Route path="/admin" element={<AdminDashboard />} />
             <Route path="/admin/settings" element={<AdminSettings />} />
+            <Route path="/admin/transporter-approvals" element={<AdminTransporterApprovals />} />
             <Route path="/admin/audit" element={<AuditLogs />} />
             <Route path="/chat/:requestId" element={<ChatPage />} />
             <Route path="/contracts" element={<Contracts />} />
