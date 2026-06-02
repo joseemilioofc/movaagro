@@ -73,7 +73,8 @@ export function Footer() {
               <span className="font-medium">WhatsApp</span>
             </a>
             <p className="mt-3 sm:mt-4 text-xs sm:text-sm text-muted-foreground">
-              Fale connosco pelo WhatsApp.
+              <span className="block">Email: movaagro@gmail.com</span>
+              <span className="block mt-1">Contactos: +258 87 780 1500 / +258 85 597 7759</span>
             </p>
           </div>
         </div>
