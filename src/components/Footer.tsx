@@ -83,6 +83,8 @@ export function Footer() {
         <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
           <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
             © {new Date().getFullYear()} MOVA. Todos os direitos reservados.
+            <span className="block sm:inline sm:ml-2">NUIT: 402168609</span>
+            <span className="block sm:inline sm:ml-2">Alvará N°: 64/04/01/PS/2026</span>
           </p>
           <Link to="/auth?admin=true" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors">
             Acesso Administrativo
