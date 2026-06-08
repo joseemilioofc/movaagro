@@ -67,6 +67,10 @@ export const TransporterApprovalForm = () => {
       setTruckPlate(data.truck_plate);
       setCapacityTons(String(data.capacity_tons));
       setBodyType(data.body_type);
+      setIsCompany(!!(data as any).is_company);
+      setCompanyName((data as any).company_name || "");
+      setCompanyNuit((data as any).company_nuit || "");
+      setCompanyAddress((data as any).company_address || "");
     }
     setLoading(false);
   };
@@ -103,7 +107,7 @@ export const TransporterApprovalForm = () => {
       }
 
       if (details) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from("transporter_details")
           .update({
             alvara_number: alvaraNumber.trim(),
@@ -113,17 +117,25 @@ export const TransporterApprovalForm = () => {
             body_type: bodyType,
             approval_status: "pending",
             rejection_reason: null,
+            is_company: isCompany,
+            company_name: isCompany ? companyName.trim() || null : null,
+            company_nuit: isCompany ? companyNuit.trim() || null : null,
+            company_address: isCompany ? companyAddress.trim() || null : null,
           })
           .eq("id", details.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("transporter_details").insert({
+        const { error } = await (supabase as any).from("transporter_details").insert({
           user_id: user.id,
           alvara_number: alvaraNumber.trim(),
           alvara_document_url: alvaraUrl,
           truck_plate: truckPlate.trim().toUpperCase(),
           capacity_tons: capacity,
           body_type: bodyType,
+          is_company: isCompany,
+          company_name: isCompany ? companyName.trim() || null : null,
+          company_nuit: isCompany ? companyNuit.trim() || null : null,
+          company_address: isCompany ? companyAddress.trim() || null : null,
         });
         if (error) throw error;
       }
