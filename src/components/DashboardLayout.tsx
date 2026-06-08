@@ -2,12 +2,13 @@ import { ReactNode } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Truck, LogOut, Home, Package, Shield, ShieldCheck, ScrollText, Settings, User, FileText, Smartphone, Trophy } from "lucide-react";
+import { Truck, LogOut, Home, Package, Shield, ShieldCheck, ScrollText, Settings, User, FileText, Smartphone, Trophy, Building2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Footer } from "@/components/Footer";
 import { NotificationBell } from "@/components/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { useTransporterProfile } from "@/hooks/useTransporterProfile";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -15,6 +16,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
   const { role, signOut } = useAuth();
+  const { isCompany } = useTransporterProfile();
   const location = useLocation();
   const { notifications, clearAll, markAsRead } = useNotifications(true);
 
@@ -47,12 +49,19 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           { label: "App", href: "/install", icon: Smartphone },
         ];
       case "transporter":
-        return [
-          { label: "Pedidos", href: "/transporter", icon: Package },
-          { label: "Contratos", href: "/contracts", icon: FileText },
-          { label: "Ranking", href: "/ranking", icon: Trophy },
-          { label: "App", href: "/install", icon: Smartphone },
-        ];
+        return isCompany
+          ? [
+              { label: "Frota", href: "/fleet", icon: Building2 },
+              { label: "Contratos", href: "/contracts", icon: FileText },
+              { label: "Ranking", href: "/ranking", icon: Trophy },
+              { label: "App", href: "/install", icon: Smartphone },
+            ]
+          : [
+              { label: "Pedidos", href: "/transporter", icon: Package },
+              { label: "Contratos", href: "/contracts", icon: FileText },
+              { label: "Ranking", href: "/ranking", icon: Trophy },
+              { label: "App", href: "/install", icon: Smartphone },
+            ];
       default:
         return [];
     }

@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ShieldCheck, ShieldAlert, Clock, Upload, FileCheck2 } from "lucide-react";
+import { Loader2, ShieldCheck, ShieldAlert, Clock, Upload, FileCheck2, Building2 } from "lucide-react";
 
 interface TransporterDetails {
   id: string;
@@ -20,6 +21,10 @@ interface TransporterDetails {
   body_type: string;
   approval_status: "pending" | "approved" | "rejected";
   rejection_reason: string | null;
+  is_company?: boolean;
+  company_name?: string | null;
+  company_nuit?: string | null;
+  company_address?: string | null;
 }
 
 const BODY_TYPES = [
@@ -40,6 +45,10 @@ export const TransporterApprovalForm = () => {
   const [capacityTons, setCapacityTons] = useState("");
   const [bodyType, setBodyType] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [isCompany, setIsCompany] = useState(false);
+  const [companyName, setCompanyName] = useState("");
+  const [companyNuit, setCompanyNuit] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
 
   useEffect(() => {
     if (user) fetchDetails();
@@ -58,6 +67,10 @@ export const TransporterApprovalForm = () => {
       setTruckPlate(data.truck_plate);
       setCapacityTons(String(data.capacity_tons));
       setBodyType(data.body_type);
+      setIsCompany(!!(data as any).is_company);
+      setCompanyName((data as any).company_name || "");
+      setCompanyNuit((data as any).company_nuit || "");
+      setCompanyAddress((data as any).company_address || "");
     }
     setLoading(false);
   };
@@ -94,7 +107,7 @@ export const TransporterApprovalForm = () => {
       }
 
       if (details) {
-        const { error } = await supabase
+        const { error } = await (supabase as any)
           .from("transporter_details")
           .update({
             alvara_number: alvaraNumber.trim(),
@@ -104,17 +117,25 @@ export const TransporterApprovalForm = () => {
             body_type: bodyType,
             approval_status: "pending",
             rejection_reason: null,
+            is_company: isCompany,
+            company_name: isCompany ? companyName.trim() || null : null,
+            company_nuit: isCompany ? companyNuit.trim() || null : null,
+            company_address: isCompany ? companyAddress.trim() || null : null,
           })
           .eq("id", details.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("transporter_details").insert({
+        const { error } = await (supabase as any).from("transporter_details").insert({
           user_id: user.id,
           alvara_number: alvaraNumber.trim(),
           alvara_document_url: alvaraUrl,
           truck_plate: truckPlate.trim().toUpperCase(),
           capacity_tons: capacity,
           body_type: bodyType,
+          is_company: isCompany,
+          company_name: isCompany ? companyName.trim() || null : null,
+          company_nuit: isCompany ? companyNuit.trim() || null : null,
+          company_address: isCompany ? companyAddress.trim() || null : null,
         });
         if (error) throw error;
       }
@@ -189,6 +210,34 @@ export const TransporterApprovalForm = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="rounded-lg border p-4 space-y-3 bg-muted/30">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-primary" />
+                <Label htmlFor="is-company" className="cursor-pointer">Sou empresa de transporte com frota</Label>
+              </div>
+              <Switch id="is-company" checked={isCompany} onCheckedChange={setIsCompany} disabled={isLocked} />
+            </div>
+            {isCompany && (
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label>Nome da Empresa *</Label>
+                    <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} disabled={isLocked} placeholder="Ex: MOVA AGRO, LDA" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label>NUIT</Label>
+                    <Input value={companyNuit} onChange={(e) => setCompanyNuit(e.target.value)} disabled={isLocked} placeholder="Ex: 402168609" />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label>Endereço</Label>
+                  <Input value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} disabled={isLocked} placeholder="Endereço da sede" />
+                </div>
+                <p className="text-xs text-muted-foreground">Como empresa terá um painel dedicado para gerir várias viaturas e motoristas.</p>
+              </div>
+            )}
+          </div>
           <div className="space-y-2">
             <Label htmlFor="alvara">Número do Alvará *</Label>
             <Input

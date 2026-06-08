@@ -15,6 +15,7 @@ import { useContracts } from "@/hooks/useContracts";
 import { logAuditAction } from "@/hooks/useAuditLog";
 import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye, MessageSquare, Star, Navigation, FileText } from "lucide-react";
 import { TransporterApprovalForm } from "@/components/TransporterApprovalForm";
+import { useTransporterProfile } from "@/hooks/useTransporterProfile";
 
 interface TransportRequest {
   id: string;
@@ -31,7 +32,7 @@ interface TransportRequest {
   cooperative_id: string;
 }
 
-const TransporterDashboard = () => {
+const TransporterDashboard = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const { user, role, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -46,11 +47,19 @@ const TransporterDashboard = () => {
   const [cooperativeNames, setCooperativeNames] = useState<Record<string, string>>({});
   const { contracts, refetch: refetchContracts } = useContracts();
 
+  const { isCompany, loading: profileLoading } = useTransporterProfile();
+
   useEffect(() => {
     if (!authLoading && (!user || role !== "transporter")) {
       navigate("/auth");
     }
   }, [user, role, authLoading, navigate]);
+
+  useEffect(() => {
+    if (!embedded && !profileLoading && isCompany) {
+      navigate("/fleet", { replace: true });
+    }
+  }, [embedded, profileLoading, isCompany, navigate]);
 
   useEffect(() => {
     if (user) {
@@ -229,18 +238,16 @@ const TransporterDashboard = () => {
   };
 
   if (authLoading || loading) {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      </DashboardLayout>
+    const spinner = (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
     );
+    return embedded ? spinner : <DashboardLayout>{spinner}</DashboardLayout>;
   }
 
-  return (
-    <DashboardLayout>
-      <div className="space-y-8">
+  const content = (
+    <div className="space-y-8">
         {/* Header */}
         <div>
           <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">Pedidos Disponíveis</h1>
@@ -572,8 +579,9 @@ const TransporterDashboard = () => {
           />
         )}
       </div>
-    </DashboardLayout>
   );
+
+  return embedded ? content : <DashboardLayout>{content}</DashboardLayout>;
 };
 
 export default TransporterDashboard;
