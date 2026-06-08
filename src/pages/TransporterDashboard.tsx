@@ -31,7 +31,7 @@ interface TransportRequest {
   cooperative_id: string;
 }
 
-const TransporterDashboard = () => {
+const TransporterDashboard = ({ embedded = false }: { embedded?: boolean } = {}) => {
   const { user, role, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
