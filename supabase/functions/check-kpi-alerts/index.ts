@@ -23,19 +23,67 @@ serve(async (req) => {
   }
 
   try {
-    const { kpiData, adminEmails, forceAlert = false } = await req.json() as { 
-      kpiData: KPIData[]; 
-      adminEmails: string[];
-      forceAlert?: boolean;
-    };
-
-    console.log("Checking KPI alerts for", kpiData.length, "KPIs");
+    // Require authenticated admin caller
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const token = authHeader.replace("Bearer ", "");
 
     const supabaseAdmin = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
       Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
       { auth: { autoRefreshToken: false, persistSession: false } }
     );
+
+    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token);
+    if (userErr || !userData?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const { data: roleRows } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userData.user.id)
+      .in("role", ["admin", "secondary_admin"]);
+    if (!roleRows || roleRows.length === 0) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const { kpiData, forceAlert = false } = await req.json() as {
+      kpiData: KPIData[];
+      forceAlert?: boolean;
+    };
+
+    if (!Array.isArray(kpiData)) {
+      return new Response(JSON.stringify({ error: "Invalid kpiData" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Derive admin recipients server-side from user_roles + profiles
+    const { data: adminRoleRows } = await supabaseAdmin
+      .from("user_roles")
+      .select("user_id")
+      .in("role", ["admin", "secondary_admin"]);
+    const adminIds = (adminRoleRows ?? []).map((r: any) => r.user_id);
+    const { data: adminProfiles } = adminIds.length
+      ? await supabaseAdmin.from("profiles").select("email").in("user_id", adminIds)
+      : { data: [] as { email: string }[] };
+    const adminEmails: string[] = (adminProfiles ?? [])
+      .map((p: any) => p.email)
+      .filter((e: string | null): e is string => !!e);
+
+    console.log("Checking KPI alerts for", kpiData.length, "KPIs");
 
     // Get alert settings
     const { data: alertSettings, error: alertError } = await supabaseAdmin

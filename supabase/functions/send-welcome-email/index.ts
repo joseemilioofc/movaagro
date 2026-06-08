@@ -36,6 +36,41 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
+    // Require authenticated admin caller
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader?.startsWith("Bearer ")) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const token = authHeader.replace("Bearer ", "");
+
+    const supabaseAdmin = createClient(
+      Deno.env.get("SUPABASE_URL") ?? "",
+      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
+      { auth: { autoRefreshToken: false, persistSession: false } }
+    );
+
+    const { data: userData, error: userErr } = await supabaseAdmin.auth.getUser(token);
+    if (userErr || !userData?.user) {
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+    const { data: roleRows } = await supabaseAdmin
+      .from("user_roles")
+      .select("role")
+      .eq("user_id", userData.user.id)
+      .in("role", ["admin", "secondary_admin"]);
+    if (!roleRows || roleRows.length === 0) {
+      return new Response(JSON.stringify({ error: "Forbidden" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { email, name, role }: WelcomeEmailRequest = await req.json();
 
     // Log with masked email for security
@@ -44,12 +79,7 @@ const handler = async (req: Request): Promise<Response> => {
     const roleLabel = roleLabels[role] || role;
     const origin = req.headers.get("origin") || "https://movaagro.com";
     
-    // Generate password reset link instead of sending plain password
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { autoRefreshToken: false, persistSession: false } }
-    );
+    // (supabaseAdmin client created above for auth check)
 
     // Generate a secure password reset link
     const { data: resetData, error: resetError } = await supabaseAdmin.auth.admin.generateLink({
