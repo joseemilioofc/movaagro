@@ -229,18 +229,16 @@ const TransporterDashboard = ({ embedded = false }: { embedded?: boolean } = {})
   };
 
   if (authLoading || loading) {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64">
-          <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        </div>
-      </DashboardLayout>
+    const spinner = (
+      <div className="flex items-center justify-center h-64">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
     );
+    return embedded ? spinner : <DashboardLayout>{spinner}</DashboardLayout>;
   }
 
-  return (
-    <DashboardLayout>
-      <div className="space-y-8">
+  const content = (
+    <div className="space-y-8">
         {/* Header */}
         <div>
           <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">Pedidos Disponíveis</h1>
