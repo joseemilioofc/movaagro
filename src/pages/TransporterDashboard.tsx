@@ -570,8 +570,9 @@ const TransporterDashboard = ({ embedded = false }: { embedded?: boolean } = {})
           />
         )}
       </div>
-    </DashboardLayout>
   );
+
+  return embedded ? content : <DashboardLayout>{content}</DashboardLayout>;
 };
 
 export default TransporterDashboard;
