@@ -79,12 +79,7 @@ const handler = async (req: Request): Promise<Response> => {
     const roleLabel = roleLabels[role] || role;
     const origin = req.headers.get("origin") || "https://movaagro.com";
     
-    // Generate password reset link instead of sending plain password
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "",
-      { auth: { autoRefreshToken: false, persistSession: false } }
-    );
+    // (supabaseAdmin client created above for auth check)
 
     // Generate a secure password reset link
     const { data: resetData, error: resetError } = await supabaseAdmin.auth.admin.generateLink({
