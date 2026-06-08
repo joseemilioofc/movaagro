@@ -8,8 +8,9 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Switch } from "@/components/ui/switch";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, ShieldCheck, ShieldAlert, Clock, Upload, FileCheck2 } from "lucide-react";
+import { Loader2, ShieldCheck, ShieldAlert, Clock, Upload, FileCheck2, Building2 } from "lucide-react";
 
 interface TransporterDetails {
   id: string;
@@ -20,6 +21,10 @@ interface TransporterDetails {
   body_type: string;
   approval_status: "pending" | "approved" | "rejected";
   rejection_reason: string | null;
+  is_company?: boolean;
+  company_name?: string | null;
+  company_nuit?: string | null;
+  company_address?: string | null;
 }
 
 const BODY_TYPES = [
@@ -40,6 +45,10 @@ export const TransporterApprovalForm = () => {
   const [capacityTons, setCapacityTons] = useState("");
   const [bodyType, setBodyType] = useState("");
   const [file, setFile] = useState<File | null>(null);
+  const [isCompany, setIsCompany] = useState(false);
+  const [companyName, setCompanyName] = useState("");
+  const [companyNuit, setCompanyNuit] = useState("");
+  const [companyAddress, setCompanyAddress] = useState("");
 
   useEffect(() => {
     if (user) fetchDetails();
