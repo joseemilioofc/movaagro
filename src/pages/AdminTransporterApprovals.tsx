@@ -26,6 +26,9 @@ interface Row {
   rejection_reason: string | null;
   created_at: string;
   reviewed_at: string | null;
+  is_company?: boolean;
+  company_name?: string | null;
+  company_nuit?: string | null;
   profile?: { name: string; email: string; phone: string | null; company_name: string | null };
 }
 
@@ -137,12 +140,16 @@ const AdminTransporterApprovals = () => {
       <CardContent className="p-4 space-y-3">
         <div className="flex justify-between items-start flex-wrap gap-2">
           <div>
-            <p className="font-semibold flex items-center gap-2">
+            <p className="font-semibold flex items-center gap-2 flex-wrap">
               <Truck className="w-4 h-4 text-primary" />
               {r.profile?.name || "Sem nome"}
               {r.profile?.company_name && <span className="text-muted-foreground font-normal">— {r.profile.company_name}</span>}
+              {(r as any).is_company && <Badge className="bg-blue-600 hover:bg-blue-600 text-[10px]">Empresa</Badge>}
             </p>
             <p className="text-xs text-muted-foreground">{r.profile?.email} {r.profile?.phone ? `• ${r.profile.phone}` : ""}</p>
+            {(r as any).is_company && (r as any).company_name && (
+              <p className="text-xs text-muted-foreground">{(r as any).company_name}{(r as any).company_nuit ? ` • NUIT ${(r as any).company_nuit}` : ""}</p>
+            )}
           </div>
           {r.approval_status === "pending" && <Badge variant="secondary">Pendente</Badge>}
           {r.approval_status === "approved" && <Badge className="bg-green-600 hover:bg-green-600">Aprovado</Badge>}

@@ -15,6 +15,7 @@ import { useContracts } from "@/hooks/useContracts";
 import { logAuditAction } from "@/hooks/useAuditLog";
 import { Truck, Package, MapPin, Calendar, Weight, CheckCircle, XCircle, Loader2, ExternalLink, Eye, MessageSquare, Star, Navigation, FileText } from "lucide-react";
 import { TransporterApprovalForm } from "@/components/TransporterApprovalForm";
+import { useTransporterProfile } from "@/hooks/useTransporterProfile";
 
 interface TransportRequest {
   id: string;
@@ -46,11 +47,19 @@ const TransporterDashboard = ({ embedded = false }: { embedded?: boolean } = {})
   const [cooperativeNames, setCooperativeNames] = useState<Record<string, string>>({});
   const { contracts, refetch: refetchContracts } = useContracts();
 
+  const { isCompany, loading: profileLoading } = useTransporterProfile();
+
   useEffect(() => {
     if (!authLoading && (!user || role !== "transporter")) {
       navigate("/auth");
     }
   }, [user, role, authLoading, navigate]);
+
+  useEffect(() => {
+    if (!embedded && !profileLoading && isCompany) {
+      navigate("/fleet", { replace: true });
+    }
+  }, [embedded, profileLoading, isCompany, navigate]);
 
   useEffect(() => {
     if (user) {
