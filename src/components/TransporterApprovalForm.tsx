@@ -210,6 +210,34 @@ export const TransporterApprovalForm = () => {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="rounded-lg border p-4 space-y-3 bg-muted/30">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Building2 className="w-4 h-4 text-primary" />
+                <Label htmlFor="is-company" className="cursor-pointer">Sou empresa de transporte com frota</Label>
+              </div>
+              <Switch id="is-company" checked={isCompany} onCheckedChange={setIsCompany} disabled={isLocked} />
+            </div>
+            {isCompany && (
+              <div className="space-y-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <Label>Nome da Empresa *</Label>
+                    <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} disabled={isLocked} placeholder="Ex: MOVA AGRO, LDA" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label>NUIT</Label>
+                    <Input value={companyNuit} onChange={(e) => setCompanyNuit(e.target.value)} disabled={isLocked} placeholder="Ex: 402168609" />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <Label>Endereço</Label>
+                  <Input value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} disabled={isLocked} placeholder="Endereço da sede" />
+                </div>
+                <p className="text-xs text-muted-foreground">Como empresa terá um painel dedicado para gerir várias viaturas e motoristas.</p>
+              </div>
+            )}
+          </div>
           <div className="space-y-2">
             <Label htmlFor="alvara">Número do Alvará *</Label>
             <Input
