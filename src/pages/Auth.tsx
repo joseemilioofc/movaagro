@@ -57,6 +57,9 @@ const Auth = () => {
     password: "",
     confirmPassword: "",
     role: (searchParams.get("role") as "cooperative" | "transporter") || "cooperative",
+    isCompany: false,
+    companyName: "",
+    companyNuit: "",
   });
 
   useEffect(() => {
