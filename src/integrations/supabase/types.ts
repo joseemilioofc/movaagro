@@ -190,6 +190,185 @@ export type Database = {
           },
         ]
       }
+      fleet_drivers: {
+        Row: {
+          address: string | null
+          assigned_vehicle_id: string | null
+          created_at: string
+          email: string | null
+          employment_contract_url: string | null
+          id: string
+          id_doc_expiry: string | null
+          id_doc_number: string | null
+          id_doc_type: string | null
+          id_doc_url: string | null
+          license_category: string | null
+          license_expiry: string | null
+          license_number: string | null
+          license_url: string | null
+          name: string
+          phone: string | null
+          phone_alt: string | null
+          status: string
+          transporter_id: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          assigned_vehicle_id?: string | null
+          created_at?: string
+          email?: string | null
+          employment_contract_url?: string | null
+          id?: string
+          id_doc_expiry?: string | null
+          id_doc_number?: string | null
+          id_doc_type?: string | null
+          id_doc_url?: string | null
+          license_category?: string | null
+          license_expiry?: string | null
+          license_number?: string | null
+          license_url?: string | null
+          name: string
+          phone?: string | null
+          phone_alt?: string | null
+          status?: string
+          transporter_id: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          assigned_vehicle_id?: string | null
+          created_at?: string
+          email?: string | null
+          employment_contract_url?: string | null
+          id?: string
+          id_doc_expiry?: string | null
+          id_doc_number?: string | null
+          id_doc_type?: string | null
+          id_doc_url?: string | null
+          license_category?: string | null
+          license_expiry?: string | null
+          license_number?: string | null
+          license_url?: string | null
+          name?: string
+          phone?: string | null
+          phone_alt?: string | null
+          status?: string
+          transporter_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fleet_drivers_assigned_vehicle_id_fkey"
+            columns: ["assigned_vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      fleet_vehicles: {
+        Row: {
+          binding_declaration_url: string | null
+          brand: string | null
+          capacity_kg: number
+          created_at: string
+          document_url: string | null
+          id: string
+          inspection_date: string | null
+          inspection_expiry: string | null
+          inspection_url: string | null
+          insurance_company: string | null
+          insurance_expiry: string | null
+          insurance_number: string | null
+          insurance_url: string | null
+          livrete_number: string | null
+          livrete_url: string | null
+          model: string | null
+          ownership_doc_url: string | null
+          photo_front_url: string | null
+          photo_plate_url: string | null
+          photo_rear_url: string | null
+          photo_side_url: string | null
+          photo_url: string | null
+          plate: string
+          status: string
+          transport_license_expiry: string | null
+          transport_license_number: string | null
+          transport_license_url: string | null
+          transporter_id: string
+          updated_at: string
+          vehicle_type: string
+          year: number | null
+        }
+        Insert: {
+          binding_declaration_url?: string | null
+          brand?: string | null
+          capacity_kg?: number
+          created_at?: string
+          document_url?: string | null
+          id?: string
+          inspection_date?: string | null
+          inspection_expiry?: string | null
+          inspection_url?: string | null
+          insurance_company?: string | null
+          insurance_expiry?: string | null
+          insurance_number?: string | null
+          insurance_url?: string | null
+          livrete_number?: string | null
+          livrete_url?: string | null
+          model?: string | null
+          ownership_doc_url?: string | null
+          photo_front_url?: string | null
+          photo_plate_url?: string | null
+          photo_rear_url?: string | null
+          photo_side_url?: string | null
+          photo_url?: string | null
+          plate: string
+          status?: string
+          transport_license_expiry?: string | null
+          transport_license_number?: string | null
+          transport_license_url?: string | null
+          transporter_id: string
+          updated_at?: string
+          vehicle_type?: string
+          year?: number | null
+        }
+        Update: {
+          binding_declaration_url?: string | null
+          brand?: string | null
+          capacity_kg?: number
+          created_at?: string
+          document_url?: string | null
+          id?: string
+          inspection_date?: string | null
+          inspection_expiry?: string | null
+          inspection_url?: string | null
+          insurance_company?: string | null
+          insurance_expiry?: string | null
+          insurance_number?: string | null
+          insurance_url?: string | null
+          livrete_number?: string | null
+          livrete_url?: string | null
+          model?: string | null
+          ownership_doc_url?: string | null
+          photo_front_url?: string | null
+          photo_plate_url?: string | null
+          photo_rear_url?: string | null
+          photo_side_url?: string | null
+          photo_url?: string | null
+          plate?: string
+          status?: string
+          transport_license_expiry?: string | null
+          transport_license_number?: string | null
+          transport_license_url?: string | null
+          transporter_id?: string
+          updated_at?: string
+          vehicle_type?: string
+          year?: number | null
+        }
+        Relationships: []
+      }
       kpi_alerts: {
         Row: {
           created_at: string
@@ -456,6 +635,8 @@ export type Database = {
         Row: {
           admin_confirmed_at: string | null
           admin_confirmed_by: string | null
+          assigned_driver_id: string | null
+          assigned_vehicle_id: string | null
           created_at: string
           description: string
           id: string
@@ -471,6 +652,8 @@ export type Database = {
         Insert: {
           admin_confirmed_at?: string | null
           admin_confirmed_by?: string | null
+          assigned_driver_id?: string | null
+          assigned_vehicle_id?: string | null
           created_at?: string
           description: string
           id?: string
@@ -486,6 +669,8 @@ export type Database = {
         Update: {
           admin_confirmed_at?: string | null
           admin_confirmed_by?: string | null
+          assigned_driver_id?: string | null
+          assigned_vehicle_id?: string | null
           created_at?: string
           description?: string
           id?: string
@@ -499,6 +684,20 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "transport_proposals_assigned_driver_id_fkey"
+            columns: ["assigned_driver_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_drivers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "transport_proposals_assigned_vehicle_id_fkey"
+            columns: ["assigned_vehicle_id"]
+            isOneToOne: false
+            referencedRelation: "fleet_vehicles"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "transport_proposals_transport_request_id_fkey"
             columns: ["transport_request_id"]
@@ -595,45 +794,99 @@ export type Database = {
       transporter_details: {
         Row: {
           alvara_document_url: string
+          alvara_expiry: string | null
           alvara_number: string
           approval_status: string
           body_type: string
           capacity_tons: number
+          civil_insurance_company: string | null
+          civil_insurance_expiry: string | null
+          civil_insurance_number: string | null
+          civil_insurance_url: string | null
+          commercial_registry_number: string | null
+          commercial_registry_url: string | null
+          company_address: string | null
+          company_name: string | null
+          company_nuit: string | null
           created_at: string
           id: string
+          is_company: boolean
+          legal_rep_doc_number: string | null
+          legal_rep_doc_type: string | null
+          legal_rep_doc_url: string | null
+          legal_rep_name: string | null
+          legal_rep_role: string | null
           rejection_reason: string | null
           reviewed_at: string | null
           reviewed_by: string | null
+          tax_clearance_expiry: string | null
+          tax_clearance_url: string | null
           truck_plate: string
           updated_at: string
           user_id: string
         }
         Insert: {
           alvara_document_url: string
+          alvara_expiry?: string | null
           alvara_number: string
           approval_status?: string
           body_type: string
           capacity_tons: number
+          civil_insurance_company?: string | null
+          civil_insurance_expiry?: string | null
+          civil_insurance_number?: string | null
+          civil_insurance_url?: string | null
+          commercial_registry_number?: string | null
+          commercial_registry_url?: string | null
+          company_address?: string | null
+          company_name?: string | null
+          company_nuit?: string | null
           created_at?: string
           id?: string
+          is_company?: boolean
+          legal_rep_doc_number?: string | null
+          legal_rep_doc_type?: string | null
+          legal_rep_doc_url?: string | null
+          legal_rep_name?: string | null
+          legal_rep_role?: string | null
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          tax_clearance_expiry?: string | null
+          tax_clearance_url?: string | null
           truck_plate: string
           updated_at?: string
           user_id: string
         }
         Update: {
           alvara_document_url?: string
+          alvara_expiry?: string | null
           alvara_number?: string
           approval_status?: string
           body_type?: string
           capacity_tons?: number
+          civil_insurance_company?: string | null
+          civil_insurance_expiry?: string | null
+          civil_insurance_number?: string | null
+          civil_insurance_url?: string | null
+          commercial_registry_number?: string | null
+          commercial_registry_url?: string | null
+          company_address?: string | null
+          company_name?: string | null
+          company_nuit?: string | null
           created_at?: string
           id?: string
+          is_company?: boolean
+          legal_rep_doc_number?: string | null
+          legal_rep_doc_type?: string | null
+          legal_rep_doc_url?: string | null
+          legal_rep_name?: string | null
+          legal_rep_role?: string | null
           rejection_reason?: string | null
           reviewed_at?: string | null
           reviewed_by?: string | null
+          tax_clearance_expiry?: string | null
+          tax_clearance_url?: string | null
           truck_plate?: string
           updated_at?: string
           user_id?: string
