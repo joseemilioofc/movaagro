@@ -1,66 +1,86 @@
 
-# Plano: Painel de Empresa Transportadora (Frota)
+# Plano: Documentação completa (Empresa, Viatura, Motorista)
 
-## Visão geral
-Adicionar suporte a **empresas com frota** dentro do role existente `transporter`, com auto-cadastro público, aprovação por admin, e um painel dedicado para gerir viaturas, motoristas e KPIs da frota. Transportadores individuais continuam com o painel atual.
+Vamos estender o painel de **Empresa Transportadora com Frota** para recolher toda a documentação legalmente exigida em Moçambique, em três blocos: empresa, viatura e motorista. Mantém-se o painel do transportador individual como está hoje.
 
-## 1. Modelo de dados (migração)
+## 1. Documentos da Transportadora (empresa)
 
-**Extensão de `transporter_details`:**
-- `is_company` (boolean, default false) — marca a conta como empresa
-- `company_name`, `company_nuit`, `company_address` (text) — dados fiscais
+Estender `transporter_details` e o formulário `TransporterApprovalForm` (apenas quando `is_company = true`) com:
 
-**Nova tabela `fleet_vehicles`:**
-- `transporter_id` (uuid → auth.users)
-- `plate` (matrícula), `vehicle_type`, `capacity_kg`, `year`, `brand`, `model`
-- `photo_url`, `document_url`, `status` (active/maintenance/inactive)
+- Alvará/licença de transporte da empresa (upload + nº + validade)
+- Certidão de registo comercial (upload + nº)
+- NUIT da empresa (já existe em `company_nuit` — manter)
+- Documento de identificação do representante legal (upload + nome + cargo + tipo de doc + nº)
+- Comprovativo de situação fiscal regular (upload + validade, opcional)
+- Apólice de seguro de responsabilidade civil (upload + seguradora + nº + validade, opcional)
 
-**Nova tabela `fleet_drivers`:**
-- `transporter_id` (uuid → auth.users)
-- `name`, `phone`, `license_number`, `license_expiry`
-- `assigned_vehicle_id` (uuid → fleet_vehicles, nullable)
-- `status` (active/inactive)
+Bucket privado existente `transporter-documents` é reaproveitado, com pasta `{user_id}/company/`.
 
-**Extensão de `transport_proposals`** (atribuição na confirmação):
-- `assigned_vehicle_id` (uuid, nullable)
-- `assigned_driver_id` (uuid, nullable)
+## 2. Documentos da Viatura
 
-Cada tabela com RLS: a própria empresa (auth.uid = transporter_id) faz CRUD; admins veem tudo; cooperativa vê viatura/motorista atribuídos do seu pedido. GRANTs explícitos para `authenticated` e `service_role`.
+Estender a tabela `fleet_vehicles` e o formulário em `FleetVehiclesManager` com:
 
-Buckets: reutilizar/criar `fleet-vehicles` (privado) para fotos e documentos das viaturas, com policies por owner folder.
+- Livrete / DUA (upload + nº)
+- Título de propriedade ou prova de posse (upload)
+- Licença de transporte da viatura (upload + nº + validade)
+- Inspeção técnica (upload + data da última + validade)
+- Apólice de seguro (upload + seguradora + nº + validade)
+- Fotos da viatura: frontal, lateral, traseira e da matrícula (4 uploads; manter `photo_url` como principal)
+- **Declaração de vinculação à transportadora** (upload, com nota de que deve conter matrícula, marca/modelo, proprietário, nome da transportadora e confirmação de autorização sob o alvará)
 
-## 2. Auto-cadastro com aprovação
+Alertas visuais quando uma validade está a < 30 dias ou expirada (badge vermelho/amarelo na lista de viaturas).
 
-- Em `/auth`, opção "Empresa de Transporte" no signup do transportador (toggle "Sou empresa com frota").
-- Ao registar com flag empresa: cria `transporter_details` com `is_company=true` e `approval_status='pending'`.
-- Admin aprova no fluxo existente `/admin/transporter-approvals` (adicionar coluna/badge "Empresa").
+## 3. Documentos do Motorista
 
-## 3. Painel da Empresa (`/fleet`)
+Estender `fleet_drivers` e o formulário em `FleetDriversManager` com:
 
-Detecta `is_company=true` ao entrar em `/transporter` e redireciona para `/fleet`. Novo `FleetDashboard` com tabs:
+- Carta de condução (upload + categoria + nº + validade — `license_number` e `license_expiry` já existem; adicionar `license_category` e upload)
+- BI / documento de identificação (upload + tipo + nº + validade)
+- Contrato de trabalho ou declaração da transportadora autorizando-o a operar (upload)
+- Contactos atualizados: telefone (já existe), telefone alternativo, email, endereço
 
-- **Pedidos** — mesma listagem do transportador individual; ao confirmar/aceitar uma proposta abre dialog para escolher **viatura + motorista** disponíveis.
-- **Viaturas** — tabela com CRUD (form com upload de foto/documento).
-- **Motoristas** — tabela com CRUD, atribuição opcional a viatura.
-- **KPIs da Frota** — cards e gráficos:
-  - Receita total e por mês
-  - Viagens por viatura
-  - Ranking de motoristas (viagens, avaliação média)
-  - Taxa de utilização da frota
+## 4. Aprovação por Admin
 
-## 4. Navegação e papéis
+Em `/admin/transporter-approvals` o admin passa a ver, para empresas:
 
-- `DashboardLayout` mostra item "Frota" quando `is_company=true` (mantendo role `transporter`).
-- Hook `useTransporterProfile` para ler `is_company` uma vez e cachear.
-- Mobile bottom-nav atualizada com Viaturas/Motoristas.
+- Checklist dos documentos obrigatórios da empresa (com link para abrir cada ficheiro via signed URL)
+- Indicadores de validade
+- Ações: aprovar / rejeitar com motivo (já existem)
 
-## 5. Detalhes técnicos
+Viaturas e motoristas continuam geridos pela empresa; admins podem inspecionar via página de detalhe da empresa (link "Ver frota").
 
-- Triggers `BEFORE UPDATE` para impedir mudanças em `transporter_id` nas tabelas de frota.
-- Função `is_fleet_company(_uid)` (SECURITY DEFINER) para uso em RLS de outras tabelas que precisem distinguir.
-- Atualização do edge function `create-user` opcional para permitir admin criar empresa pré-aprovada.
-- Memória: criar `mem://features/fleet-companies` documentando o modelo.
+## 5. UX no formulário
 
-## Fora de escopo (futuro)
-- Login individual para motoristas (continuam geridos pela empresa).
-- Tracking GPS por viatura específica (usar o sistema atual no nível do pedido).
+- Cada bloco numa secção colapsável (`Accordion`) para não sobrecarregar a página.
+- Marcar campos obrigatórios vs. opcionais (situação fiscal e seguro RC são opcionais).
+- Validação client-side: NUIT 9 dígitos, datas de validade no futuro, ficheiros até 10 MB (pdf/jpg/png).
+- Após upload, mostrar preview/nome do ficheiro e botão para substituir.
+
+## Detalhes técnicos
+
+**Migração SQL** (alterar tabelas existentes — sem novas tabelas):
+
+`transporter_details` ganha:
+`alvara_number`, `alvara_expiry`, `alvara_url`, `commercial_registry_number`, `commercial_registry_url`, `legal_rep_name`, `legal_rep_role`, `legal_rep_doc_type`, `legal_rep_doc_number`, `legal_rep_doc_url`, `tax_clearance_url`, `tax_clearance_expiry`, `civil_insurance_company`, `civil_insurance_number`, `civil_insurance_expiry`, `civil_insurance_url`.
+
+`fleet_vehicles` ganha:
+`livrete_number`, `livrete_url`, `ownership_doc_url`, `transport_license_number`, `transport_license_expiry`, `transport_license_url`, `inspection_date`, `inspection_expiry`, `inspection_url`, `insurance_company`, `insurance_number`, `insurance_expiry`, `insurance_url`, `photo_front_url`, `photo_side_url`, `photo_rear_url`, `photo_plate_url`, `binding_declaration_url`.
+
+`fleet_drivers` ganha:
+`license_category`, `license_url`, `id_doc_type`, `id_doc_number`, `id_doc_expiry`, `id_doc_url`, `employment_contract_url`, `phone_alt`, `email`, `address`.
+
+Todos os campos novos são `nullable` para não quebrar registos existentes; obrigatoriedade é validada na UI antes de submeter para aprovação.
+
+**Storage**: reutilizar `transporter-documents` (já privado) com prefixos:
+- `{user_id}/company/...`
+- `{user_id}/vehicles/{vehicle_id}/...`
+- `{user_id}/drivers/{driver_id}/...`
+
+Policies existentes já restringem por `owner` (auth.uid).
+
+**Memória**: atualizar `mem://features/fleet-companies` com a checklist completa.
+
+## Fora de escopo
+
+- OCR/extração automática dos documentos.
+- Renovação automática de alertas por email (pode entrar numa fase seguinte).
