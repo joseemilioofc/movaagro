@@ -116,12 +116,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                   <span className="hidden sm:inline">Perfil</span>
                 </Button>
               </Link>
-              <Link to="/" className="hidden sm:block">
-                <Button variant="ghost" size="sm" className="gap-2">
-                  <Home className="w-4 h-4" />
-                  <span className="hidden sm:inline">Início</span>
-                </Button>
-              </Link>
+              {location.pathname === "/home" && (
+                <Link to="/" className="hidden sm:block">
+                  <Button variant="ghost" size="sm" className="gap-2">
+                    <Home className="w-4 h-4" />
+                    <span className="hidden sm:inline">Home</span>
+                  </Button>
+                </Link>
+              )}
               <Button variant="outline" size="sm" onClick={handleSignOut} className="gap-1 sm:gap-2 px-2 sm:px-3">
                 <LogOut className="w-4 h-4" />
                 <span className="hidden sm:inline">Sair</span>
