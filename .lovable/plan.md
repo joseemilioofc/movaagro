@@ -1,12 +1,14 @@
-Alteração simples no botão de navegação superior direito do painel autenticado.
+Tornar o botão da barra superior (ao lado de "Perfil") contextual:
 
-Objetivo: trocar o label visível do botão ao lado de "Perfil" e antes de "Sair".
+- Quando estiver em `/home` → mostrar botão **"Início"** que leva para `/` (página de boas-vindas / landing pública).
+- Quando estiver em qualquer outra rota → mostrar botão **"Home"** que leva para `/home` (painel do utilizador).
 
 Arquivo afetado:
-- `src/components/DashboardLayout.tsx` (linha ~125)
+- `src/components/DashboardLayout.tsx`
 
-Mudança exata:
-- De: `<span className="hidden sm:inline">Início</span>`
-- Para: `<span className="hidden sm:inline">Home</span>`
+Implementação:
+- Usar `useLocation()` (já importado) para detectar `location.pathname === "/home"`.
+- Renderizar condicionalmente o `<Link>` com `to` e o `<span>` com o label correto.
+- Ícone permanece `Home` em ambos os casos.
 
-Sem impacto em rotas, ícones ou outra lógica — apenas o texto exibido.
+Sem mudanças em rotas, lógica de auth ou outros componentes.
