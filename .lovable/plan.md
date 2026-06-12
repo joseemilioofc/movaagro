@@ -1,34 +1,55 @@
-# Popular Conta Demo com Dados de Exemplo
+# Reativar Conta Demo + Dados Fictícios
 
-Vou inserir 3 exemplos de cada tipo de operação na conta demo (`Teste@demo.com`), usando os papéis de **cooperativa** e **transportadora** que ela já possui.
+## Objetivo
+Garantir que a conta `Teste@demo.com` / `123teste123` funcione e tenha **três papéis** (Cooperativa + Transportadora + Admin), além de 3 exemplos de cada tipo de operação com dados fictícios realistas.
 
-## Dados a inserir (3 de cada)
+## Passos
 
-### Como Cooperativa (origem dos pedidos)
-1. **Solicitações de transporte (`transport_requests`)** — 3 pedidos com status variados (pendente, em negociação, concluído), rotas dentro de Moçambique (Quelimane→Maputo, Mocuba→Beira, Gurué→Nampula), tipos de carga diferentes (milho, arroz, soja).
-2. **Cálculos de preço (`price_calculations`)** — 3 simulações de frete salvas no histórico.
-3. **Alertas de preço (`price_alerts`)** — 3 alertas configurados para rotas/cargas.
+### 1. Recriar/ativar a conta demo (Edge Function temporária)
+- Criar `supabase/functions/activate-demo/index.ts` (sem exigir auth — uso único).
+- Se já existir um user com `Teste@demo.com`, apagar e recriar via `auth.admin`.
+- Email confirmado, senha `123teste123`.
+- Inserir em `user_roles` os três papéis: `cooperative`, `transporter`, `admin`.
+- Deploy → invocar → apagar a função (segurança).
 
-### Como Transportadora (responde e opera)
-4. **Disponibilidade (`transporter_availability`)** — 3 janelas de disponibilidade futuras em regiões diferentes.
-5. **Frota — Viaturas (`fleet_vehicles`)** — 3 veículos (camião 10t, camião 20t, carrinha 3t) com placas, marcas e capacidades.
-6. **Frota — Motoristas (`fleet_drivers`)** — 3 motoristas, cada um associado a uma viatura.
-7. **Propostas (`transport_proposals`)** — 3 propostas enviadas aos pedidos acima (uma aceite, uma pendente, uma recusada).
+### 2. Limpar dados antigos da demo
+Antes de inserir, remover registos antigos do user demo nas tabelas afetadas para evitar duplicados / violações de unique.
 
-### Operações conjuntas / pós-negociação
-8. **Contratos digitais (`digital_contracts`)** — 3 contratos gerados a partir das propostas aceites (1 assinado pelos dois, 1 só pela cooperativa, 1 rascunho).
-9. **Mensagens de chat (`chat_messages`)** — 3 mensagens trocadas nos pedidos.
-10. **Localizações de transporte (`transport_locations`)** — 3 pontos GPS simulando rota em curso.
-11. **Avaliações (`ratings`)** — 3 avaliações (cooperativa↔transportadora) em transportes concluídos.
+### 3. Popular dados fictícios (3 de cada)
 
-## Abordagem técnica
+**Como Cooperativa**
+- 3 `transport_requests` — Milho Quelimane→Maputo, Arroz Mocuba→Beira, Soja Gurué→Nampula (status: pendente, em negociação, concluído).
+- 3 `price_calculations` — simulações de frete.
+- 3 `price_alerts` — alertas configurados.
 
-- Usar a ferramenta `supabase--insert` num único bloco SQL transacional, com CTEs para reaproveitar IDs (request → proposal → contract → rating → chat → location).
-- Todos os registos vinculados ao `user_id` da demo (`dfce9b8f-c554-4a9a-ab0d-e04650e8dba6`) tanto como `cooperative_id` como `transporter_id` (a conta tem ambos os papéis, então ela negocia consigo mesma — apropriado para demo).
-- Telefones e contas de pagamento usam `+258 87 780 1500` (MOVA AGRO), conforme regra do projeto.
-- Zambézia priorizada nas rotas de exemplo.
-- Nenhum ficheiro de código alterado — apenas dados.
+**Como Transportadora**
+- 3 `transporter_availability` — janelas futuras.
+- 3 `fleet_vehicles` — camião 10t, camião 20t, carrinha 3t.
+- 3 `fleet_drivers` — vinculados às viaturas.
+- 3 `transport_proposals` — 1 pendente, 1 aceite, 1 recusada.
 
-## Pergunta antes de avançar
+**Como Admin**
+- 3 `audit_logs` — login, criação de utilizador, aprovação de transportadora.
+- 3 `kpi_goals` — metas mensais (entregas, receita, satisfação).
+- 3 `kpi_alerts` — alertas de KPI ativos.
 
-Quer que a conta demo negocie consigo mesma (cooperativa + transportadora no mesmo user, mais simples e isolado), **ou** prefere que eu crie também uma segunda conta demo "contraparte" para tornar as interações mais realistas?
+**Operações conjuntas / pós-negociação**
+- 3 `digital_contracts` — MOVA-2026-0001/0002/0003 (1 assinado por ambos, 1 só cooperativa, 1 rascunho).
+- 3 `chat_messages` — mensagens nos pedidos.
+- 3 `transport_locations` — pontos GPS em rota.
+- 3 `ratings` — avaliações 4–5★.
+
+### 4. Verificação
+- Login com as credenciais.
+- Validar que dashboards de Cooperativa, Transportadora e Admin mostram dados.
+
+## Detalhes técnicos
+- Telefones e MOVA AGRO usam `+258 87 780 1500`.
+- Zambézia priorizada nas rotas.
+- `cooperative_id` e `transporter_id` = mesmo user (`dfce9b8f-c554-4a9a-ab0d-e04650e8dba6`) — negocia consigo mesma (apropriado para demo).
+- Inserção via `supabase--insert` num único bloco `DO $$ ... $$` com `RETURNING` para encadear IDs.
+
+## Credenciais finais
+- **Email:** `Teste@demo.com`
+- **Senha:** `123teste123`
+- **Papéis:** Cooperativa + Transportadora + Admin
