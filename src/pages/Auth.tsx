@@ -142,26 +142,25 @@ const Auth = () => {
 
   const handleGoogleLogin = async () => {
     setIsSubmitting(true);
-    
+
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/auth`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          },
-        },
+      const result = await lovable.auth.signInWithOAuth("google", {
+        redirect_uri: window.location.origin,
       });
 
-      if (error) {
+      if (result.error) {
         toast({
           title: "Erro ao entrar com Google",
-          description: error.message,
+          description: (result.error as Error).message,
           variant: "destructive",
         });
+        return;
       }
+
+      if (result.redirected) {
+        return;
+      }
+      // session set by lovable module; AuthProvider will pick it up
     } catch (error: any) {
       toast({
         title: "Erro ao entrar com Google",
@@ -172,6 +171,7 @@ const Auth = () => {
       setIsSubmitting(false);
     }
   };
+
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
