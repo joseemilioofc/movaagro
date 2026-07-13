@@ -27,6 +27,12 @@ import Install from "./pages/Install";
 import Ranking from "./pages/Ranking";
 import AboutUs from "./pages/AboutUs";
 import Company from "./pages/Company";
+import Cookies from "./pages/Cookies";
+import GPSConsent from "./pages/GPSConsent";
+import IntermediationContract from "./pages/IntermediationContract";
+import DataRetention from "./pages/DataRetention";
+import AcceptableUse from "./pages/AcceptableUse";
+import LegalContact from "./pages/LegalContact";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -62,6 +68,12 @@ const App = () => (
             <Route path="/security" element={<Security />} />
             <Route path="/about" element={<AboutUs />} />
             <Route path="/company" element={<Company />} />
+            <Route path="/cookies" element={<Cookies />} />
+            <Route path="/gps-consent" element={<GPSConsent />} />
+            <Route path="/intermediation" element={<IntermediationContract />} />
+            <Route path="/data-retention" element={<DataRetention />} />
+            <Route path="/acceptable-use" element={<AcceptableUse />} />
+            <Route path="/legal-contact" element={<LegalContact />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
