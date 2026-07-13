@@ -37,26 +37,16 @@ export function Footer() {
           <div>
             <h4 className="font-semibold text-foreground mb-3 sm:mb-4 text-sm sm:text-base">Informação Legal</h4>
             <ul className="space-y-1.5 sm:space-y-2 text-xs sm:text-sm">
-              <li>
-                <Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">
-                  Sobre Nós
-                </Link>
-              </li>
-              <li>
-                <Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">
-                  Política de Privacidade
-                </Link>
-              </li>
-              <li>
-                <Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">
-                  Termos
-                </Link>
-              </li>
-              <li>
-                <Link to="/security" className="text-muted-foreground hover:text-primary transition-colors">
-                  Segurança
-                </Link>
-              </li>
+              <li><Link to="/about" className="text-muted-foreground hover:text-primary transition-colors">Sobre Nós</Link></li>
+              <li><Link to="/terms" className="text-muted-foreground hover:text-primary transition-colors">Termos de Uso</Link></li>
+              <li><Link to="/privacy" className="text-muted-foreground hover:text-primary transition-colors">Política de Privacidade</Link></li>
+              <li><Link to="/cookies" className="text-muted-foreground hover:text-primary transition-colors">Política de Cookies</Link></li>
+              <li><Link to="/security" className="text-muted-foreground hover:text-primary transition-colors">Política de Segurança</Link></li>
+              <li><Link to="/data-retention" className="text-muted-foreground hover:text-primary transition-colors">Política de Retenção de Dados</Link></li>
+              <li><Link to="/gps-consent" className="text-muted-foreground hover:text-primary transition-colors">Consentimento de GPS</Link></li>
+              <li><Link to="/intermediation" className="text-muted-foreground hover:text-primary transition-colors">Contrato de Intermediação</Link></li>
+              <li><Link to="/acceptable-use" className="text-muted-foreground hover:text-primary transition-colors">Política de Uso Aceitável</Link></li>
+              <li><Link to="/legal-contact" className="text-muted-foreground hover:text-primary transition-colors">Contacto Jurídico</Link></li>
             </ul>
           </div>
 
@@ -80,17 +70,21 @@ export function Footer() {
         </div>
 
         {/* Copyright */}
-        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
+        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-border flex flex-col gap-3 sm:gap-4">
           <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
-            © {new Date().getFullYear()} MOVA. Todos os direitos reservados.
-            <span className="block sm:inline sm:ml-2">Empresa: MOVA AGRO, LDA</span>
-            <span className="block sm:inline sm:ml-2">NUIT: 402168609</span>
-            <span className="block sm:inline sm:ml-2">Registo Comercial N° 105070087/Zambézia</span>
-            <span className="block sm:inline sm:ml-2">Alvará N°: 64/04/01/PS/2026</span>
+            <strong>MOVA AGRO, LDA</strong> — Plataforma Digital de Intermediação de Transporte Agrícola.
+            <span className="block mt-1">Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Rua 1115, Moçambique.</span>
+            <span className="block mt-1">E-mail: movaagro@gmail.com</span>
+            <span className="block mt-1">NUIT: 402168609 · Registo Comercial N° 105070087/Zambézia · Alvará N°: 64/04/01/PS/2026</span>
           </p>
-          <Link to="/auth?admin=true" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors">
-            Acesso Administrativo
-          </Link>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
+              © {new Date().getFullYear()} MOVA AGRO, LDA. Todos os direitos reservados.
+            </p>
+            <Link to="/auth?admin=true" className="text-xs sm:text-sm text-muted-foreground hover:text-primary transition-colors">
+              Acesso Administrativo
+            </Link>
+          </div>
         </div>
       </div>
 
