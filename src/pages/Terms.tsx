@@ -1,7 +1,7 @@
 import { LegalPageLayout } from "@/components/LegalPageLayout";
 
 const Terms = () => (
-  <LegalPageLayout title="Termos de Uso – MOVA AGRO">
+  <LegalPageLayout title="Termos de Uso – MOVA AGRO" updatedAt="13 de Julho de 2026">
     <section className="space-y-4">
       <h2 className="text-xl font-semibold text-foreground">1. Identificação da Plataforma</h2>
       <p>

@@ -1,55 +1,24 @@
-# Atualização Jurídica – MOVA AGRO
+# Atualização Jurídica – Documentos 1 a 4 de 9
 
-Vou publicar o conteúdo jurídico que enviaste na plataforma, criando novas páginas e atualizando as existentes para refletir o posicionamento de **plataforma de intermediação tecnológica** (não transportadora).
+Vou substituir integralmente o conteúdo das 4 páginas legais existentes pelos novos textos v1.0 (13 de julho de 2026) fornecidos.
 
-## 1. Páginas a atualizar (conteúdo existente)
+## Arquivos a atualizar
 
-- **`src/pages/Terms.tsx`** — substituir totalmente pelo novo texto "TERMOS DE USO – MOVA AGRO" (identificação da plataforma, natureza dos serviços, limitação de responsabilidade).
-- **`src/pages/Privacy.tsx`** — substituir pelo novo texto da Política de Privacidade, com referência à Lei n.º 3/2017 (Moçambique) e GDPR.
-- **`src/pages/Security.tsx`** — manter como "Política de Segurança" (já existe no rodapé).
+1. **`src/pages/Terms.tsx`** — Termos de Uso da Plataforma MOVA AGRO (Documento 1 de 9, texto já enviado anteriormente).
+2. **`src/pages/Privacy.tsx`** — Política de Privacidade (Documento 2 de 9): 20 seções, da apresentação às disposições finais, com referências à Lei nº 3/2017 e GDPR.
+3. **`src/pages/Cookies.tsx`** — Política de Cookies (Documento 3 de 9): 15 seções, tipos de cookies, tecnologias semelhantes, gerenciamento e consequências de desativação.
+4. **`src/pages/GPSConsent.tsx`** — Termo de Consentimento para Geolocalização e Rastreamento GPS (Documento 4 de 9): 17 seções, incluindo dados coletados, período de rastreamento, revogação e declaração de consentimento.
 
-## 2. Páginas novas a criar
+## Padronizações
 
-- **`src/pages/Cookies.tsx`** — Política de Cookies.
-- **`src/pages/GPSConsent.tsx`** — Termo de Consentimento para Geolocalização e GPS.
-- **`src/pages/IntermediationContract.tsx`** — Contrato de Intermediação.
-- **`src/pages/DataRetention.tsx`** — Política de Retenção de Dados.
-- **`src/pages/AcceptableUse.tsx`** — Política de Uso Aceitável.
-- **`src/pages/LegalContact.tsx`** — Contacto Jurídico (movaagro@gmail.com, endereço Quelimane).
+- `updatedAt="13 de Julho de 2026"` no `LegalPageLayout` de cada página.
+- Estrutura semântica: `<h2>` para seções numeradas, `<h3>` para subseções (ex.: 3.1, 4.1, cookies de sessão vs persistentes), `<ul class="list-disc pl-6">` para listas.
+- Endereços e e-mail (`movaagro@gmail.com`) como blocos formatados, com link `mailto:` no e-mail.
+- Uso de tokens semânticos (`text-foreground`, `text-primary`), sem cores hardcoded.
 
-Todas seguem o layout existente (header com logo + botão Voltar, `Footer`, tipografia `prose`).
+## Fora do escopo
 
-## 3. Rotas
-
-Adicionar em **`src/App.tsx`** as 6 novas rotas:
-`/cookies`, `/gps-consent`, `/intermediation`, `/data-retention`, `/acceptable-use`, `/legal-contact`.
-
-## 4. Rodapé (`src/components/Footer.tsx`)
-
-Reorganizar a secção **Informação Legal** com a lista jurídica recomendada:
-
-- Termos de Uso
-- Política de Privacidade
-- Política de Cookies
-- Política de Segurança
-- Política de Retenção de Dados
-- Consentimento de GPS
-- Contrato de Intermediação
-- Política de Uso Aceitável
-- Contacto Jurídico
-
-(Mantenho "Sobre Nós" na secção Comercial junto a "Empresa", já que não consta na lista jurídica.)
-
-Atualizar o bloco de copyright para o texto sugerido:
-> MOVA AGRO, LDA — Plataforma Digital de Intermediação de Transporte Agrícola. Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Rua 1115, Moçambique. E-mail: movaagro@gmail.com. © 2026 MOVA AGRO, LDA. Todos os direitos reservados.
-
-Mantenho NUIT / Registo Comercial / Alvará na mesma linha (já estão no rodapé atual).
-
-## 5. Detalhes técnicos
-
-- Componentes reutilizam `Footer`, `Button`, `Link` já existentes — sem novas dependências.
-- Conteúdo em PT, sem hardcoded colors (usa tokens semânticos `text-foreground`, `text-muted-foreground`, `bg-card`).
-- Cada página tem `<h1>` único e estrutura semântica para SEO.
-- Sem alterações em backend, RLS, edge functions ou lógica de negócio.
+- Nenhuma alteração no `Footer`, rotas ou backend — as 4 páginas já existem e estão linkadas.
+- Documentos 5 a 9 (Retenção, etc.) ficam para os próximos turnos quando o texto for enviado.
 
 Confirmas para implementar?
