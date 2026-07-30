@@ -15,7 +15,7 @@ export default defineTool({
     if (!ctx.isAuthenticated()) return unauthenticated();
     const { data, error } = await supabaseForUser(ctx)
       .from("fleet_vehicles")
-      .select("id,plate_number,brand,model,body_type,capacity_tons,status,created_at")
+      .select("id,plate,brand,model,vehicle_type,capacity_kg,year,status,created_at")
       .order("created_at", { ascending: false })
       .limit(Math.min(limit ?? 50, 100));
     if (error) return errorResult(error.message);
