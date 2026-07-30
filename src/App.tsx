@@ -33,7 +33,9 @@ import IntermediationContract from "./pages/IntermediationContract";
 import DataRetention from "./pages/DataRetention";
 import AcceptableUse from "./pages/AcceptableUse";
 import LegalContact from "./pages/LegalContact";
+import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
+
 
 const queryClient = new QueryClient();
 
