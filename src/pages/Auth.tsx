@@ -151,8 +151,11 @@ const Auth = () => {
 
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: nextPath
+          ? `${window.location.origin}/auth?next=${encodeURIComponent(nextPath)}`
+          : window.location.origin,
       });
+
 
       if (result.error) {
         toast({
