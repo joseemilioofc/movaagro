@@ -1,0 +1,148 @@
+{
+  "version": 1,
+  "sdk_version": "0.25.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "oauth",
+    "issuer": "https://xnrckjigfltaaanzfzml.supabase.co/auth/v1",
+    "accepted_audiences": [
+      "authenticated"
+    ]
+  },
+  "mcp": {
+    "server": {
+      "name": "mova-agro-mcp",
+      "version": "0.1.0",
+      "title": "MOVA AGRO"
+    },
+    "tools": [
+      {
+        "name": "list_transport_requests",
+        "title": "Listar pedidos de transporte",
+        "description": "Lista os pedidos de transporte visíveis para o utilizador autenticado, com filtro opcional por estado.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "status": {
+              "type": "string",
+              "description": "Filtrar por estado, ex: pending, accepted, in_transit, completed."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Número máximo de resultados (padrão 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "create_transport_request",
+        "title": "Criar pedido de transporte",
+        "description": "Cria um novo pedido de transporte para a cooperativa autenticada.",
+        "annotations": {
+          "readOnlyHint": false,
+          "destructiveHint": false,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Título curto do pedido."
+            },
+            "cargo_type": {
+              "type": "string",
+              "description": "Tipo de carga, ex: milho, arroz, castanha de caju."
+            },
+            "origin_address": {
+              "type": "string",
+              "description": "Endereço de origem (distrito/província)."
+            },
+            "destination_address": {
+              "type": "string",
+              "description": "Endereço de destino."
+            },
+            "pickup_date": {
+              "type": "string",
+              "description": "Data de recolha no formato YYYY-MM-DD."
+            },
+            "weight_kg": {
+              "type": "number",
+              "description": "Peso da carga em quilogramas."
+            },
+            "description": {
+              "type": "string",
+              "description": "Detalhes adicionais do pedido."
+            }
+          },
+          "required": [
+            "title",
+            "cargo_type",
+            "origin_address",
+            "destination_address",
+            "pickup_date"
+          ],
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_proposals",
+        "title": "Listar propostas",
+        "description": "Lista as propostas de transporte visíveis para o utilizador autenticado, opcionalmente filtradas por pedido.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "transport_request_id": {
+              "type": "string",
+              "description": "ID do pedido de transporte."
+            },
+            "limit": {
+              "type": "integer",
+              "description": "Número máximo de resultados (padrão 20)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "list_fleet_vehicles",
+        "title": "Listar viaturas da frota",
+        "description": "Lista as viaturas registadas na frota da transportadora autenticada.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "type": "object",
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "description": "Número máximo de resultados (padrão 50)."
+            }
+          },
+          "additionalProperties": false,
+          "$schema": "http://json-schema.org/draft-07/schema#"
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
