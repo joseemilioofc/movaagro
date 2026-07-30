@@ -60,15 +60,21 @@ const Auth = () => {
     role: (searchParams.get("role") as "cooperative" | "transporter") || "cooperative",
   });
 
+  const rawNext = searchParams.get("next") || "";
+  const nextPath = /^\/(?!\/)/.test(rawNext) ? rawNext : "";
+
   useEffect(() => {
     if (user && role && !authLoading) {
-      if (role === "admin" || role === "secondary_admin") {
+      if (nextPath) {
+        window.location.href = nextPath;
+      } else if (role === "admin" || role === "secondary_admin") {
         navigate("/admin");
       } else {
         navigate("/home");
       }
     }
-  }, [user, role, authLoading, navigate]);
+  }, [user, role, authLoading, navigate, nextPath]);
+
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -145,8 +151,11 @@ const Auth = () => {
 
     try {
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: window.location.origin,
+        redirect_uri: nextPath
+          ? `${window.location.origin}/auth?next=${encodeURIComponent(nextPath)}`
+          : window.location.origin,
       });
+
 
       if (result.error) {
         toast({

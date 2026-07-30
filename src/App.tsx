@@ -33,7 +33,9 @@ import IntermediationContract from "./pages/IntermediationContract";
 import DataRetention from "./pages/DataRetention";
 import AcceptableUse from "./pages/AcceptableUse";
 import LegalContact from "./pages/LegalContact";
+import OAuthConsent from "./pages/OAuthConsent";
 import NotFound from "./pages/NotFound";
+
 
 const queryClient = new QueryClient();
 
@@ -74,7 +76,9 @@ const App = () => (
             <Route path="/data-retention" element={<DataRetention />} />
             <Route path="/acceptable-use" element={<AcceptableUse />} />
             <Route path="/legal-contact" element={<LegalContact />} />
+            <Route path="/.lovable/oauth/consent" element={<OAuthConsent />} />
             <Route path="*" element={<NotFound />} />
+
           </Routes>
         </BrowserRouter>
       </TooltipProvider>
