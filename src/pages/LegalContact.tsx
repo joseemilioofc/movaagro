@@ -4,7 +4,7 @@ import { Mail, MapPin, Phone, Building2 } from "lucide-react";
 const LegalContact = () => {
   const items = [
     { icon: Building2, label: "Empresa", value: "MOVA AGRO, LDA" },
-    { icon: MapPin, label: "Endereço", value: "Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Rua 1115, Moçambique" },
+    { icon: MapPin, label: "Endereço", value: "Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Avenida: Eduardo Mondlane, Moçambique" },
     { icon: Mail, label: "E-mail Jurídico", value: "movaagro@gmail.com" },
     { icon: Phone, label: "Contactos", value: "+258 87 780 1500 / +258 85 597 7759" },
   ];

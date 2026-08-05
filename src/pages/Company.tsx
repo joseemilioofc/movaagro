@@ -12,7 +12,7 @@ const Company = () => {
     {
       icon: MapPin,
       label: "Endereço",
-      value: "Moçambique, Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Rua 1115",
+      value: "Moçambique, Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Avenida: Eduardo Mondlane",
     },
     { icon: Mail, label: "Email", value: "movaagro@gmail.com" },
     { icon: Phone, label: "Contactos", value: "+258 87 780 1500 / +258 85 597 7759" },
