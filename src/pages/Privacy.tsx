@@ -36,7 +36,7 @@ const Privacy = () => (
         Província da Zambézia<br />
         Distrito de Quelimane<br />
         Bairro Cimento<br />
-        Rua 1115<br />
+        Avenida: Eduardo Mondlane<br />
         Moçambique
       </p>
       <p>E-mail para assuntos de privacidade: <a href="mailto:movaagro@gmail.com" className="text-primary hover:underline">movaagro@gmail.com</a></p>
@@ -341,7 +341,7 @@ const Privacy = () => (
         Província da Zambézia<br />
         Distrito de Quelimane<br />
         Bairro Cimento<br />
-        Rua 1115<br />
+        Avenida: Eduardo Mondlane<br />
         Moçambique
       </p>
       <p>E-mail: <a href="mailto:movaagro@gmail.com" className="text-primary hover:underline">movaagro@gmail.com</a></p>

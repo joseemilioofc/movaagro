@@ -12,7 +12,7 @@ const Terms = () => (
         Província da Zambézia<br />
         Distrito de Quelimane<br />
         Bairro Cimento<br />
-        Rua 1115<br />
+        Avenida: Eduardo Mondlane<br />
         Moçambique
       </p>
       <p>

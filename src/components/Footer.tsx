@@ -73,7 +73,7 @@ export function Footer() {
         <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-border flex flex-col gap-3 sm:gap-4">
           <p className="text-xs sm:text-sm text-muted-foreground text-center sm:text-left">
             <strong>MOVA AGRO, LDA</strong> — Plataforma Digital de Intermediação de Transporte Agrícola.
-            <span className="block mt-1">Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Rua 1115, Moçambique.</span>
+            <span className="block mt-1">Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Avenida: Eduardo Mondlane, Moçambique.</span>
             <span className="block mt-1">E-mail: movaagro@gmail.com</span>
             <span className="block mt-1">NUIT: 402168609 · Registo Comercial N° 105070087/Zambézia · Alvará N°: 64/04/01/PS/2026</span>
           </p>
