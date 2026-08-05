@@ -1,24 +1,22 @@
-# Atualização Jurídica – Documentos 1 a 4 de 9
+# Atualização do endereço da MOVA AGRO, LDA
 
-Vou substituir integralmente o conteúdo das 4 páginas legais existentes pelos novos textos v1.0 (13 de julho de 2026) fornecidos.
+## Objectivo
+Substituir o endereço antigo `Rua 1115` pelo novo endereço `Avenida: Eduardo Mondlane` em todos os locais onde aparece na plataforma.
 
-## Arquivos a atualizar
+## Alterações a fazer
+Atualizar o texto do endereço nos seguintes ficheiros:
 
-1. **`src/pages/Terms.tsx`** — Termos de Uso da Plataforma MOVA AGRO (Documento 1 de 9, texto já enviado anteriormente).
-2. **`src/pages/Privacy.tsx`** — Política de Privacidade (Documento 2 de 9): 20 seções, da apresentação às disposições finais, com referências à Lei nº 3/2017 e GDPR.
-3. **`src/pages/Cookies.tsx`** — Política de Cookies (Documento 3 de 9): 15 seções, tipos de cookies, tecnologias semelhantes, gerenciamento e consequências de desativação.
-4. **`src/pages/GPSConsent.tsx`** — Termo de Consentimento para Geolocalização e Rastreamento GPS (Documento 4 de 9): 17 seções, incluindo dados coletados, período de rastreamento, revogação e declaração de consentimento.
+1. `src/components/Footer.tsx` — bloco de copyright.
+2. `src/pages/Company.tsx` — campo de endereço da empresa.
+3. `src/pages/LegalContact.tsx` — campo de endereço de contacto jurídico.
+4. `src/pages/Terms.tsx` — secção de identificação da plataforma.
+5. `src/pages/Privacy.tsx` — duas ocorrências (secção inicial e contacto do encarregado).
+6. `src/pages/Cookies.tsx` — secção de identificação do responsável.
+7. `src/pages/GPSConsent.tsx` — secção de identificação do responsável.
 
-## Padronizações
+## Validação
+Após as edições, executar uma pesquisa por "Rua 1115" para garantir que não restam ocorrências antigas.
 
-- `updatedAt="13 de Julho de 2026"` no `LegalPageLayout` de cada página.
-- Estrutura semântica: `<h2>` para seções numeradas, `<h3>` para subseções (ex.: 3.1, 4.1, cookies de sessão vs persistentes), `<ul class="list-disc pl-6">` para listas.
-- Endereços e e-mail (`movaagro@gmail.com`) como blocos formatados, com link `mailto:` no e-mail.
-- Uso de tokens semânticos (`text-foreground`, `text-primary`), sem cores hardcoded.
-
-## Fora do escopo
-
-- Nenhuma alteração no `Footer`, rotas ou backend — as 4 páginas já existem e estão linkadas.
-- Documentos 5 a 9 (Retenção, etc.) ficam para os próximos turnos quando o texto for enviado.
-
-Confirmas para implementar?
+## Notas
+- Alteração apenas de conteúdo textual; sem impacto em lógica de negócio, base de dados ou autenticação.
+- O novo endereço completo passa a ser: Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Avenida: Eduardo Mondlane, Moçambique.
