@@ -46,6 +46,7 @@ export function Footer() {
               <li><Link to="/gps-consent" className="text-muted-foreground hover:text-primary transition-colors">Consentimento de GPS</Link></li>
               <li><Link to="/intermediation" className="text-muted-foreground hover:text-primary transition-colors">Contrato de Intermediação</Link></li>
               <li><Link to="/acceptable-use" className="text-muted-foreground hover:text-primary transition-colors">Política de Uso Aceitável</Link></li>
+              <li><Link to="/legal-notice" className="text-muted-foreground hover:text-primary transition-colors">Aviso Legal</Link></li>
               <li><Link to="/legal-contact" className="text-muted-foreground hover:text-primary transition-colors">Contacto Jurídico</Link></li>
             </ul>
           </div>
