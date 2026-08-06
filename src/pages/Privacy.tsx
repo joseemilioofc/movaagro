@@ -5,9 +5,11 @@ const Privacy = () => (
     <p className="text-sm">Versão: 1.0</p>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">1. Apresentação</h2>
+      <h2 className="text-xl font-semibold text-foreground">1. APRESENTAÇÃO</h2>
       <p>
-        A presente Política de Privacidade descreve como a MOVA AGRO, LDA ("MOVA AGRO", "nós" ou "plataforma") coleta, utiliza, armazena, protege, compartilha e trata os dados pessoais dos usuários que utilizam a plataforma digital MOVA AGRO.
+        A presente Política de Privacidade descreve como a MOVA AGRO, LDA ("MOVA AGRO", "nós" ou "plataforma") coleta,
+        utiliza, armazena, protege, compartilha e trata os dados pessoais dos usuários que utilizam a plataforma
+        digital MOVA AGRO.
       </p>
       <p>Esta Política aplica-se a todos os usuários da plataforma, incluindo:</p>
       <ul className="list-disc pl-6 space-y-1">
@@ -19,7 +21,9 @@ const Privacy = () => (
         <li>Clientes;</li>
         <li>Visitantes do Website.</li>
       </ul>
-      <p>Nos comprometemos a tratar os dados pessoais de forma transparente, ética e segura, em conformidade com:</p>
+      <p>
+        Nos comprometemos a tratar os dados pessoais de forma transparente, ética e segura, em conformidade com:
+      </p>
       <ul className="list-disc pl-6 space-y-1">
         <li>Lei n.º 3/2017 da República de Moçambique (Proteção de Dados Pessoais);</li>
         <li>princípios do Regulamento Geral de Proteção de Dados da União Europeia (GDPR), quando aplicáveis;</li>
@@ -29,21 +33,21 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">2. Quem Somos</h2>
+      <h2 className="text-xl font-semibold text-foreground">2. QUEM SOMOS</h2>
       <p>A plataforma é operada por:</p>
-      <p>
-        <strong>MOVA AGRO, LDA</strong><br />
-        Província da Zambézia<br />
-        Distrito de Quelimane<br />
-        Bairro Cimento<br />
-        Avenida: Eduardo Mondlane<br />
-        Moçambique
-      </p>
-      <p>E-mail para assuntos de privacidade: <a href="mailto:movaagro@gmail.com" className="text-primary hover:underline">movaagro@gmail.com</a></p>
+      <p>MOVA AGRO, LDA</p>
+      <p>Endereço:</p>
+      <p>Província da Zambézia</p>
+      <p>Distrito de Quelimane</p>
+      <p>Bairro Cimento</p>
+      <p>Avenida: Eduardo Mondlane</p>
+      <p>Moçambique</p>
+      <p>E-mail para assuntos de privacidade:</p>
+      <p><a href="mailto:movaagro@gmail.com" className="text-primary hover:underline">movaagro@gmail.com</a></p>
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">3. Dados que Coletamos</h2>
+      <h2 className="text-xl font-semibold text-foreground">3. DADOS QUE COLETAMOS</h2>
 
       <h3 className="text-lg font-semibold text-foreground">3.1 Dados de Cadastro</h3>
       <p>Durante a criação da conta poderão ser solicitados:</p>
@@ -138,7 +142,8 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">4. Como Coletamos os Dados</h2>
+      <h2 className="text-xl font-semibold text-foreground">4. COMO COLETAMOS OS DADOS</h2>
+      <p>Os dados podem ser coletados:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>durante o cadastro;</li>
         <li>durante a utilização da plataforma;</li>
@@ -151,7 +156,7 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">5. Finalidade do Tratamento</h2>
+      <h2 className="text-xl font-semibold text-foreground">5. FINALIDADE DO TRATAMENTO</h2>
       <p>Os dados são utilizados para:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>criar contas;</li>
@@ -171,7 +176,7 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">6. Base Legal</h2>
+      <h2 className="text-xl font-semibold text-foreground">6. BASE LEGAL</h2>
       <p>Os dados poderão ser tratados com fundamento em:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>consentimento;</li>
@@ -185,7 +190,7 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">7. Compartilhamento dos Dados</h2>
+      <h2 className="text-xl font-semibold text-foreground">7. COMPARTILHAMENTO DOS DADOS</h2>
       <p>A MOVA AGRO poderá compartilhar informações com:</p>
 
       <h3 className="text-lg font-semibold text-foreground">Instituições Financeiras</h3>
@@ -222,16 +227,18 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">8. Transferência Internacional</h2>
+      <h2 className="text-xl font-semibold text-foreground">8. TRANSFERÊNCIA INTERNACIONAL</h2>
       <p>
-        Como a MOVA AGRO poderá atuar futuramente em países da SADC e outros mercados africanos, determinados dados poderão ser processados fora de Moçambique.
+        Como a MOVA AGRO poderá atuar futuramente em países da SADC e outros mercados africanos, determinados dados
+        poderão ser processados fora de Moçambique.
       </p>
       <p>Sempre adotaremos medidas adequadas para garantir proteção equivalente.</p>
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">9. Geolocalização</h2>
-      <p>Durante a viagem será realizado rastreamento GPS. Os dados serão utilizados para:</p>
+      <h2 className="text-xl font-semibold text-foreground">9. GEOLOCALIZAÇÃO</h2>
+      <p>Durante a viagem será realizado rastreamento GPS.</p>
+      <p>Os dados serão utilizados para:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>segurança da carga;</li>
         <li>confirmação de entrega;</li>
@@ -243,7 +250,7 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">10. Retenção dos Dados</h2>
+      <h2 className="text-xl font-semibold text-foreground">10. RETENÇÃO DOS DADOS</h2>
       <p>Os dados poderão permanecer armazenados enquanto:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>a conta estiver ativa;</li>
@@ -256,7 +263,7 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">11. Direitos dos Titulares</h2>
+      <h2 className="text-xl font-semibold text-foreground">11. DIREITOS DOS TITULARES</h2>
       <p>O usuário poderá solicitar:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>confirmação do tratamento;</li>
@@ -269,11 +276,12 @@ const Privacy = () => (
         <li>revogação do consentimento;</li>
         <li>oposição ao tratamento quando permitido pela legislação.</li>
       </ul>
-      <p>As solicitações deverão ser enviadas para: <a href="mailto:movaagro@gmail.com" className="text-primary hover:underline">movaagro@gmail.com</a></p>
+      <p>As solicitações deverão ser enviadas para:</p>
+      <p><a href="mailto:movaagro@gmail.com" className="text-primary hover:underline">movaagro@gmail.com</a></p>
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">12. Segurança dos Dados</h2>
+      <h2 className="text-xl font-semibold text-foreground">12. SEGURANÇA DOS DADOS</h2>
       <p>A MOVA AGRO utiliza medidas técnicas e administrativas para proteger as informações, incluindo:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>criptografia TLS/SSL;</li>
@@ -289,7 +297,7 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">13. Responsabilidade dos Usuários</h2>
+      <h2 className="text-xl font-semibold text-foreground">13. RESPONSABILIDADE DOS USUÁRIOS</h2>
       <p>O usuário compromete-se a:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>proteger sua senha;</li>
@@ -301,13 +309,13 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">14. Menores de Idade</h2>
+      <h2 className="text-xl font-semibold text-foreground">14. MENORES DE IDADE</h2>
       <p>A plataforma não é destinada a menores de 18 anos.</p>
       <p>Caso seja identificado cadastro realizado por menor sem autorização legal, a conta poderá ser encerrada.</p>
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">15. Cookies</h2>
+      <h2 className="text-xl font-semibold text-foreground">15. COOKIES</h2>
       <p>A MOVA AGRO utiliza cookies para:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>autenticação;</li>
@@ -320,35 +328,38 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">16. Links para Terceiros</h2>
+      <h2 className="text-xl font-semibold text-foreground">16. LINKS PARA TERCEIROS</h2>
       <p>A plataforma poderá conter links para sites e serviços de terceiros.</p>
       <p>A MOVA AGRO não é responsável pelas práticas de privacidade desses terceiros.</p>
       <p>Recomenda-se a leitura das respectivas políticas.</p>
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">17. Alterações da Política</h2>
+      <h2 className="text-xl font-semibold text-foreground">17. ALTERAÇÕES DA POLÍTICA</h2>
       <p>Esta Política poderá ser alterada a qualquer momento.</p>
-      <p>Sempre que houver alterações relevantes, a nova versão será publicada na plataforma com indicação da data de atualização.</p>
+      <p>
+        Sempre que houver alterações relevantes, a nova versão será publicada na plataforma com indicação da data de
+        atualização.
+      </p>
       <p>O uso continuado da plataforma após as alterações implica aceitação da versão atualizada.</p>
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">18. Encarregado de Privacidade</h2>
+      <h2 className="text-xl font-semibold text-foreground">18. ENCARREGADO DE PRIVACIDADE</h2>
       <p>Questões relacionadas à proteção de dados poderão ser encaminhadas para:</p>
-      <p>
-        <strong>MOVA AGRO, LDA</strong><br />
-        Província da Zambézia<br />
-        Distrito de Quelimane<br />
-        Bairro Cimento<br />
-        Avenida: Eduardo Mondlane<br />
-        Moçambique
-      </p>
-      <p>E-mail: <a href="mailto:movaagro@gmail.com" className="text-primary hover:underline">movaagro@gmail.com</a></p>
+      <p>MOVA AGRO, LDA</p>
+      <p>📍 Endereço:</p>
+      <p>Província da Zambézia</p>
+      <p>Distrito de Quelimane</p>
+      <p>Bairro Cimento</p>
+      <p>Avenida: Eduardo Mondlane</p>
+      <p>Moçambique</p>
+      <p>📧 E-mail:</p>
+      <p><a href="mailto:movaagro@gmail.com" className="text-primary hover:underline">movaagro@gmail.com</a></p>
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">19. Legislação Aplicável</h2>
+      <h2 className="text-xl font-semibold text-foreground">19. LEGISLAÇÃO APLICÁVEL</h2>
       <p>Esta Política será interpretada de acordo com:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>Constituição da República de Moçambique;</li>
@@ -359,13 +370,16 @@ const Privacy = () => (
     </section>
 
     <section className="space-y-4">
-      <h2 className="text-xl font-semibold text-foreground">20. Disposições Finais</h2>
+      <h2 className="text-xl font-semibold text-foreground">20. DISPOSIÇÕES FINAIS</h2>
       <p>Ao utilizar a plataforma MOVA AGRO, o usuário declara que:</p>
       <ul className="list-disc pl-6 space-y-1">
         <li>leu esta Política;</li>
         <li>compreendeu seu conteúdo;</li>
         <li>concorda com o tratamento dos dados pessoais conforme aqui descrito;</li>
-        <li>autoriza a MOVA AGRO a tratar seus dados para execução dos serviços contratados e cumprimento das obrigações legais.</li>
+        <li>
+          autoriza a MOVA AGRO a tratar seus dados para execução dos serviços contratados e cumprimento das
+          obrigações legais.
+        </li>
       </ul>
     </section>
   </LegalPageLayout>
