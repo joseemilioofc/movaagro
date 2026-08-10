@@ -49,45 +49,119 @@ export const useContracts = (transportRequestId?: string) => {
   };
 
   const generateTerms = (params: CreateContractParams) => {
-    return `CONTRATO DE PRESTAÇÃO DE SERVIÇOS DE TRANSPORTE DE CARGA
+    const NI = "Não informado";
+    const money = params.price.toLocaleString("pt-MZ", { style: "currency", currency: "MZN" });
+    const pickup = new Date(params.pickupDate).toLocaleDateString("pt-MZ");
 
-1. OBJETO DO CONTRATO
-O presente contrato tem por objeto a prestação de serviços de transporte de carga agrícola, conforme especificações abaixo.
+    return `CONTRATO ELECTRÓNICO DE INTERMEDIAÇÃO E PRESTAÇÃO DE SERVIÇOS DE TRANSPORTE DE CARGA AGRÍCOLA
 
-2. DESCRIÇÃO DA CARGA
-Tipo: ${params.cargoType}
-${params.weightKg ? `Peso estimado: ${params.weightKg} kg` : ""}
+Este contrato é celebrado através da plataforma tecnológica MOVA AGRO, que actua exclusivamente como intermediária tecnológica entre as partes. A MOVA AGRO NÃO é transportadora, operadora logística, seguradora, proprietária da carga, proprietária do veículo, empregadora do motorista nem representante das partes.
 
-3. TRAJETO
-Origem: ${params.originAddress}
-Destino: ${params.destinationAddress}
+1. IDENTIFICAÇÃO DAS PARTES
+1.1. PLATAFORMA INTERMEDIÁRIA: MOVA AGRO, LDA, com sede na Província da Zambézia, Distrito de Quelimane, Bairro Cimento, Avenida Eduardo Mondlane, Moçambique, e-mail movaagro@gmail.com, adiante designada "MOVA AGRO" ou "Plataforma".
+1.2. CONTRATANTE (Expedidor/Cooperativa): identificado no cabeçalho deste contrato e no registo electrónico da viagem, incluindo nome, NUIT, contacto telefónico e responsável no local de carga.
+1.3. TRANSPORTADOR (Contratado): pessoa singular ou colectiva identificada no registo electrónico, incluindo nome, NUIT, motorista designado, contacto, carta de condução, matrícula do veículo e do reboque, quando aplicável.
+1.4. As partes declaram que os dados constantes do registo electrónico da viagem são verdadeiros e integram este contrato para todos os efeitos.
 
-4. DATA DE COLETA
-${new Date(params.pickupDate).toLocaleDateString("pt-MZ")}
+2. OBJECTO
+2.1. O presente contrato tem por objecto a prestação de serviços de transporte rodoviário de carga agrícola pelo TRANSPORTADOR ao CONTRATANTE, nas condições aqui descritas.
+2.2. A MOVA AGRO limita-se a disponibilizar a infra-estrutura tecnológica que permite a aproximação das partes, a formalização electrónica do acordo e o acompanhamento da viagem.
+2.3. A relação de transporte estabelece-se directa e exclusivamente entre CONTRATANTE e TRANSPORTADOR, não sendo a MOVA AGRO parte na execução do transporte.
 
-5. VALOR E PAGAMENTO
-O valor total do serviço é de ${params.price.toLocaleString("pt-MZ", { style: "currency", currency: "MZN" })}, a ser pago conforme acordado entre as partes através da plataforma MOVA.
+3. DESCRIÇÃO DA CARGA
+Tipo de carga: ${params.cargoType}
+Categoria: ${params.cargoType}
+Quantidade: ${NI}
+Peso estimado: ${params.weightKg ? `${params.weightKg} kg` : NI}
+Volume: ${NI}
+Valor declarado da carga: ${NI}
+Observações: ${NI}
+3.1. A exactidão da descrição da carga é da inteira responsabilidade do CONTRATANTE.
 
-6. OBRIGAÇÕES DO CONTRATANTE
-a) Disponibilizar a carga no local e data acordados;
-b) Fornecer documentação necessária para o transporte;
-c) Efetuar o pagamento conforme acordado.
+4. ORIGEM
+Endereço de recolha: ${params.originAddress}
+Responsável no local: ${NI}
+Contacto: ${NI}
 
-7. OBRIGAÇÕES DO CONTRATADO
-a) Realizar o transporte com segurança e cuidado;
-b) Entregar a carga no destino acordado;
-c) Comunicar qualquer imprevisto durante o transporte;
-d) Manter veículo em boas condições de funcionamento.
+5. DESTINO
+Endereço de entrega: ${params.destinationAddress}
+Responsável no local: ${NI}
+Contacto: ${NI}
 
-8. RESPONSABILIDADES
-O CONTRATADO será responsável pela integridade da carga durante o transporte, exceto em casos de força maior devidamente comprovados.
+6. DATAS
+Data prevista de recolha: ${pickup}
+Hora prevista de recolha: ${NI}
+Data prevista de entrega: ${NI}
+6.1. Alterações de datas devem ser registadas na plataforma e acordadas entre as partes.
 
-9. DISPOSIÇÕES GERAIS
-Este contrato é regido pelas leis da República de Moçambique. Qualquer disputa será resolvida preferencialmente por acordo amigável entre as partes.
+7. VALOR DO TRANSPORTE
+7.1. O valor acordado pelo serviço é de ${money}.
+7.2. Forma de pagamento: conforme acordado entre as partes e registado na plataforma.
+7.3. O pagamento é devido pelo CONTRATANTE ao TRANSPORTADOR. A MOVA AGRO não é parte na relação financeira e não garante o pagamento nem o recebimento de valores entre as partes.
 
-10. FORO
-Fica eleito o foro da comarca do local de origem da carga para dirimir quaisquer dúvidas oriundas deste contrato.`;
+8. RASTREAMENTO DA VIAGEM
+8.1. A viagem poderá ser acompanhada através das funcionalidades de geolocalização da plataforma, mediante consentimento do condutor.
+8.2. Os registos de localização têm natureza meramente informativa e não constituem garantia de cumprimento de prazos.
+8.3. A indisponibilidade temporária do rastreamento não isenta o TRANSPORTADOR das suas obrigações.
+
+9. DOCUMENTOS ANEXADOS
+9.1. Integram este contrato, quando disponíveis: alvará do transportador, livrete e matrícula do veículo, inspecção, seguro, carta de condução do motorista, guia de remessa e comprovativos de recolha e entrega.
+9.2. Os documentos são carregados e mantidos pelas próprias partes, cabendo-lhes garantir a sua validade e autenticidade.
+
+10. OBRIGAÇÕES DO CONTRATANTE
+a) Disponibilizar a carga no local, data e hora acordados;
+b) Prestar informação verdadeira e completa sobre a carga;
+c) Assegurar o acondicionamento adequado e a documentação legal da mercadoria;
+d) Garantir condições de acesso e de carregamento no local de origem;
+e) Efectuar o pagamento nos termos acordados.
+
+11. OBRIGAÇÕES DO TRANSPORTADOR
+a) Executar o transporte com diligência, segurança e cumprimento da legislação aplicável;
+b) Manter o veículo em boas condições e com toda a documentação válida;
+c) Utilizar condutor legalmente habilitado;
+d) Comunicar de imediato qualquer incidente, avaria, desvio ou atraso;
+e) Entregar a carga ao destinatário indicado, obtendo comprovativo de entrega;
+f) Manter, quando aplicável, seguro de responsabilidade civil e de mercadorias transportadas.
+
+12. RECEBIMENTO DA CARGA
+12.1. No momento da recolha, o TRANSPORTADOR deve conferir a carga quanto a quantidade, aparência e acondicionamento.
+12.2. Divergências devem ser registadas na plataforma no acto da recolha; a ausência de registo presume conformidade aparente.
+
+13. ENTREGA
+13.1. A entrega considera-se concluída com a recepção da carga pelo destinatário e o respectivo registo na plataforma.
+13.2. Reservas ou reclamações sobre o estado da carga devem ser apresentadas no acto da entrega ou, quando não aparentes, no prazo legalmente admissível.
+
+14. RESPONSABILIDADE
+14.1. A responsabilidade pela execução do transporte, pela guarda e integridade da carga e pelo cumprimento das obrigações legais e laborais é exclusiva do TRANSPORTADOR.
+14.2. A MOVA AGRO não responde por perdas, avarias, atrasos, furtos, acidentes, incumprimentos contratuais, danos a terceiros ou quaisquer prejuízos decorrentes da execução do transporte.
+14.3. Reitera-se que a MOVA AGRO não é transportadora, operadora logística, seguradora, proprietária da carga, proprietária do veículo, empregadora do motorista nem representante das partes, actuando unicamente como plataforma tecnológica de intermediação.
+14.4. Casos de força maior devidamente comprovados excluem a responsabilidade da parte afectada, nos termos da lei.
+
+15. CANCELAMENTO
+15.1. Qualquer das partes pode cancelar o serviço antes do início da recolha, mediante comunicação registada na plataforma.
+15.2. Cancelamentos após o início da execução podem gerar custos, a acordar directamente entre as partes.
+15.3. A MOVA AGRO não arbitra nem suporta custos decorrentes de cancelamentos.
+
+16. RESOLUÇÃO DE CONFLITOS
+16.1. As partes obrigam-se a procurar, em primeiro lugar, a resolução amigável de qualquer divergência.
+16.2. Não havendo acordo, o litígio será dirimido nos tribunais competentes da República de Moçambique, aplicando-se a lei moçambicana.
+16.3. A eventual disponibilização de registos pela MOVA AGRO tem carácter meramente probatório e não a torna parte no litígio.
+
+17. PROTECÇÃO DE DADOS
+17.1. Os dados pessoais tratados no âmbito deste contrato são utilizados exclusivamente para a formalização e execução do serviço, nos termos da Política de Privacidade da MOVA AGRO.
+17.2. As partes comprometem-se a não utilizar os dados obtidos através da plataforma para finalidades distintas das aqui previstas.
+17.3. Os titulares dos dados podem exercer os seus direitos através do e-mail movaagro@gmail.com.
+
+18. ACEITAÇÃO ELECTRÓNICA
+18.1. As partes reconhecem a validade da contratação electrónica e da assinatura electrónica aposta neste documento.
+18.2. O registo electrónico, incluindo data, hora, identificação do utilizador e código de verificação (hash) do documento, constitui meio de prova da aceitação.
+18.3. A aceitação electrónica confirma que as partes leram e compreenderam que a MOVA AGRO actua apenas como intermediária tecnológica.
+
+19. ASSINATURAS
+19.1. Este contrato é assinado electronicamente pelo CONTRATANTE e pelo TRANSPORTADOR.
+19.2. A MOVA AGRO figura como plataforma interveniente, exclusivamente para efeitos de registo e certificação electrónica do acordo, sem assumir obrigações de transporte.`;
   };
+
 
   const fetchContracts = async () => {
     try {
