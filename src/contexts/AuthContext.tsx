@@ -45,19 +45,46 @@ const logAuditAction = async (
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [role, setRole] = useState<AppRole | null>(null);
+  const [role, setRoleState] = useState<AppRole | null>(null);
+  const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const setActiveRole = (next: AppRole) => {
+    setRoleState(next);
+    try {
+      localStorage.setItem(ACTIVE_ROLE_KEY, next);
+    } catch {
+      // ignore storage errors
+    }
+  };
+
   const fetchUserRole = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", userId)
-      .single();
-    
-    if (data) {
-      setRole(data.role as AppRole);
+      .eq("user_id", userId);
+
+    if (error || !data) return;
+
+    const found = ROLE_PRIORITY.filter((r) => data.some((d) => d.role === r));
+    setRoles(found);
+
+    if (found.length === 0) {
+      setRoleState(null);
+      return;
     }
+
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem(ACTIVE_ROLE_KEY);
+    } catch {
+      stored = null;
+    }
+
+    const active = (stored && found.includes(stored as AppRole))
+      ? (stored as AppRole)
+      : found[0];
+    setRoleState(active);
   };
 
   useEffect(() => {
