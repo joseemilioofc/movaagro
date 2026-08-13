@@ -41,7 +41,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   const handleRoleChange = (next: string) => {
-    setActiveRole(next as typeof role extends null ? never : any);
+    setActiveRole(next as "admin" | "secondary_admin" | "cooperative" | "transporter");
     navigate(next === "transporter" && isCompany ? "/fleet" : ROLE_HOME[next] ?? "/home");
   };
 
