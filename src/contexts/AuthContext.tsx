@@ -98,7 +98,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             fetchUserRole(session.user.id);
           }, 0);
         } else {
-          setRole(null);
+          setRoleState(null);
+          setRoles([]);
         }
         setLoading(false);
       }
@@ -173,11 +174,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
-    setRole(null);
+    setRoleState(null);
+    setRoles([]);
+    try {
+      localStorage.removeItem(ACTIVE_ROLE_KEY);
+    } catch {
+      // ignore
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, role, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, role, roles, setActiveRole, loading, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
