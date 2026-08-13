@@ -8,11 +8,16 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: AppRole | null;
+  roles: AppRole[];
+  setActiveRole: (role: AppRole) => void;
   loading: boolean;
   signUp: (email: string, password: string, name: string, role: AppRole) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
+
+const ROLE_PRIORITY: AppRole[] = ["admin", "secondary_admin", "cooperative", "transporter"];
+const ACTIVE_ROLE_KEY = "mova:active-role";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -40,19 +45,46 @@ const logAuditAction = async (
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [role, setRole] = useState<AppRole | null>(null);
+  const [role, setRoleState] = useState<AppRole | null>(null);
+  const [roles, setRoles] = useState<AppRole[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const setActiveRole = (next: AppRole) => {
+    setRoleState(next);
+    try {
+      localStorage.setItem(ACTIVE_ROLE_KEY, next);
+    } catch {
+      // ignore storage errors
+    }
+  };
+
   const fetchUserRole = async (userId: string) => {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("user_roles")
       .select("role")
-      .eq("user_id", userId)
-      .single();
-    
-    if (data) {
-      setRole(data.role as AppRole);
+      .eq("user_id", userId);
+
+    if (error || !data) return;
+
+    const found = ROLE_PRIORITY.filter((r) => data.some((d) => d.role === r));
+    setRoles(found);
+
+    if (found.length === 0) {
+      setRoleState(null);
+      return;
     }
+
+    let stored: string | null = null;
+    try {
+      stored = localStorage.getItem(ACTIVE_ROLE_KEY);
+    } catch {
+      stored = null;
+    }
+
+    const active = (stored && found.includes(stored as AppRole))
+      ? (stored as AppRole)
+      : found[0];
+    setRoleState(active);
   };
 
   useEffect(() => {
@@ -66,7 +98,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
             fetchUserRole(session.user.id);
           }, 0);
         } else {
-          setRole(null);
+          setRoleState(null);
+          setRoles([]);
         }
         setLoading(false);
       }
@@ -141,11 +174,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
-    setRole(null);
+    setRoleState(null);
+    setRoles([]);
+    try {
+      localStorage.removeItem(ACTIVE_ROLE_KEY);
+    } catch {
+      // ignore
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, role, loading, signUp, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, role, roles, setActiveRole, loading, signUp, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );

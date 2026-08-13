@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
 import { Truck, LogOut, Home, Package, Shield, ShieldCheck, ScrollText, Settings, User, FileText, Smartphone, Trophy, Building2 } from "lucide-react";
@@ -14,14 +15,34 @@ interface DashboardLayoutProps {
   children: ReactNode;
 }
 
+const ROLE_LABELS: Record<string, string> = {
+  admin: "Admin",
+  secondary_admin: "Admin Secundário",
+  cooperative: "Cooperativa",
+  transporter: "Transportadora",
+};
+
+const ROLE_HOME: Record<string, string> = {
+  admin: "/admin",
+  secondary_admin: "/admin",
+  cooperative: "/cooperative",
+  transporter: "/transporter",
+};
+
 export function DashboardLayout({ children }: DashboardLayoutProps) {
-  const { role, signOut } = useAuth();
+  const { role, roles, setActiveRole, signOut } = useAuth();
   const { isCompany } = useTransporterProfile();
   const location = useLocation();
+  const navigate = useNavigate();
   const { notifications, clearAll, markAsRead } = useNotifications(true);
 
   const handleSignOut = async () => {
     await signOut();
+  };
+
+  const handleRoleChange = (next: string) => {
+    setActiveRole(next as "admin" | "secondary_admin" | "cooperative" | "transporter");
+    navigate(next === "transporter" && isCompany ? "/fleet" : ROLE_HOME[next] ?? "/home");
   };
 
   const getNavItems = () => {
@@ -105,6 +126,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
 
             <div className="flex items-center gap-1 sm:gap-2">
+              {roles.length > 1 && role && (
+                <Select value={role} onValueChange={handleRoleChange}>
+                  <SelectTrigger className="h-8 w-[130px] sm:w-[170px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roles.map((r) => (
+                      <SelectItem key={r} value={r} className="text-xs">
+                        {ROLE_LABELS[r] ?? r}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
               <NotificationBell
                 notifications={notifications}
                 onClearAll={clearAll}
