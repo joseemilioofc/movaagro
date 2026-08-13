@@ -126,6 +126,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </div>
 
             <div className="flex items-center gap-1 sm:gap-2">
+              {roles.length > 1 && role && (
+                <Select value={role} onValueChange={handleRoleChange}>
+                  <SelectTrigger className="h-8 w-[130px] sm:w-[170px] text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {roles.map((r) => (
+                      <SelectItem key={r} value={r} className="text-xs">
+                        {ROLE_LABELS[r] ?? r}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
               <NotificationBell
                 notifications={notifications}
                 onClearAll={clearAll}
