@@ -8,11 +8,16 @@ interface AuthContextType {
   user: User | null;
   session: Session | null;
   role: AppRole | null;
+  roles: AppRole[];
+  setActiveRole: (role: AppRole) => void;
   loading: boolean;
   signUp: (email: string, password: string, name: string, role: AppRole) => Promise<{ error: Error | null }>;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }
+
+const ROLE_PRIORITY: AppRole[] = ["admin", "secondary_admin", "cooperative", "transporter"];
+const ACTIVE_ROLE_KEY = "mova:active-role";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
