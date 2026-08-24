@@ -10,6 +10,7 @@ import { NotificationBell } from "@/components/NotificationBell";
 import { useNotifications } from "@/hooks/useNotifications";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { useTransporterProfile } from "@/hooks/useTransporterProfile";
+import { DemoBanner } from "@/components/DemoBanner";
 
 interface DashboardLayoutProps {
   children: ReactNode;
@@ -92,6 +93,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <DemoBanner />
       {/* Header */}
       <header className="border-b border-border bg-card sticky top-0 z-40">
         <div className="container mx-auto px-3 sm:px-4">

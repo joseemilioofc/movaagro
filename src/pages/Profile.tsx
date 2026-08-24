@@ -11,6 +11,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Loader2, User, Mail, Phone, Building, Save, ShieldCheck, Clock, XCircle, CheckCircle2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { z } from "zod";
+import { RoleUpgradeCard } from "@/components/RoleUpgradeCard";
 
 const profileSchema = z.object({
   name: z.string().min(2, "O nome deve ter pelo menos 2 caracteres").max(100),
@@ -249,6 +250,8 @@ const Profile = () => {
           userId={user?.id}
           onStatusUpdate={(status) => setProfile(prev => prev ? { ...prev, identity_status: status } : prev)}
         />
+
+        <RoleUpgradeCard />
 
         <Card>
           <CardHeader>
