@@ -6,6 +6,7 @@ import { useMemo, useEffect, useState, useCallback } from "react";
 import { subDays, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
 import { supabase } from "@/integrations/supabase/client";
 import { KPIGoalsSettings } from "./KPIGoalsSettings";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface KPIDashboardProps {
   profiles: Array<{ created_at: string }>;
@@ -31,6 +32,8 @@ interface KPIGoal {
 }
 
 export const KPIDashboard = ({ profiles, requests, proposals, adminEmails = [] }: KPIDashboardProps) => {
+  const { roles } = useAuth();
+  const isAdmin = roles?.some((r) => r === "admin" || r === "secondary_admin") ?? false;
   const [goals, setGoals] = useState<KPIGoal[]>([]);
   const [refreshKey, setRefreshKey] = useState(0);
 
@@ -168,7 +171,7 @@ export const KPIDashboard = ({ profiles, requests, proposals, adminEmails = [] }
   // Check KPI alerts
   useEffect(() => {
     const checkAlerts = async () => {
-      if (kpis.length === 0 || adminEmails.length === 0) return;
+      if (!isAdmin || kpis.length === 0 || adminEmails.length === 0) return;
 
       const kpiData = kpis.map((kpi) => ({
         name: kpi.name,
@@ -179,17 +182,18 @@ export const KPIDashboard = ({ profiles, requests, proposals, adminEmails = [] }
       }));
 
       try {
-        await supabase.functions.invoke("check-kpi-alerts", {
-          body: { kpiData, adminEmails },
+        const { error } = await supabase.functions.invoke("check-kpi-alerts", {
+          body: { kpiData },
         });
+        if (error) console.warn("KPI alerts skipped:", error.message);
       } catch (error) {
-        console.error("Error checking KPI alerts:", error);
+        console.warn("KPI alerts skipped:", error);
       }
     };
 
     // Check alerts once on load
     checkAlerts();
-  }, [kpis, adminEmails]);
+  }, [kpis, adminEmails, isAdmin]);
 
   const getProgressColor = (current: number, target: number) => {
     const percentage = (current / target) * 100;
