@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useState, ReactNode } from "react
 import { User, Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 
-type AppRole = "admin" | "secondary_admin" | "cooperative" | "transporter";
+type AppRole = "admin" | "secondary_admin" | "cooperative" | "transporter" | "wholesale_seller" | "retail_buyer";
 
 interface AuthContextType {
   user: User | null;
@@ -16,7 +16,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
 }
 
-const ROLE_PRIORITY: AppRole[] = ["admin", "secondary_admin", "cooperative", "transporter"];
+const ROLE_PRIORITY: AppRole[] = ["admin", "secondary_admin", "cooperative", "transporter", "wholesale_seller", "retail_buyer"];
 const ACTIVE_ROLE_KEY = "mova:active-role";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
