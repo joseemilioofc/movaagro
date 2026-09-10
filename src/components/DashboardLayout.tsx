@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Truck, LogOut, Home, Package, Shield, ShieldCheck, ScrollText, Settings, User, FileText, Smartphone, Trophy, Building2 } from "lucide-react";
+import { Truck, LogOut, Home, Package, Shield, ShieldCheck, ScrollText, Settings, User, FileText, Smartphone, Trophy, Building2, Store, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Footer } from "@/components/Footer";
 import { NotificationBell } from "@/components/NotificationBell";
