@@ -429,6 +429,140 @@ export type Database = {
         }
         Relationships: []
       }
+      order_payments: {
+        Row: {
+          amount: number
+          confirmed_at: string | null
+          confirmed_by: string | null
+          created_at: string
+          id: string
+          order_id: string
+          proof_url: string | null
+          provider_reference: string | null
+          status: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          id?: string
+          order_id: string
+          proof_url?: string | null
+          provider_reference?: string | null
+          status?: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          confirmed_at?: string | null
+          confirmed_by?: string | null
+          created_at?: string
+          id?: string
+          order_id?: string
+          proof_url?: string | null
+          provider_reference?: string | null
+          status?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_payments_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          buyer_id: string
+          created_at: string
+          delivery_address: string
+          id: string
+          listing_id: string
+          mova_commission_amount: number
+          mova_commission_rate: number
+          mova_transport_commission_amount: number
+          mova_transport_commission_rate: number
+          payment_provider_reference: string | null
+          payment_status: string
+          pickup_address: string
+          price_per_kg: number
+          quantity_kg: number
+          seller_id: string
+          shipping_amount: number
+          status: string
+          total_product_amount: number
+          transport_request_id: string | null
+          updated_at: string
+        }
+        Insert: {
+          buyer_id: string
+          created_at?: string
+          delivery_address: string
+          id?: string
+          listing_id: string
+          mova_commission_amount?: number
+          mova_commission_rate?: number
+          mova_transport_commission_amount?: number
+          mova_transport_commission_rate?: number
+          payment_provider_reference?: string | null
+          payment_status?: string
+          pickup_address: string
+          price_per_kg: number
+          quantity_kg: number
+          seller_id: string
+          shipping_amount?: number
+          status?: string
+          total_product_amount: number
+          transport_request_id?: string | null
+          updated_at?: string
+        }
+        Update: {
+          buyer_id?: string
+          created_at?: string
+          delivery_address?: string
+          id?: string
+          listing_id?: string
+          mova_commission_amount?: number
+          mova_commission_rate?: number
+          mova_transport_commission_amount?: number
+          mova_transport_commission_rate?: number
+          payment_provider_reference?: string | null
+          payment_status?: string
+          pickup_address?: string
+          price_per_kg?: number
+          quantity_kg?: number
+          seller_id?: string
+          shipping_amount?: number
+          status?: string
+          total_product_amount?: number
+          transport_request_id?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "orders_listing_id_fkey"
+            columns: ["listing_id"]
+            isOneToOne: false
+            referencedRelation: "product_listings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "orders_transport_request_id_fkey"
+            columns: ["transport_request_id"]
+            isOneToOne: false
+            referencedRelation: "transport_requests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       price_alerts: {
         Row: {
           base_price: number
@@ -507,6 +641,69 @@ export type Database = {
           price_min?: number
           user_id?: string
           weight_kg?: number
+        }
+        Relationships: []
+      }
+      product_listings: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          district: string | null
+          harvest_date: string | null
+          id: string
+          location: string | null
+          min_order_kg: number
+          photos: string[] | null
+          price_per_kg: number
+          product_type: string
+          province: string | null
+          quality_grade: string | null
+          quantity_kg: number
+          seller_id: string
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          harvest_date?: string | null
+          id?: string
+          location?: string | null
+          min_order_kg?: number
+          photos?: string[] | null
+          price_per_kg: number
+          product_type: string
+          province?: string | null
+          quality_grade?: string | null
+          quantity_kg: number
+          seller_id: string
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          district?: string | null
+          harvest_date?: string | null
+          id?: string
+          location?: string | null
+          min_order_kg?: number
+          photos?: string[] | null
+          price_per_kg?: number
+          product_type?: string
+          province?: string | null
+          quality_grade?: string | null
+          quantity_kg?: number
+          seller_id?: string
+          status?: string
+          title?: string
+          updated_at?: string
         }
         Relationships: []
       }
@@ -589,6 +786,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      seller_wallets: {
+        Row: {
+          available_balance: number
+          created_at: string
+          currency: string
+          id: string
+          pending_balance: number
+          seller_id: string
+          updated_at: string
+        }
+        Insert: {
+          available_balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          pending_balance?: number
+          seller_id: string
+          updated_at?: string
+        }
+        Update: {
+          available_balance?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          pending_balance?: number
+          seller_id?: string
+          updated_at?: string
+        }
+        Relationships: []
       }
       transport_locations: {
         Row: {
@@ -719,6 +946,7 @@ export type Database = {
           destination_address: string
           external_form_link: string | null
           id: string
+          order_id: string | null
           origin_address: string
           pickup_date: string
           status: string | null
@@ -735,6 +963,7 @@ export type Database = {
           destination_address: string
           external_form_link?: string | null
           id?: string
+          order_id?: string | null
           origin_address: string
           pickup_date: string
           status?: string | null
@@ -751,6 +980,7 @@ export type Database = {
           destination_address?: string
           external_form_link?: string | null
           id?: string
+          order_id?: string | null
           origin_address?: string
           pickup_date?: string
           status?: string | null
@@ -759,7 +989,15 @@ export type Database = {
           updated_at?: string
           weight_kg?: number | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "transport_requests_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       transporter_availability: {
         Row: {
