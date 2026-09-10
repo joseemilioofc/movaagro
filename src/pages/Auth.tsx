@@ -31,13 +31,13 @@ const signupSchema = z.object({
     .min(8, "A senha deve ter pelo menos 8 caracteres")
     .regex(passwordRegex, "A senha deve conter letra maiúscula e minúscula"),
   confirmPassword: z.string(),
-  role: z.enum(["cooperative", "transporter"]),
+  role: z.enum(["cooperative", "transporter", "wholesale_seller", "retail_buyer"]),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
   path: ["confirmPassword"],
 });
 
-type AppRole = "admin" | "secondary_admin" | "cooperative" | "transporter";
+type AppRole = "admin" | "secondary_admin" | "cooperative" | "transporter" | "wholesale_seller" | "retail_buyer";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -57,7 +57,7 @@ const Auth = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    role: (searchParams.get("role") as "cooperative" | "transporter") || "cooperative",
+    role: (searchParams.get("role") as "cooperative" | "transporter" | "wholesale_seller" | "retail_buyer") || "cooperative",
   });
 
   const rawNext = searchParams.get("next") || "";
