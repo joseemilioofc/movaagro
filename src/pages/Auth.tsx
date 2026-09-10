@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Truck, Wheat, Shield, ArrowLeft, Loader2, Chrome, Package } from "lucide-react";
+import { Truck, Wheat, Shield, ArrowLeft, Loader2, Chrome, Package, Store, ShoppingCart } from "lucide-react";
 import { z } from "zod";
 import { Footer } from "@/components/Footer";
 import { PasswordInput } from "@/components/PasswordInput";
