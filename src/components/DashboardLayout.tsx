@@ -88,6 +88,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               { label: "Ranking", href: "/ranking", icon: Trophy },
               { label: "App", href: "/install", icon: Smartphone },
             ];
+      case "wholesale_seller":
+        return [
+          { label: "Dashboard", href: "/seller", icon: Store },
+          { label: "Marketplace", href: "/marketplace", icon: ShoppingCart },
+          { label: "Contratos", href: "/contracts", icon: FileText },
+          { label: "Ranking", href: "/ranking", icon: Trophy },
+        ];
+      case "retail_buyer":
+        return [
+          { label: "Dashboard", href: "/buyer", icon: ShoppingCart },
+          { label: "Marketplace", href: "/marketplace", icon: Store },
+          { label: "Contratos", href: "/contracts", icon: FileText },
+          { label: "Ranking", href: "/ranking", icon: Trophy },
+        ];
       default:
         return [];
     }
