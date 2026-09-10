@@ -3,7 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { Truck, LogOut, Home, Package, Shield, ShieldCheck, ScrollText, Settings, User, FileText, Smartphone, Trophy, Building2 } from "lucide-react";
+import { Truck, LogOut, Home, Package, Shield, ShieldCheck, ScrollText, Settings, User, FileText, Smartphone, Trophy, Building2, Store, ShoppingCart } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Footer } from "@/components/Footer";
 import { NotificationBell } from "@/components/NotificationBell";
@@ -21,6 +21,8 @@ const ROLE_LABELS: Record<string, string> = {
   secondary_admin: "Admin Secundário",
   cooperative: "Cooperativa",
   transporter: "Transportadora",
+  wholesale_seller: "Vendedor Grossista",
+  retail_buyer: "Comprador Retalhista",
 };
 
 const ROLE_HOME: Record<string, string> = {
@@ -28,6 +30,8 @@ const ROLE_HOME: Record<string, string> = {
   secondary_admin: "/admin",
   cooperative: "/cooperative",
   transporter: "/transporter",
+  wholesale_seller: "/seller",
+  retail_buyer: "/buyer",
 };
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
@@ -42,7 +46,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   };
 
   const handleRoleChange = (next: string) => {
-    setActiveRole(next as "admin" | "secondary_admin" | "cooperative" | "transporter");
+    setActiveRole(next as "admin" | "secondary_admin" | "cooperative" | "transporter" | "wholesale_seller" | "retail_buyer");
     navigate(next === "transporter" && isCompany ? "/fleet" : ROLE_HOME[next] ?? "/home");
   };
 
@@ -84,6 +88,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               { label: "Ranking", href: "/ranking", icon: Trophy },
               { label: "App", href: "/install", icon: Smartphone },
             ];
+      case "wholesale_seller":
+        return [
+          { label: "Dashboard", href: "/seller", icon: Store },
+          { label: "Marketplace", href: "/marketplace", icon: ShoppingCart },
+          { label: "Contratos", href: "/contracts", icon: FileText },
+          { label: "Ranking", href: "/ranking", icon: Trophy },
+        ];
+      case "retail_buyer":
+        return [
+          { label: "Dashboard", href: "/buyer", icon: ShoppingCart },
+          { label: "Marketplace", href: "/marketplace", icon: Store },
+          { label: "Contratos", href: "/contracts", icon: FileText },
+          { label: "Ranking", href: "/ranking", icon: Trophy },
+        ];
       default:
         return [];
     }

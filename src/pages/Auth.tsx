@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
-import { Truck, Wheat, Shield, ArrowLeft, Loader2, Chrome, Package } from "lucide-react";
+import { Truck, Wheat, Shield, ArrowLeft, Loader2, Chrome, Package, Store, ShoppingCart } from "lucide-react";
 import { z } from "zod";
 import { Footer } from "@/components/Footer";
 import { PasswordInput } from "@/components/PasswordInput";
@@ -31,13 +31,13 @@ const signupSchema = z.object({
     .min(8, "A senha deve ter pelo menos 8 caracteres")
     .regex(passwordRegex, "A senha deve conter letra maiúscula e minúscula"),
   confirmPassword: z.string(),
-  role: z.enum(["cooperative", "transporter"]),
+  role: z.enum(["cooperative", "transporter", "wholesale_seller", "retail_buyer"]),
 }).refine((data) => data.password === data.confirmPassword, {
   message: "As senhas não coincidem",
   path: ["confirmPassword"],
 });
 
-type AppRole = "admin" | "secondary_admin" | "cooperative" | "transporter";
+type AppRole = "admin" | "secondary_admin" | "cooperative" | "transporter" | "wholesale_seller" | "retail_buyer";
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
@@ -57,7 +57,7 @@ const Auth = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    role: (searchParams.get("role") as "cooperative" | "transporter") || "cooperative",
+    role: (searchParams.get("role") as "cooperative" | "transporter" | "wholesale_seller" | "retail_buyer") || "cooperative",
   });
 
   const rawNext = searchParams.get("next") || "";
@@ -473,7 +473,7 @@ const Auth = () => {
                         <Label>Tipo de conta</Label>
                         <RadioGroup
                           value={signupForm.role}
-                          onValueChange={(value) => setSignupForm({ ...signupForm, role: value as "cooperative" | "transporter" })}
+                          onValueChange={(value) => setSignupForm({ ...signupForm, role: value as "cooperative" | "transporter" | "wholesale_seller" | "retail_buyer" })}
                           className="grid grid-cols-2 gap-4"
                         >
                           <Label
@@ -486,7 +486,31 @@ const Auth = () => {
                           >
                             <RadioGroupItem value="cooperative" id="cooperative" className="sr-only" />
                             <Wheat className="w-6 h-6 text-primary" />
-                            <span className="text-sm font-medium">Cooperativa</span>
+                            <span className="text-sm font-medium text-center">Agricultor / Cooperativa</span>
+                          </Label>
+                          <Label
+                            htmlFor="wholesale_seller"
+                            className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
+                              signupForm.role === "wholesale_seller"
+                                ? "border-primary bg-emerald-light"
+                                : "border-border hover:border-primary/50"
+                            }`}
+                          >
+                            <RadioGroupItem value="wholesale_seller" id="wholesale_seller" className="sr-only" />
+                            <Store className="w-6 h-6 text-primary" />
+                            <span className="text-sm font-medium text-center">Vendedor Grossista</span>
+                          </Label>
+                          <Label
+                            htmlFor="retail_buyer"
+                            className={`flex flex-col items-center gap-2 p-4 rounded-lg border-2 cursor-pointer transition-colors ${
+                              signupForm.role === "retail_buyer"
+                                ? "border-primary bg-emerald-light"
+                                : "border-border hover:border-primary/50"
+                            }`}
+                          >
+                            <RadioGroupItem value="retail_buyer" id="retail_buyer" className="sr-only" />
+                            <ShoppingCart className="w-6 h-6 text-primary" />
+                            <span className="text-sm font-medium text-center">Comprador Retalhista</span>
                           </Label>
                           <Label
                             htmlFor="transporter"
@@ -498,7 +522,7 @@ const Auth = () => {
                           >
                             <RadioGroupItem value="transporter" id="transporter" className="sr-only" />
                             <Package className="w-6 h-6 text-primary" />
-                            <span className="text-sm font-medium">Procuro Carga</span>
+                            <span className="text-sm font-medium text-center">Transportador</span>
                           </Label>
                         </RadioGroup>
                       </div>
