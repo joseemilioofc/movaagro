@@ -21,6 +21,8 @@ const ROLE_LABELS: Record<string, string> = {
   secondary_admin: "Admin Secundário",
   cooperative: "Cooperativa",
   transporter: "Transportadora",
+  wholesale_seller: "Vendedor Grossista",
+  retail_buyer: "Comprador Retalhista",
 };
 
 const ROLE_HOME: Record<string, string> = {
@@ -28,6 +30,8 @@ const ROLE_HOME: Record<string, string> = {
   secondary_admin: "/admin",
   cooperative: "/cooperative",
   transporter: "/transporter",
+  wholesale_seller: "/seller",
+  retail_buyer: "/buyer",
 };
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
