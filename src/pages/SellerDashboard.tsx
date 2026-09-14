@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader2, Plus, Package, ShoppingCart, TrendingUp, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
-import { formatCurrency } from "@/lib/currency";
+import { formatMZN } from "@/lib/currency";
 
 interface ProductListing {
   id: string;
@@ -121,7 +121,7 @@ const SellerDashboard = () => {
           <Card>
             <CardHeader className="pb-2">
               <CardDescription>Saldo Disponível</CardDescription>
-              <CardTitle className="text-3xl">{formatCurrency(wallet?.available_balance || 0)}</CardTitle>
+              <CardTitle className="text-3xl">{formatMZN(wallet?.available_balance || 0)}</CardTitle>
             </CardHeader>
             <CardContent>
               <Wallet className="w-5 h-5 text-primary" />
@@ -166,7 +166,7 @@ const SellerDashboard = () => {
                       <div className="grid grid-cols-2 gap-4 text-sm">
                         <div>
                           <p className="text-muted-foreground">Preço/kg</p>
-                          <p className="font-semibold">{formatCurrency(listing.price_per_kg)}</p>
+                          <p className="font-semibold">{formatMZN(listing.price_per_kg)}</p>
                         </div>
                         <div>
                           <p className="text-muted-foreground">Stock</p>
@@ -201,11 +201,11 @@ const SellerDashboard = () => {
                         <Badge>{order.status}</Badge>
                       </div>
                       <CardDescription>
-                        {order.quantity_kg} kg • {formatCurrency(order.total_product_amount)}
+                        {order.quantity_kg} kg • {formatMZN(order.total_product_amount)}
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="text-sm text-muted-foreground">
-                      <p>Transporte: {formatCurrency(order.shipping_amount)}</p>
+                      <p>Transporte: {formatMZN(order.shipping_amount)}</p>
                       <p>Pagamento: {order.payment_status}</p>
                     </CardContent>
                   </Card>

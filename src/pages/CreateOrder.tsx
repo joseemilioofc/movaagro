@@ -7,6 +7,7 @@ import { OrderForm } from "@/components/OrderForm";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { formatMZN } from "@/lib/currency";
 
 const COMMISSION_SALES_PERCENT = 5;
 const COMMISSION_FREIGHT_PERCENT = 20;

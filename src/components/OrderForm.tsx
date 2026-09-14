@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, MapPin, Truck } from "lucide-react";
-import { formatCurrency } from "@/lib/currency";
+import { formatMZN } from "@/lib/currency";
 
 interface ProductListing {
   id: string;
@@ -95,7 +95,7 @@ export const OrderForm = ({ listing, onSubmit, isSubmitting }: OrderFormProps) =
         <CardContent className="space-y-2">
           <p className="font-semibold text-foreground">{listing.title}</p>
           <p className="text-sm text-muted-foreground">
-            Preço: {formatCurrency(listing.price_per_kg)}/kg • Disponível: {listing.quantity_kg} kg • Mínimo: {listing.min_order_kg} kg
+            Preço: {formatMZN(listing.price_per_kg)}/kg • Disponível: {listing.quantity_kg} kg • Mínimo: {listing.min_order_kg} kg
           </p>
           <p className="text-sm text-muted-foreground flex items-center gap-2">
             <MapPin className="w-4 h-4" />
@@ -188,17 +188,17 @@ export const OrderForm = ({ listing, onSubmit, isSubmitting }: OrderFormProps) =
           <div className="space-y-2 pt-4 border-t border-border">
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">Produto</span>
-              <span>{formatCurrency(productAmount)}</span>
+              <span>{formatMZN(productAmount)}</span>
             </div>
             {formData.needs_transport && (
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Transporte estimado</span>
-                <span>{formatCurrency(estimatedShipping)}</span>
+                <span>{formatMZN(estimatedShipping)}</span>
               </div>
             )}
             <div className="flex justify-between text-lg font-bold pt-2 border-t border-border">
               <span>Total estimado</span>
-              <span className="text-primary">{formatCurrency(totalAmount)}</span>
+              <span className="text-primary">{formatMZN(totalAmount)}</span>
             </div>
           </div>
         </CardContent>

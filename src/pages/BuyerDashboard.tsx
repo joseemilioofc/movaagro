@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Package, ShoppingCart, Store, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
-import { formatCurrency } from "@/lib/currency";
+import { formatMZN } from "@/lib/currency";
 
 interface Order {
   id: string;
@@ -153,11 +153,11 @@ const BuyerDashboard = () => {
                     <Badge>{order.status}</Badge>
                   </div>
                   <CardDescription>
-                    {order.quantity_kg} kg • {formatCurrency(order.total_product_amount)} • {order.seller_name}
+                    {order.quantity_kg} kg • {formatMZN(order.total_product_amount)} • {order.seller_name}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="text-sm text-muted-foreground">
-                  <p>Transporte: {formatCurrency(order.shipping_amount)}</p>
+                  <p>Transporte: {formatMZN(order.shipping_amount)}</p>
                   <p>Pagamento: {order.payment_status}</p>
                 </CardContent>
               </Card>

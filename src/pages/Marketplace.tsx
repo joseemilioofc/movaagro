@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Search, ShoppingCart, MapPin, Package, Store } from "lucide-react";
 import { Link } from "react-router-dom";
-import { formatCurrency } from "@/lib/currency";
+import { formatMZN } from "@/lib/currency";
 
 interface ProductListing {
   id: string;
@@ -173,7 +173,7 @@ const Marketplace = () => {
                 <CardContent className="space-y-3">
                   <div className="flex items-baseline gap-1">
                     <span className="text-2xl font-bold text-primary">
-                      {formatCurrency(listing.price_per_kg)}
+                      {formatMZN(listing.price_per_kg)}
                     </span>
                     <span className="text-muted-foreground">/kg</span>
                   </div>
