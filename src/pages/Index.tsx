@@ -65,26 +65,37 @@ const Index = () => {
         <div className="container mx-auto px-3 sm:px-4 py-12 sm:py-20 lg:py-32 relative z-10">
           <div className="max-w-4xl mx-auto text-center animate-slide-up">
             <span className="inline-block px-3 sm:px-4 py-1.5 sm:py-2 bg-emerald-light text-primary rounded-full text-xs sm:text-sm font-medium mb-4 sm:mb-6">
-              Serviço de Logística Agrícola
+              Marketplace B2B + Logística Agrícola
             </span>
             <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-display font-bold text-foreground mb-4 sm:mb-6 leading-tight px-2">
-              Conectando o <span className="text-gradient">Campo</span> ao seu <span className="text-gradient">Destino</span>
+              Do <span className="text-gradient">Campo</span> ao <span className="text-gradient">Negócio</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-10 max-w-2xl mx-auto px-2">
-              A MOVA Simplifica o Transporte de Produtos Agrícolas. Conectando Cooperativas
-              e Transportadoras a Oportunidades de Forma Rápida e Segura.
+              Compre e venda produtos agrícolas a granel em Moçambique. A MOVA conecta quem vende, quem compra e quem transporta num só lugar.
             </p>
-            <div className="flex flex-col items-center justify-center gap-3 sm:gap-4 px-2">
-              <Link to="/auth?tab=signup&role=cooperative" className="w-full sm:w-auto">
-                <Button size="lg" className="w-full sm:w-auto bg-gradient-primary text-primary-foreground font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg shadow-glow">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 px-2 max-w-2xl mx-auto">
+              <Link to="/auth?tab=signup&role=cooperative" className="w-full">
+                <Button size="lg" className="w-full bg-gradient-primary text-primary-foreground font-semibold px-6 h-12 sm:h-14 text-base sm:text-lg shadow-glow">
                   <Wheat className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Sou Cooperativa
+                  Sou Agricultor / Cooperativa
                 </Button>
               </Link>
-              <Link to="/auth?tab=signup&role=transporter" className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full sm:w-auto font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg border-2 bg-background/80 backdrop-blur-sm">
+              <Link to="/auth?tab=signup&role=wholesale_seller" className="w-full">
+                <Button size="lg" variant="outline" className="w-full font-semibold px-6 h-12 sm:h-14 text-base sm:text-lg border-2 bg-background/80 backdrop-blur-sm">
+                  <Store className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Vendo a Granel
+                </Button>
+              </Link>
+              <Link to="/auth?tab=signup&role=retail_buyer" className="w-full">
+                <Button size="lg" variant="outline" className="w-full font-semibold px-6 h-12 sm:h-14 text-base sm:text-lg border-2 bg-background/80 backdrop-blur-sm">
+                  <ShoppingCart className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Compro a Granel
+                </Button>
+              </Link>
+              <Link to="/auth?tab=signup&role=transporter" className="w-full">
+                <Button size="lg" variant="outline" className="w-full font-semibold px-6 h-12 sm:h-14 text-base sm:text-lg border-2 bg-background/80 backdrop-blur-sm">
                   <Package className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Procuro Carga
+                  Faço Transporte
                 </Button>
               </Link>
             </div>
