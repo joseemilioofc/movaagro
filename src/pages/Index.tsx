@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Truck, Wheat, Shield, ArrowRight, UserCircle, DollarSign, Settings, CheckCircle, ChevronDown, Package, HelpCircle, Info } from "lucide-react";
+import { Truck, Wheat, Shield, ArrowRight, UserCircle, DollarSign, Settings, CheckCircle, ChevronDown, Package, HelpCircle, Info, Store, ShoppingCart } from "lucide-react";
 import { MobileMenu } from "@/components/MobileMenu";
 import { Footer } from "@/components/Footer";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
