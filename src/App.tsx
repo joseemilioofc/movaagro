@@ -35,6 +35,11 @@ import AcceptableUse from "./pages/AcceptableUse";
 import LegalContact from "./pages/LegalContact";
 import LegalNotice from "./pages/LegalNotice";
 import OAuthConsent from "./pages/OAuthConsent";
+import Marketplace from "./pages/Marketplace";
+import SellerDashboard from "./pages/SellerDashboard";
+import BuyerDashboard from "./pages/BuyerDashboard";
+import CreateListing from "./pages/CreateListing";
+import CreateOrder from "./pages/CreateOrder";
 import NotFound from "./pages/NotFound";
 
 
