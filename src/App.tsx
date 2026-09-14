@@ -35,6 +35,11 @@ import AcceptableUse from "./pages/AcceptableUse";
 import LegalContact from "./pages/LegalContact";
 import LegalNotice from "./pages/LegalNotice";
 import OAuthConsent from "./pages/OAuthConsent";
+import Marketplace from "./pages/Marketplace";
+import SellerDashboard from "./pages/SellerDashboard";
+import BuyerDashboard from "./pages/BuyerDashboard";
+import CreateListing from "./pages/CreateListing";
+import CreateOrder from "./pages/CreateOrder";
 import NotFound from "./pages/NotFound";
 
 
@@ -66,6 +71,11 @@ const App = () => (
             <Route path="/contracts" element={<Contracts />} />
             <Route path="/install" element={<Install />} />
             <Route path="/ranking" element={<Ranking />} />
+            <Route path="/marketplace" element={<Marketplace />} />
+            <Route path="/seller" element={<SellerDashboard />} />
+            <Route path="/seller/listings/new" element={<CreateListing />} />
+            <Route path="/buyer" element={<BuyerDashboard />} />
+            <Route path="/buyer/orders/new" element={<CreateOrder />} />
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
             <Route path="/security" element={<Security />} />
