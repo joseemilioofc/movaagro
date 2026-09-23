@@ -86,22 +86,24 @@ export const Breadcrumbs = () => {
           const isLast = index === breadcrumbTrail.length - 1;
           
           return (
-            <BreadcrumbItem key={item.path}>
+            <div key={item.path} className="contents">
               {index > 0 && <BreadcrumbSeparator />}
-              {isLast ? (
-                <BreadcrumbPage className="flex items-center gap-1.5">
-                  {index === 0 && <Home className="h-3.5 w-3.5" />}
-                  {item.label}
-                </BreadcrumbPage>
-              ) : (
-                <BreadcrumbLink asChild>
-                  <Link to={item.path} className="flex items-center gap-1.5 hover:text-primary transition-colors">
+              <BreadcrumbItem>
+                {isLast ? (
+                  <BreadcrumbPage className="flex items-center gap-1.5">
                     {index === 0 && <Home className="h-3.5 w-3.5" />}
                     {item.label}
-                  </Link>
-                </BreadcrumbLink>
-              )}
-            </BreadcrumbItem>
+                  </BreadcrumbPage>
+                ) : (
+                  <BreadcrumbLink asChild>
+                    <Link to={item.path} className="flex items-center gap-1.5 hover:text-primary transition-colors">
+                      {index === 0 && <Home className="h-3.5 w-3.5" />}
+                      {item.label}
+                    </Link>
+                  </BreadcrumbLink>
+                )}
+              </BreadcrumbItem>
+            </div>
           );
         })}
       </BreadcrumbList>

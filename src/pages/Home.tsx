@@ -103,9 +103,14 @@ const Home = () => {
     { label: "Mensagens", value: "0", icon: MessageSquare },
   ];
 
-  const filteredActions = quickActions.filter(
-    (action) => !action.roles || action.roles.includes(role || "")
-  );
+  const isAdmin = role === "admin" || role === "secondary_admin";
+  const filteredActions = isAdmin
+    ? quickActions.filter((a) => !a.roles?.includes("cooperative") || true).filter(
+        (action, index, self) => self.findIndex((a) => a.title === action.title) === index
+      )
+    : quickActions.filter(
+        (action) => !action.roles || action.roles.includes(role || "")
+      );
 
   return (
     <DashboardLayout>

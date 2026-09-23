@@ -54,7 +54,7 @@ const SellerDashboard = () => {
       const [listingsRes, ordersRes, walletRes] = await Promise.all([
         supabase.from("product_listings").select("*").eq("seller_id", user?.id).order("created_at", { ascending: false }),
         supabase.from("orders").select("*").eq("seller_id", user?.id).order("created_at", { ascending: false }),
-        supabase.from("seller_wallets").select("*").eq("seller_id", user?.id).single(),
+        supabase.from("seller_wallets").select("*").eq("seller_id", user?.id).maybeSingle(),
       ]);
 
       if (listingsRes.error) throw listingsRes.error;
