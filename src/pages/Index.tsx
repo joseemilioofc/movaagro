@@ -115,20 +115,20 @@ const Index = () => {
           <StepCard
             step={1}
             icon={<UserCircle className="w-12 h-12" />}
-            title="Cadastre-se"
-            description="Escolha seu perfil, cooperativa ou transportadora, e crie sua conta em minutos."
+            title="Crie a sua conta"
+            description="Escolha o seu perfil: vendedor, comprador ou transportador, e registe-se em minutos."
           />
           <StepCard
             step={2}
-            icon={<Truck className="w-12 h-12" />}
-            title="Crie ou Encontre um Frete"
-            description="Cooperativas publicam suas necessidades de transporte. Transportadoras encontram as melhores ofertas."
+            icon={<Store className="w-12 h-12" />}
+            title="Compre ou Venda a Granel"
+            description="Vendedores publicam produtos. Compradores encontram as melhores ofertas no marketplace."
           />
           <StepCard
             step={3}
-            icon={<DollarSign className="w-12 h-12" />}
-            title="Feche Negócio"
-            description="Negocie, aceite a proposta e movimente sua carga com segurança e eficiência."
+            icon={<Truck className="w-12 h-12" />}
+            title="Transporte Garantido"
+            description="A MOVA organiza o frete, rastreia a entrega e garante o pagamento com segurança."
           />
         </div>
       </section>
