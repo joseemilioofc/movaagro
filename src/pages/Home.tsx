@@ -117,9 +117,13 @@ const Home = () => {
           </h1>
           <p className="text-primary-foreground/80 text-lg">
             {role === "cooperative" 
-              ? "Gerencie suas solicitações de transporte e acompanhe suas cargas."
+              ? "Gerencie suas solicitações de transporte, venda a granel e acompanhe suas cargas."
               : role === "transporter"
               ? "Encontre novas oportunidades de transporte e gerencie seus serviços."
+              : role === "wholesale_seller"
+              ? "Publique produtos a granel e gerencie as suas vendas no marketplace."
+              : role === "retail_buyer"
+              ? "Encontre produtos agrícolas a granel e acompanhe as suas encomendas."
               : role === "secondary_admin"
               ? "Acompanhe as operações da plataforma."
               : "Gerencie a plataforma e monitore todas as operações."}
