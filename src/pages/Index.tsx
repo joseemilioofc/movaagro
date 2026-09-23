@@ -334,8 +334,9 @@ const Index = () => {
                 O que é a MOVA?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-sm sm:text-base">
-                A MOVA é uma plataforma digital que conecta cooperativas agrícolas a transportadoras de forma rápida e segura. 
-                Nosso objetivo é simplificar a logística do agronegócio, reduzindo custos e tempo de espera para encontrar fretes.
+                A MOVA é um marketplace B2B com logística integrada que conecta agricultores, cooperativas e vendedores
+                grossistas a compradores — retalhistas, restaurantes e mercados — garantindo o transporte da carga
+                do início ao fim.
               </AccordionContent>
             </AccordionItem>
 
@@ -344,9 +345,9 @@ const Index = () => {
                 Como funciona o cadastro na plataforma?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-sm sm:text-base">
-                O cadastro é simples e gratuito. Basta escolher seu perfil (cooperativa ou transportadora), 
-                preencher seus dados básicos e começar a usar. Cooperativas podem publicar pedidos de transporte 
-                e transportadoras podem visualizar e aceitar as ofertas disponíveis.
+                O cadastro é simples e gratuito. Escolha o seu perfil — vendedor, comprador ou transportador —
+                preencha os seus dados e comece a usar. Vendedores publicam produtos, compradores fazem encomendas
+                e transportadores encontram cargas constantes.
               </AccordionContent>
             </AccordionItem>
 
@@ -355,8 +356,8 @@ const Index = () => {
                 Quanto custa usar a MOVA?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-sm sm:text-base">
-                O cadastro e uso básico da plataforma são gratuitos. Cobramos apenas uma pequena taxa de intermediação 
-                quando um frete é confirmado e concluído com sucesso. Isso garante que você só paga quando obtém resultados.
+                O cadastro e uso básico são gratuitos. Cobramos uma pequena comissão sobre vendas concluídas
+                e sobre fretes organizados pela plataforma. Você só paga quando obtém resultados.
               </AccordionContent>
             </AccordionItem>
 
