@@ -410,19 +410,25 @@ const Index = () => {
               Pronto para começar?
             </h2>
             <p className="text-primary-foreground/80 text-base sm:text-lg mb-6 sm:mb-8 max-w-xl mx-auto">
-              Cadastre-se e comece a usar o Serviço MOVA hoje mesmo.
+              Crie a sua conta e entre no maior marketplace agrícola de Moçambique.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
               <Link to="/auth?tab=signup&role=cooperative">
-                <Button size="lg" variant="secondary" className="font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg w-full sm:w-auto">
+                <Button size="lg" variant="secondary" className="font-semibold px-4 h-12 sm:h-14 text-sm sm:text-base w-full">
                   <Wheat className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Sou Cooperativa
+                  Vender
+                </Button>
+              </Link>
+              <Link to="/auth?tab=signup&role=retail_buyer">
+                <Button size="lg" variant="secondary" className="font-semibold px-4 h-12 sm:h-14 text-sm sm:text-base w-full">
+                  <ShoppingCart className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Comprar
                 </Button>
               </Link>
               <Link to="/auth?tab=signup&role=transporter">
-                <Button size="lg" variant="outline" className="font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/20 w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="font-semibold px-4 h-12 sm:h-14 text-sm sm:text-base border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/20 w-full">
                   <Package className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Procuro Carga
+                  Transportar
                 </Button>
               </Link>
             </div>
