@@ -15,7 +15,9 @@ import {
   Clock,
   Star,
   ArrowRight,
-  Loader2
+  Loader2,
+  Store,
+  ShoppingCart
 } from "lucide-react";
 
 const Home = () => {
@@ -68,6 +70,30 @@ const Home = () => {
       href: "/ranking",
       color: "bg-yellow-500/10 text-yellow-600",
       roles: ["cooperative", "transporter"],
+    },
+    {
+      title: "Marketplace",
+      description: "Compre e venda produtos a granel",
+      icon: Store,
+      href: "/marketplace",
+      color: "bg-emerald-500/10 text-emerald-600",
+      roles: ["wholesale_seller", "retail_buyer", "cooperative"],
+    },
+    {
+      title: "Painel do Vendedor",
+      description: "Gerencie as suas listagens e vendas",
+      icon: Store,
+      href: "/seller",
+      color: "bg-primary/10 text-primary",
+      roles: ["wholesale_seller"],
+    },
+    {
+      title: "Minhas Encomendas",
+      description: "Acompanhe as suas compras",
+      icon: ShoppingCart,
+      href: "/buyer",
+      color: "bg-accent/10 text-accent",
+      roles: ["retail_buyer"],
     },
   ];
 
