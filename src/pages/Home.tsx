@@ -105,9 +105,7 @@ const Home = () => {
 
   const isAdmin = role === "admin" || role === "secondary_admin";
   const filteredActions = isAdmin
-    ? quickActions.filter((a) => !a.roles?.includes("cooperative") || true).filter(
-        (action, index, self) => self.findIndex((a) => a.title === action.title) === index
-      )
+    ? quickActions
     : quickActions.filter(
         (action) => !action.roles || action.roles.includes(role || "")
       );
