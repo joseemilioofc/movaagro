@@ -115,20 +115,20 @@ const Index = () => {
           <StepCard
             step={1}
             icon={<UserCircle className="w-12 h-12" />}
-            title="Cadastre-se"
-            description="Escolha seu perfil, cooperativa ou transportadora, e crie sua conta em minutos."
+            title="Crie a sua conta"
+            description="Escolha o seu perfil: vendedor, comprador ou transportador, e registe-se em minutos."
           />
           <StepCard
             step={2}
-            icon={<Truck className="w-12 h-12" />}
-            title="Crie ou Encontre um Frete"
-            description="Cooperativas publicam suas necessidades de transporte. Transportadoras encontram as melhores ofertas."
+            icon={<Store className="w-12 h-12" />}
+            title="Compre ou Venda a Granel"
+            description="Vendedores publicam produtos. Compradores encontram as melhores ofertas no marketplace."
           />
           <StepCard
             step={3}
-            icon={<DollarSign className="w-12 h-12" />}
-            title="Feche Negócio"
-            description="Negocie, aceite a proposta e movimente sua carga com segurança e eficiência."
+            icon={<Truck className="w-12 h-12" />}
+            title="Transporte Garantido"
+            description="A MOVA organiza o frete, rastreia a entrega e garante o pagamento com segurança."
           />
         </div>
       </section>
@@ -142,7 +142,7 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-6xl mx-auto">
-          {/* For Cooperatives */}
+          {/* For Sellers (cooperativas + grossistas) */}
           <div className="bg-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-border">
             <div className="h-40 sm:h-56 overflow-hidden">
               <img 
@@ -154,18 +154,18 @@ const Index = () => {
             <div className="p-5 sm:p-8">
               <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
                 <Wheat className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                Para Cooperativas
+                Para Quem Vende
               </h3>
               <ul className="space-y-2 sm:space-y-3">
-                <AdvantageItem text="Alcance novos mercados." />
-                <AdvantageItem text="Otimize custos de frete." />
-                <AdvantageItem text="Agendamento fácil e rápido." />
-                <AdvantageItem text="Segurança e rastreabilidade da carga." />
+                <AdvantageItem text="Alcance compradores de todo o país." />
+                <AdvantageItem text="Publique produtos a granel em minutos." />
+                <AdvantageItem text="Pagamentos garantidos pela plataforma." />
+                <AdvantageItem text="Transporte organizado pela MOVA." />
               </ul>
             </div>
           </div>
 
-          {/* For Transporters */}
+          {/* For Buyers */}
           <div className="bg-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-border">
             <div className="h-40 sm:h-56 overflow-hidden">
               <img 
@@ -176,13 +176,29 @@ const Index = () => {
             </div>
             <div className="p-5 sm:p-8">
               <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
-                <Package className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                Para Quem Procura Carga
+                <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                Para Quem Compra
               </h3>
               <ul className="space-y-2 sm:space-y-3">
-                <AdvantageItem text="Acesso a novas oportunidades de frete." />
+                <AdvantageItem text="Acesso a vendedores certificados." />
+                <AdvantageItem text="Preços competitivos a granel." />
+                <AdvantageItem text="Encomendas rastreadas em tempo real." />
+                <AdvantageItem text="Pagamento seguro dentro da plataforma." />
+              </ul>
+            </div>
+          </div>
+
+          {/* For Transporters */}
+          <div className="bg-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-border lg:col-span-2">
+            <div className="p-5 sm:p-8">
+              <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
+                <Package className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                Para Quem Transporta
+              </h3>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                <AdvantageItem text="Cargas constantes do marketplace." />
                 <AdvantageItem text="Reduza o tempo ocioso do veículo." />
-                <AdvantageItem text="Otimização de rotas e cargas." />
+                <AdvantageItem text="Rotas otimizadas e renda previsível." />
                 <AdvantageItem text="Pagamentos seguros e pontuais." />
               </ul>
             </div>
@@ -318,8 +334,9 @@ const Index = () => {
                 O que é a MOVA?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-sm sm:text-base">
-                A MOVA é uma plataforma digital que conecta cooperativas agrícolas a transportadoras de forma rápida e segura. 
-                Nosso objetivo é simplificar a logística do agronegócio, reduzindo custos e tempo de espera para encontrar fretes.
+                A MOVA é um marketplace B2B com logística integrada que conecta agricultores, cooperativas e vendedores
+                grossistas a compradores — retalhistas, restaurantes e mercados — garantindo o transporte da carga
+                do início ao fim.
               </AccordionContent>
             </AccordionItem>
 
@@ -328,9 +345,9 @@ const Index = () => {
                 Como funciona o cadastro na plataforma?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-sm sm:text-base">
-                O cadastro é simples e gratuito. Basta escolher seu perfil (cooperativa ou transportadora), 
-                preencher seus dados básicos e começar a usar. Cooperativas podem publicar pedidos de transporte 
-                e transportadoras podem visualizar e aceitar as ofertas disponíveis.
+                O cadastro é simples e gratuito. Escolha o seu perfil — vendedor, comprador ou transportador —
+                preencha os seus dados e comece a usar. Vendedores publicam produtos, compradores fazem encomendas
+                e transportadores encontram cargas constantes.
               </AccordionContent>
             </AccordionItem>
 
@@ -339,8 +356,8 @@ const Index = () => {
                 Quanto custa usar a MOVA?
               </AccordionTrigger>
               <AccordionContent className="text-muted-foreground text-sm sm:text-base">
-                O cadastro e uso básico da plataforma são gratuitos. Cobramos apenas uma pequena taxa de intermediação 
-                quando um frete é confirmado e concluído com sucesso. Isso garante que você só paga quando obtém resultados.
+                O cadastro e uso básico são gratuitos. Cobramos uma pequena comissão sobre vendas concluídas
+                e sobre fretes organizados pela plataforma. Você só paga quando obtém resultados.
               </AccordionContent>
             </AccordionItem>
 
@@ -394,19 +411,25 @@ const Index = () => {
               Pronto para começar?
             </h2>
             <p className="text-primary-foreground/80 text-base sm:text-lg mb-6 sm:mb-8 max-w-xl mx-auto">
-              Cadastre-se e comece a usar o Serviço MOVA hoje mesmo.
+              Crie a sua conta e entre no maior marketplace agrícola de Moçambique.
             </p>
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-3xl mx-auto">
               <Link to="/auth?tab=signup&role=cooperative">
-                <Button size="lg" variant="secondary" className="font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg w-full sm:w-auto">
+                <Button size="lg" variant="secondary" className="font-semibold px-4 h-12 sm:h-14 text-sm sm:text-base w-full">
                   <Wheat className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Sou Cooperativa
+                  Vender
+                </Button>
+              </Link>
+              <Link to="/auth?tab=signup&role=retail_buyer">
+                <Button size="lg" variant="secondary" className="font-semibold px-4 h-12 sm:h-14 text-sm sm:text-base w-full">
+                  <ShoppingCart className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
+                  Comprar
                 </Button>
               </Link>
               <Link to="/auth?tab=signup&role=transporter">
-                <Button size="lg" variant="outline" className="font-semibold px-6 sm:px-8 h-12 sm:h-14 text-base sm:text-lg border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/20 w-full sm:w-auto">
+                <Button size="lg" variant="outline" className="font-semibold px-4 h-12 sm:h-14 text-sm sm:text-base border-2 border-primary-foreground text-primary-foreground hover:bg-primary-foreground/20 w-full">
                   <Package className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Procuro Carga
+                  Transportar
                 </Button>
               </Link>
             </div>
