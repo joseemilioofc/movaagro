@@ -142,7 +142,7 @@ const Index = () => {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 max-w-6xl mx-auto">
-          {/* For Cooperatives */}
+          {/* For Sellers (cooperativas + grossistas) */}
           <div className="bg-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-border">
             <div className="h-40 sm:h-56 overflow-hidden">
               <img 
@@ -154,18 +154,18 @@ const Index = () => {
             <div className="p-5 sm:p-8">
               <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
                 <Wheat className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                Para Cooperativas
+                Para Quem Vende
               </h3>
               <ul className="space-y-2 sm:space-y-3">
-                <AdvantageItem text="Alcance novos mercados." />
-                <AdvantageItem text="Otimize custos de frete." />
-                <AdvantageItem text="Agendamento fácil e rápido." />
-                <AdvantageItem text="Segurança e rastreabilidade da carga." />
+                <AdvantageItem text="Alcance compradores de todo o país." />
+                <AdvantageItem text="Publique produtos a granel em minutos." />
+                <AdvantageItem text="Pagamentos garantidos pela plataforma." />
+                <AdvantageItem text="Transporte organizado pela MOVA." />
               </ul>
             </div>
           </div>
 
-          {/* For Transporters */}
+          {/* For Buyers */}
           <div className="bg-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-border">
             <div className="h-40 sm:h-56 overflow-hidden">
               <img 
@@ -176,13 +176,29 @@ const Index = () => {
             </div>
             <div className="p-5 sm:p-8">
               <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
-                <Package className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                Para Quem Procura Carga
+                <ShoppingCart className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                Para Quem Compra
               </h3>
               <ul className="space-y-2 sm:space-y-3">
-                <AdvantageItem text="Acesso a novas oportunidades de frete." />
+                <AdvantageItem text="Acesso a vendedores certificados." />
+                <AdvantageItem text="Preços competitivos a granel." />
+                <AdvantageItem text="Encomendas rastreadas em tempo real." />
+                <AdvantageItem text="Pagamento seguro dentro da plataforma." />
+              </ul>
+            </div>
+          </div>
+
+          {/* For Transporters */}
+          <div className="bg-card rounded-2xl sm:rounded-3xl overflow-hidden shadow-lg border border-border lg:col-span-2">
+            <div className="p-5 sm:p-8">
+              <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-4 sm:mb-6 flex items-center gap-2">
+                <Package className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                Para Quem Transporta
+              </h3>
+              <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-3">
+                <AdvantageItem text="Cargas constantes do marketplace." />
                 <AdvantageItem text="Reduza o tempo ocioso do veículo." />
-                <AdvantageItem text="Otimização de rotas e cargas." />
+                <AdvantageItem text="Rotas otimizadas e renda previsível." />
                 <AdvantageItem text="Pagamentos seguros e pontuais." />
               </ul>
             </div>
