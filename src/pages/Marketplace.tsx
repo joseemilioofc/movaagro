@@ -94,7 +94,7 @@ const Marketplace = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl sm:text-3xl font-display font-bold text-foreground">Marketplace</h1>
-            <p className="text-muted-foreground">Encontre produtos agrícolas a granel de vendedores certificados</p>
+            <p className="text-muted-foreground">Encontre produtos agrícolas a grosso de vendedores certificados</p>
           </div>
           <Link to="/seller/listings/new">
             <Button className="bg-gradient-primary text-primary-foreground">
@@ -167,7 +167,7 @@ const Marketplace = () => {
                     <Badge variant="secondary">{listing.category}</Badge>
                   </div>
                   <CardDescription className="line-clamp-2">
-                    {listing.description || `${listing.product_type} disponível a granel`}
+                    {listing.description || `${listing.product_type} disponível a grosso`}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-3">

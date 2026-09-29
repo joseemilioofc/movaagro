@@ -71,7 +71,7 @@ const Index = () => {
               Do <span className="text-gradient">Campo</span> ao <span className="text-gradient">Negócio</span>
             </h1>
             <p className="text-base sm:text-lg md:text-xl text-muted-foreground mb-6 sm:mb-10 max-w-2xl mx-auto px-2">
-              Compre e venda produtos agrícolas a granel em Moçambique. A MOVA conecta quem vende, quem compra e quem transporta num só lugar.
+              Compre e venda produtos agrícolas a grosso em Moçambique. A MOVA conecta quem vende, quem compra e quem transporta num só lugar.
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 px-2 max-w-2xl mx-auto">
               <Link to="/auth?tab=signup&role=cooperative" className="w-full">
@@ -83,13 +83,13 @@ const Index = () => {
               <Link to="/auth?tab=signup&role=wholesale_seller" className="w-full">
                 <Button size="lg" variant="outline" className="w-full font-semibold px-6 h-12 sm:h-14 text-base sm:text-lg border-2 bg-background/80 backdrop-blur-sm">
                   <Store className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Vendo a Granel
+                  Vendo a Grosso
                 </Button>
               </Link>
               <Link to="/auth?tab=signup&role=retail_buyer" className="w-full">
                 <Button size="lg" variant="outline" className="w-full font-semibold px-6 h-12 sm:h-14 text-base sm:text-lg border-2 bg-background/80 backdrop-blur-sm">
                   <ShoppingCart className="mr-2 h-4 w-4 sm:h-5 sm:w-5" />
-                  Compro a Granel
+                  Compro a Grosso
                 </Button>
               </Link>
               <Link to="/auth?tab=signup&role=transporter" className="w-full">
@@ -121,7 +121,7 @@ const Index = () => {
           <StepCard
             step={2}
             icon={<Store className="w-12 h-12" />}
-            title="Compre ou Venda a Granel"
+            title="Compre ou Venda a Grosso"
             description="Vendedores publicam produtos. Compradores encontram as melhores ofertas no marketplace."
           />
           <StepCard
@@ -158,7 +158,7 @@ const Index = () => {
               </h3>
               <ul className="space-y-2 sm:space-y-3">
                 <AdvantageItem text="Alcance compradores de todo o país." />
-                <AdvantageItem text="Publique produtos a granel em minutos." />
+                <AdvantageItem text="Publique produtos a grosso em minutos." />
                 <AdvantageItem text="Pagamentos garantidos pela plataforma." />
                 <AdvantageItem text="Transporte organizado pela MOVA." />
               </ul>
@@ -181,7 +181,7 @@ const Index = () => {
               </h3>
               <ul className="space-y-2 sm:space-y-3">
                 <AdvantageItem text="Acesso a vendedores certificados." />
-                <AdvantageItem text="Preços competitivos a granel." />
+                <AdvantageItem text="Preços competitivos a grosso." />
                 <AdvantageItem text="Encomendas rastreadas em tempo real." />
                 <AdvantageItem text="Pagamento seguro dentro da plataforma." />
               </ul>
